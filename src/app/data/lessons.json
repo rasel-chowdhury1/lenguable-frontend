@@ -1,0 +1,62 @@
+{
+  "modules": [
+    {
+      "id": "resources",
+      "label": "Resources to use",
+      "fullLabel": "Resources to use",
+      "completedCount": 0,
+      "totalCount": 5,
+      "lessons": [
+        { "id": 101, "title": "Study Guide PDF", "status": "unlocked", "resources": ["PDF Link"], "image": "https://images.unsplash.com/photo-1512820790803-83ca734da794?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" },
+        { "id": 102, "title": "Vocabulary Flashcards", "status": "unlocked", "resources": ["Flashcard Set"], "image": "https://images.unsplash.com/photo-1581091012184-53dc0be0e0a4?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" },
+        { "id": 103, "title": "Grammar Reference Sheet", "status": "locked", "resources": ["Grammar Sheet PDF"], "image": "https://images.unsplash.com/photo-1584697964193-7c5c2a138c8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" },
+        { "id": 104, "title": "Audio Pronunciation Pack", "status": "locked", "resources": ["Audio Pack"], "image": "https://images.unsplash.com/photo-1606813909347-7be27b5e46d2?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" },
+        { "id": 105, "title": "Practice Workbook", "status": "locked", "resources": ["Workbook PDF"], "image": "https://images.unsplash.com/photo-1621264599286-7db051ef2a47?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" }
+      ]
+    },
+    {
+      "id": "how-to-begin",
+      "label": "How to use BaseLang",
+      "fullLabel": "How to use BaseLang",
+      "completedCount": 1,
+      "totalCount": 3,
+      "lessons": [
+        { "id": 201, "title": "Platform Overview", "status": "completed", "resources": ["Overview PDF"], "image": "https://images.unsplash.com/photo-1518779578993-ec3579fee39f?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" },
+        { "id": 202, "title": "Setting Up Your Profile", "status": "unlocked", "resources": ["Profile Setup Guide"], "image": "https://images.unsplash.com/photo-1598887142483-2c54f80c8d9d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" },
+        { "id": 203, "title": "Your First Lesson", "status": "locked", "resources": ["First Lesson PDF"], "image": "https://images.unsplash.com/photo-1596496050203-7890d4c8f6ec?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" }
+      ]
+    },
+    {
+      "id": "core-lesson",
+      "label": "Core Lesson",
+      "fullLabel": "Core Lesson",
+      "completedCount": 3,
+      "totalCount": 6,
+      "lessons": [
+        { "id": 301, "title": "A0", "status": "completed", "resources": ["A0 PDF", "A0 Audio"], "image": "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" },
+        { "id": 302, "title": "A1", "status": "completed", "resources": ["A1 PDF", "A1 Audio"], "image": "https://images.unsplash.com/photo-1554784932-47a7a2d5f5b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" },
+        { "id": 303, "title": "A2", "status": "completed", "resources": ["A2 PDF"], "image": "https://images.unsplash.com/photo-1581091215368-206c13fc3c8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" },
+        { "id": 304, "title": "A3", "status": "unlocked", "resources": [], "image": "https://images.unsplash.com/photo-1573497491208-6b1acb260507?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" },
+        { "id": 305, "title": "A4", "status": "locked", "resources": [], "image": "https://images.unsplash.com/photo-1571019613914-85f342c4f82d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" },
+        { "id": 306, "title": "A5", "status": "locked", "resources": [], "image": "https://images.unsplash.com/photo-1606312611436-5b4d7d2cbf7e?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" }
+      ]
+    },
+    {
+      "id": "electives",
+      "label": "Electives",
+      "fullLabel": "Elective Courses",
+      "completedCount": 0,
+      "totalCount": 8,
+      "lessons": [
+        { "id": 401, "title": "Business Conversation", "status": "locked", "resources": [], "image": "https://images.unsplash.com/photo-1519337265831-281ec6cc8514?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" },
+        { "id": 402, "title": "Travel Spanish", "status": "locked", "resources": [], "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" },
+        { "id": 403, "title": "Medical Terminology", "status": "locked", "resources": [], "image": "https://images.unsplash.com/photo-1580281657524-0e2b11e5f1db?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" },
+        { "id": 404, "title": "Legal Language", "status": "locked", "resources": [], "image": "https://images.unsplash.com/photo-1581090460545-1e0f2a0f7466?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" },
+        { "id": 405, "title": "Tech & Startups", "status": "locked", "resources": [], "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" },
+        { "id": 406, "title": "Culture & Customs", "status": "locked", "resources": [], "image": "https://images.unsplash.com/photo-1526948128573-703ee1aeb6fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" },
+        { "id": 407, "title": "Sports & Leisure", "status": "locked", "resources": [], "image": "https://images.unsplash.com/photo-1505842465776-3a26a237998d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" },
+        { "id": 408, "title": "Food & Gastronomy", "status": "locked", "resources": [], "image": "https://images.unsplash.com/photo-1514516870922-4e4a9e3f1a0d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" }
+      ]
+    }
+  ]
+}
