@@ -25,7 +25,7 @@ interface Teacher {
   averageRating: number;
   reviewCount: number;
   experience?: number;
-  spokenLanguages?: string[];
+  languages?: string[];
   nationality?: string;
   interests?: string[];
   aboutMe?: string;
@@ -49,7 +49,7 @@ export default function MyAccountPage() {
     name: user?.name || "",
     nationality: teacher?.nationality || "",
     experience: teacher?.experience ?? 0,
-    spokenLanguages: (teacher?.spokenLanguages || []).join(", "),
+    languages: (teacher?.languages || []).join(", "),
     interests: (teacher?.interests || []).join(", "),
     aboutMe: teacher?.aboutMe || "",
   });
@@ -60,7 +60,7 @@ export default function MyAccountPage() {
       name: user?.name || "",
       nationality: teacher?.nationality || "",
       experience: teacher?.experience ?? 0,
-      spokenLanguages: (teacher?.spokenLanguages || []).join(", "),
+      languages: (teacher?.languages || []).join(", "),
       interests: (teacher?.interests || []).join(", "),
       aboutMe: teacher?.aboutMe || "",
     });
@@ -83,9 +83,7 @@ export default function MyAccountPage() {
         name: formData.name,
         nationality: formData.nationality,
         experience: Number(formData.experience),
-        spokenLanguages: formData.spokenLanguages
-          .split(",")
-          .map((l) => l.trim()),
+        languages: formData.languages.split(",").map((l) => l.trim()),
         interests: formData.interests.split(",").map((i) => i.trim()),
         aboutMe: formData.aboutMe,
       }).unwrap();
@@ -127,11 +125,7 @@ export default function MyAccountPage() {
               {/* Email (disabled) */}
               <div className="space-y-1">
                 <p className="text-sm">Email</p>
-                <Input
-                  value={user?.email || ""}
-                  placeholder="Email"
-                  disabled
-                />
+                <Input value={user?.email || ""} placeholder="Email" disabled />
               </div>
 
               {/* Nationality */}
@@ -161,11 +155,9 @@ export default function MyAccountPage() {
               <div className="space-y-1">
                 <p className="text-sm">Spoken Languages</p>
                 <Input
-                  value={formData.spokenLanguages}
+                  value={formData.languages}
                   placeholder="English, Spanish"
-                  onChange={(e) =>
-                    handleChange("spokenLanguages", e.target.value)
-                  }
+                  onChange={(e) => handleChange("languages", e.target.value)}
                 />
               </div>
 
@@ -223,7 +215,9 @@ export default function MyAccountPage() {
 
               {/* Numbers */}
               <div className="flex justify-between bg-muted rounded-lg p-3">
-                <p className="text-sm text-muted-foreground">Total Classes Taught</p>
+                <p className="text-sm text-muted-foreground">
+                  Total Classes Taught
+                </p>
                 <p className="font-semibold">{teacher?.totalClasses ?? 0}</p>
               </div>
               <div className="flex justify-between bg-muted rounded-lg p-3">

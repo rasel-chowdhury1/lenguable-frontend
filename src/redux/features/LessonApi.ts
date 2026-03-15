@@ -2,7 +2,6 @@ import { baseApi } from "../api/baseApi";
 
 export const lessonApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    // GET ALL LESSONS
     getAllLessons: builder.query({
       query: () => ({
         url: "/lesson",
@@ -11,7 +10,6 @@ export const lessonApi = baseApi.injectEndpoints({
       providesTags: ["Lesson"],
     }),
 
-    // GET SINGLE LESSON
     getSingleLesson: builder.query({
       query: (id: string) => ({
         url: `/lesson/${id}`,
@@ -20,7 +18,6 @@ export const lessonApi = baseApi.injectEndpoints({
       providesTags: ["Lesson"],
     }),
 
-    // CREATE LESSON
     createLesson: builder.mutation({
       query: (data) => ({
         url: "/lesson/create",
@@ -30,7 +27,6 @@ export const lessonApi = baseApi.injectEndpoints({
       invalidatesTags: ["Lesson"],
     }),
 
-    // UPDATE LESSON
     updateLesson: builder.mutation({
       query: ({ id, data }) => ({
         url: `/lesson/${id}`,
@@ -40,7 +36,6 @@ export const lessonApi = baseApi.injectEndpoints({
       invalidatesTags: ["Lesson"],
     }),
 
-    // DELETE LESSON
     deleteLesson: builder.mutation({
       query: (id: string) => ({
         url: `/lesson/${id}`,

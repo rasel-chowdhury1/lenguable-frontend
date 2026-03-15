@@ -15,7 +15,7 @@ export const teacherApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: data,
       }),
-      invalidatesTags: ["Teacher"],
+      invalidatesTags: ["Teacher", "User"],
     }),
   }),
 });

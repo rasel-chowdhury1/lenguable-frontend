@@ -11,6 +11,11 @@ export const availabilityApi = baseApi.injectEndpoints({
       invalidatesTags: ["Availability"],
     }),
 
+    getAllAvailability: build.query({
+      query: () => "/availability",
+      providesTags: ["Availability"],
+    }),
+
     getMyAvailability: build.query({
       query: () => "/availability/me",
       providesTags: ["Availability"],
@@ -20,5 +25,6 @@ export const availabilityApi = baseApi.injectEndpoints({
 
 export const {
   useCreateAvailabilityMutation,
+  useGetAllAvailabilityQuery,
   useGetMyAvailabilityQuery,
 } = availabilityApi;

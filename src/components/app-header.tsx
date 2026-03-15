@@ -16,6 +16,7 @@ import { useGetMeQuery } from "@/redux/features/userApi";
 import { useLogoutMutation } from "@/redux/features/authApi";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import Link from "next/link";
 
 const AppHeader = () => {
   const router = useRouter();
@@ -23,6 +24,7 @@ const AppHeader = () => {
   const { data } = useGetMeQuery(undefined);
   const [logout] = useLogoutMutation();
   const user = data?.data;
+  console.log(user, "From user ==>");
 
   const handleLogout = async () => {
     try {
@@ -56,13 +58,21 @@ const AppHeader = () => {
                 className="gap-2 bg-[#A9F877] hover:bg-[#C1FF72] text-black"
               >
                 <CreditCard className="h-4 w-4 shrink-0" />
-                <span className="hidden sm:inline">10 Class Credit</span>
+                <span className="hidden sm:inline">
+                  {user?.student?.credits} Credit Class
+                </span>
               </Button>
 
-              <Button size="sm" variant="outline" className="gap-2 bg-sidebar">
-                <CalendarPlus className="h-4 w-4 shrink-0 sm:hidden inline" />
-                <span className="hidden sm:inline">Book a Class</span>
-              </Button>
+              <Link href="/dashboard/student/calender" passHref>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="gap-2 bg-sidebar cursor-pointer"
+                >
+                  <CalendarPlus className="h-4 w-4 shrink-0 sm:hidden inline" />
+                  <span className="hidden sm:inline">Book a Class</span>
+                </Button>
+              </Link>
             </>
           )}
 

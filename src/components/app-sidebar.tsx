@@ -15,12 +15,12 @@ import {
 } from "lucide-react";
 
 import { NavItems } from "@/components/nav-items";
-import { NavUser } from "@/components/nav-user";
+// import { NavUser } from "@/components/nav-user";
 import { SidebarLogo } from "@/components/sidebar-logo";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
+  // SidebarFooter,
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";

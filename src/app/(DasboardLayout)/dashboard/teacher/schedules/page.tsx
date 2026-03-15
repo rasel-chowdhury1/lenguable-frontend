@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
@@ -7,18 +8,27 @@ import { Button } from "@/components/ui/button";
 import { CancelModal } from "./_components/CancelModal";
 import { AvailabilityModal } from "./_components/AvailabilityModal";
 import { useGetMyAvailabilityQuery } from "@/redux/features/availabilityApi";
+import { useMyBookingQuery } from "@/redux/features/bookingApi";
 
-interface UpcomingClass {
-  id: string;
-  studentName: string;
-  date: string;
-  time: string;
+interface IBooking {
+  _id: string;
+  day: string;
+  startTime: string;
+  meetLink: string;
+  createdAt: string;
+  studentId: {
+    _id: string;
+    name: string;
+    email: string;
+  };
+  teacherId: string;
 }
 
 interface IAvailabilityItem {
   _id: string;
-  userId: string;
-  slots: Record<string, string[]>;
+  teacherId: string;
+  day: string;
+  slots: { startTime: string; endTime: string; isBooked: boolean }[];
   createdAt: string;
   updatedAt: string;
 }
@@ -35,49 +45,54 @@ interface IDayAvailability {
   slots: string[];
 }
 
-const initialUpcoming: UpcomingClass[] = [
-  {
-    id: "1",
-    studentName: "Maria Garcia",
-    date: "Feb 6, 2026",
-    time: "10:00 AM",
-  },
-  {
-    id: "2",
-    studentName: "Carlos Rodriguez",
-    date: "Feb 8, 2026",
-    time: "2:00 PM",
-  },
-];
+// Format ISO date like "Mar 15, 2026"
+const formatDate = (iso: string) =>
+  new Date(iso).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+
+// Format time like "10:00" → "10:00 AM"
+const formatTime = (time: string) => {
+  const [hour, minute] = time.split(":").map(Number);
+  const ampm = hour >= 12 ? "PM" : "AM";
+  const h = hour % 12 || 12;
+  return `${h}:${minute.toString().padStart(2, "0")} ${ampm}`;
+};
 
 export default function MySchedulePage() {
-  const [upcoming, setUpcoming] = useState<UpcomingClass[]>(initialUpcoming);
   const [cancelId, setCancelId] = useState<string | null>(null);
   const [availOpen, setAvailOpen] = useState(false);
 
   const { data: availabilityData, isLoading: availLoading } =
     useGetMyAvailabilityQuery(undefined);
 
+  const { data, isLoading } = useMyBookingQuery(undefined);
+
+  // Filter only today and future bookings
+  const apiBookings: IBooking[] = (data?.data || []).filter(
+    (booking: IBooking) => {
+      const bookingDate = new Date(booking.createdAt);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // normalize to start of today
+      return bookingDate >= today;
+    },
+  );
+
   const typedData = availabilityData as IAvailabilityResponse | undefined;
 
   const handleCancelSubmit = (reason: string) => {
-    setUpcoming((prev) => prev.filter((c) => c.id !== cancelId));
+    // TODO: call cancel booking API here
     setCancelId(null);
   };
 
-  const myAvailability: IDayAvailability[] = typedData?.data?.length
-    ? Object.entries(
-        typedData.data.reduce(
-          (acc: Record<string, string[]>, item: IAvailabilityItem) => {
-            Object.entries(item.slots).forEach(([day, slots]) => {
-              acc[day] = [...(acc[day] ?? []), ...slots];
-            });
-            return acc;
-          },
-          {},
-        ),
-      ).map(([day, slots]) => ({ day, slots }))
-    : [];
+  // Map API data to IDayAvailability
+  const myAvailability: IDayAvailability[] =
+    typedData?.data?.map((item) => ({
+      day: item.day,
+      slots: item.slots.map((s) => s.startTime),
+    })) || [];
 
   return (
     <div className="p-5">
@@ -100,30 +115,36 @@ export default function MySchedulePage() {
           Upcoming Classes
         </h2>
         <div className="space-y-3">
-          {upcoming.length === 0 ? (
+          {isLoading ? (
+            <div className="text-sm text-gray-400">Loading bookings...</div>
+          ) : apiBookings.length === 0 ? (
             <div className="rounded-lg border border-gray-200 bg-white px-5 py-8 text-center text-sm text-gray-400">
               No upcoming classes.
             </div>
           ) : (
-            upcoming.map((cls) => (
+            apiBookings.map((cls) => (
               <div
-                key={cls.id}
+                key={cls._id}
                 className="rounded-lg border border-gray-200 bg-white px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
               >
                 <div className="flex flex-col gap-1.5">
                   <div className="flex items-center gap-2">
                     <User className="h-4 w-4 text-gray-400 shrink-0" />
                     <span className="text-sm font-bold text-gray-900">
-                      {cls.studentName}
+                      {cls.studentId.name}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-gray-400 shrink-0" />
-                    <span className="text-sm text-gray-600">{cls.date}</span>
+                    <span className="text-sm text-gray-600">
+                      {formatDate(cls.createdAt)}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-gray-400 shrink-0" />
-                    <span className="text-sm text-gray-600">{cls.time}</span>
+                    <span className="text-sm text-gray-600">
+                      {formatTime(cls.startTime)}
+                    </span>
                   </div>
                 </div>
 
@@ -131,6 +152,7 @@ export default function MySchedulePage() {
                   <Button
                     size="sm"
                     className="gap-1.5 bg-[#A9F877] hover:bg-[#C1FF72] text-black"
+                    onClick={() => window.open(cls.meetLink, "_blank")}
                   >
                     <Video className="h-3.5 w-3.5" />
                     Join Class
@@ -138,7 +160,7 @@ export default function MySchedulePage() {
                   <Button
                     size="sm"
                     variant="destructive"
-                    onClick={() => setCancelId(cls.id)}
+                    onClick={() => setCancelId(cls._id)}
                   >
                     <X className="h-3.5 w-3.5 sm:hidden" />
                     <span className="hidden sm:inline">✕</span>

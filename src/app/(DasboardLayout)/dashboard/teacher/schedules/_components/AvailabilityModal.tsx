@@ -14,34 +14,45 @@ import { Clock } from "lucide-react";
 import { useCreateAvailabilityMutation } from "@/redux/features/availabilityApi";
 import { toast } from "sonner";
 
+// Format a date like "Feb 16"
 const formatDate = (date: Date) =>
   date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
-const generateSlots = (startHour = 9, totalHours = 12) => {
+// Generate slots from startHour, skipping past hours if it's today
+const generateSlots = (startHour = 9, totalHours = 12, currentDate?: Date) => {
   const slots: string[] = [];
+  const now = currentDate ?? new Date();
 
   for (let i = 0; i < totalHours; i++) {
     const start = new Date();
-    start.setHours(startHour + i, 0, 0);
+    start.setHours(startHour + i, 0, 0, 0);
 
-    const end = new Date();
-    end.setHours(startHour + i + 1, 0, 0);
+    // Skip past hours for today
+    if (
+      start.getDate() === now.getDate() &&
+      start.getMonth() === now.getMonth() &&
+      start.getFullYear() === now.getFullYear() &&
+      start.getHours() < now.getHours()
+    ) {
+      continue;
+    }
 
     const formatTime = (d: Date) =>
       d.toLocaleTimeString("en-US", {
         hour: "2-digit",
         minute: "2-digit",
+        hour12: false,
       });
 
-    slots.push(`${formatTime(start)} - ${formatTime(end)}`);
+    slots.push(formatTime(start));
   }
 
   return slots;
 };
 
+// Generate weekdays with slots
 const getWeekDays = (startDate: Date, numberOfDays = 4) => {
   const week: { day: string; date: string; slots: string[] }[] = [];
-  const slots = generateSlots();
 
   for (let i = 0; i < numberOfDays; i++) {
     const current = new Date(startDate);
@@ -50,18 +61,18 @@ const getWeekDays = (startDate: Date, numberOfDays = 4) => {
     week.push({
       day: current.toLocaleDateString("en-US", { weekday: "long" }),
       date: formatDate(current),
-      slots,
+      slots: generateSlots(9, 12, current),
     });
   }
 
   return week;
 };
 
-const getUpcomingSaturday = () => {
-  const today = new Date();
-  const saturday = new Date(today);
-  saturday.setDate(today.getDate() + ((6 - today.getDay() + 7) % 7));
-  return saturday;
+// Helper to get endTime for each slot (1 hour after startTime)
+const getEndTime = (startTime: string) => {
+  const [hour, minute] = startTime.split(":").map(Number);
+  const nextHour = (hour + 1).toString().padStart(2, "0");
+  return `${nextHour}:${minute.toString().padStart(2, "0")}`;
 };
 
 export function AvailabilityModal({
@@ -74,6 +85,7 @@ export function AvailabilityModal({
   const [selected, setSelected] = useState<Record<string, string[]>>({});
   const [createAvailability, { isLoading }] = useCreateAvailabilityMutation();
 
+  // Toggle slot selection
   const toggle = (day: string, slot: string) => {
     setSelected((prev) => {
       const current = prev[day] ?? [];
@@ -86,14 +98,25 @@ export function AvailabilityModal({
     });
   };
 
+  // Handle submit
   const handleAddAvailability = async () => {
     if (!Object.keys(selected).length) {
       toast.error("Please select at least one slot");
       return;
     }
 
+    const payload = {
+      availabilities: Object.entries(selected).map(([day, slots]) => ({
+        day,
+        slots: slots.map((startTime) => ({
+          startTime,
+          endTime: getEndTime(startTime),
+        })),
+      })),
+    };
+
     try {
-      const res = await createAvailability({ slots: selected }).unwrap();
+      const res = await createAvailability(payload).unwrap();
       setSelected({});
       onClose();
       toast.success(res?.message || "Availability created successfully!");
@@ -102,7 +125,8 @@ export function AvailabilityModal({
     }
   };
 
-  const weekDays = getWeekDays(getUpcomingSaturday(), 4);
+  // Start from today
+  const weekDays = getWeekDays(new Date(), 4);
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
