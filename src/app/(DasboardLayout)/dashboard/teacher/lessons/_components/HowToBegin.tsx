@@ -22,12 +22,16 @@ const steps = [
 export function HowToBegin() {
   return (
     <main className="flex-1 bg-white border border-gray-200 rounded-xl p-6">
-      <h2 className="text-base font-semibold text-gray-800 mb-5">How to Begin</h2>
+      <h2 className="text-base font-semibold text-gray-800 mb-5">
+        How to Begin
+      </h2>
       <div className="space-y-5">
         {steps.map((step) => (
           <div key={step.id}>
             <p className="text-sm font-bold text-gray-900">{step.title}</p>
-            <p className="mt-1 text-sm text-gray-500 leading-relaxed">{step.description}</p>
+            <p className="mt-1 text-sm text-gray-500 leading-relaxed">
+              {step.description}
+            </p>
           </div>
         ))}
       </div>

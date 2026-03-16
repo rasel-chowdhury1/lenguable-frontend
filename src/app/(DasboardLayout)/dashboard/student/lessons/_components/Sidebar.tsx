@@ -12,9 +12,7 @@ interface SidebarProps {
   levels: Level[];
   activeSection: ActiveSection;
   activeLevel: string;
-  activeResourceLevel: string;
   onLevelChange: (id: string) => void;
-  onResourceLevelChange: (id: string) => void;
   onSectionChange: (section: ActiveSection) => void;
 }
 
@@ -23,12 +21,12 @@ export function Sidebar({
   levels,
   activeSection,
   activeLevel,
-  activeResourceLevel,
   onLevelChange,
-  onResourceLevelChange,
   onSectionChange,
 }: SidebarProps) {
-  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
+    "core-lessons": true,
+  });
 
   const toggleGroup = (id: string) => {
     setOpenGroups((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -38,9 +36,9 @@ export function Sidebar({
     <aside className="w-full md:w-56 md:shrink-0 bg-white border border-gray-200 rounded-xl p-4 h-fit">
       <nav className="space-y-1">
         {navSections.map((section) => {
-          // Plain link (e.g. How to Begin)
           if (section.type === "link") {
             const isActive = activeSection === section.id;
+
             return (
               <button
                 key={section.id}
@@ -49,7 +47,7 @@ export function Sidebar({
                   "w-full text-left text-sm font-medium px-3 py-2 rounded-lg transition-colors",
                   isActive
                     ? "bg-[#b9ff6a] font-semibold text-gray-900"
-                    : "text-gray-700 hover:bg-gray-50"
+                    : "text-gray-700 hover:bg-gray-50",
                 )}
               >
                 {section.label}
@@ -57,57 +55,52 @@ export function Sidebar({
             );
           }
 
-          // Collapsible group (Core Lessons / Resources)
           if (section.type === "group") {
             const isOpen = !!openGroups[section.id];
-            const isActiveGroup = activeSection === section.id;
-            const currentActiveLevel =
-              section.id === "core-lessons" ? activeLevel : activeResourceLevel;
-
-            const handleLevelClick = (id: string) => {
-              onSectionChange(section.id as ActiveSection);
-              if (section.id === "core-lessons") onLevelChange(id);
-              else onResourceLevelChange(id);
-            };
 
             return (
               <div key={section.id}>
                 <button
-                  onClick={() => toggleGroup(section.id)}
+                  onClick={() => {
+                    toggleGroup(section.id);
+                    onSectionChange(section.id as ActiveSection);
+                  }}
                   className="w-full flex items-center justify-between text-sm text-gray-900 font-semibold px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
                 >
                   <span>{section.label}</span>
-                  <ChevronDown
-                    className={cn(
-                      "h-4 w-4 text-gray-500 transition-transform duration-200",
-                      isOpen && "rotate-180"
-                    )}
-                  />
+
+                  {section.id === "core-lessons" && (
+                    <ChevronDown
+                      className={cn(
+                        "h-4 w-4 text-gray-500 transition-transform duration-200",
+                        isOpen && "rotate-180",
+                      )}
+                    />
+                  )}
                 </button>
 
-                <div
-                  className={cn(
-                    "overflow-hidden transition-all duration-200",
-                    isOpen ? "max-h-96 opacity-100 mt-1" : "max-h-0 opacity-0"
-                  )}
-                >
-                  <div className="space-y-0.5 pl-2">
+                {/* Levels ONLY for Core Lessons */}
+                {section.id === "core-lessons" && isOpen && (
+                  <div className="space-y-0.5 pl-2 mt-1">
                     {levels.map((level) => (
                       <button
                         key={level.id}
-                        onClick={() => handleLevelClick(level.id)}
+                        onClick={() => {
+                          onSectionChange("core-lessons");
+                          onLevelChange(level.id);
+                        }}
                         className={cn(
                           "w-full text-left text-sm px-3 py-1.5 rounded-lg transition-colors",
-                          isActiveGroup && currentActiveLevel === level.id
+                          activeLevel === level.id
                             ? "bg-[#b9ff6a] font-semibold text-gray-900"
-                            : "text-gray-600 hover:bg-gray-50"
+                            : "text-gray-600 hover:bg-gray-50",
                         )}
                       >
                         {level.id}
                       </button>
                     ))}
                   </div>
-                </div>
+                )}
               </div>
             );
           }

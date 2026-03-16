@@ -21,6 +21,7 @@ interface Review {
 interface Teacher {
   _id: string;
   totalClasses: number;
+  bookings?: any[];
   totalStudents: number;
   averageRating: number;
   reviewCount: number;
@@ -43,6 +44,7 @@ export default function MyAccountPage() {
   const { data } = useGetMeQuery(undefined);
   const user: User | undefined = data?.data;
   const teacher = user?.teacher;
+  console.log(teacher, "from teacher ==>");
 
   // Local form state
   const [formData, setFormData] = useState({
@@ -222,7 +224,9 @@ export default function MyAccountPage() {
               </div>
               <div className="flex justify-between bg-muted rounded-lg p-3">
                 <p className="text-sm text-muted-foreground">Total Students</p>
-                <p className="font-semibold">{teacher?.totalStudents ?? 0}</p>
+                <p className="font-semibold">
+                  {teacher?.bookings?.length ?? 0}
+                </p>
               </div>
 
               {/* Recent Reviews */}

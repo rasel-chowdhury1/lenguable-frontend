@@ -1,11 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { BookingCard } from "./_components/BookingCard";
 import { CancelModal } from "./_components/CancelModal";
-import { useMyBookingQuery } from "@/redux/features/bookingApi";
+import {
+  useMyBookingQuery,
+  useCancelBookingMutation,
+} from "@/redux/features/bookingApi";
+import { toast } from "sonner";
 
 export type BookingStatus = "scheduled" | "completed" | "cancelled";
 
@@ -20,38 +25,72 @@ export interface Booking {
   meetLink?: string;
 }
 
+// Returns true if the booking slot is still in the future
+const isUpcomingSlot = (date: string, startTime: string): boolean => {
+  const now = new Date();
+  const todayISO = now.toISOString().split("T")[0];
+
+  if (date > todayISO) return true;
+  if (date === todayISO) {
+    const [hour, minute] = startTime.split(":").map(Number);
+    const slotTime = new Date();
+    slotTime.setHours(hour, minute, 0, 0);
+    return slotTime > now;
+  }
+  return false;
+};
+
+// Format "YYYY-MM-DD" → "Mar 17, 2026"
+const formatDate = (iso: string) => {
+  const [year, month, day] = iso.split("-").map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
+
 export default function MyBookingsPage() {
+  const [cancelId, setCancelId] = useState<string | null>(null);
+
   const { data, isLoading, isError } = useMyBookingQuery(undefined);
+  const [cancelBooking, { isLoading: isCancelling }] =
+    useCancelBookingMutation();
 
   const apiBookings = data?.data || [];
 
   const bookings: Booking[] = apiBookings.map((b: any) => {
-    const bookingDate = new Date(b.createdAt);
-
-    // Combine createdAt date with startTime for accurate comparison
-    const [hour, minute] = b.startTime.split(":").map(Number);
-    const classDateTime = new Date(bookingDate);
-    classDateTime.setHours(hour, minute, 0, 0);
-
-    const isUpcoming = classDateTime >= new Date(); // ✅ current datetime onwards
+    const upcoming = isUpcomingSlot(b.date, b.startTime);
 
     return {
       id: b._id,
       tutorName: b.teacherId?.name || "Teacher",
-      date: bookingDate.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      }),
+      date: formatDate(b.date),
       time: b.startTime,
-      status: isUpcoming ? "scheduled" : "completed",
-      isUpcoming,
+      status: b.status === "cancelled" ? "cancelled" : upcoming ? "scheduled" : "completed",
+      isUpcoming: upcoming && b.status !== "cancelled",
       meetLink: b.meetLink,
     };
   });
 
   const upcomingBookings = bookings.filter((b) => b.isUpcoming);
-  const pastBookings = bookings.filter((b) => !b.isUpcoming);
+  const pastBookings = bookings.filter((b) => !b.isUpcoming && b.status === "completed");
+
+  const handleConfirmCancel = async () => {
+    if (!cancelId) return;
+
+    try {
+      const res = await cancelBooking({
+        bookingId: cancelId,
+        reason: "Cancelled by student",
+      }).unwrap();
+      toast.success(res?.message || "Booking cancelled.");
+    } catch (err: any) {
+      toast.error(err?.data?.message || "Failed to cancel booking.");
+    } finally {
+      setCancelId(null);
+    }
+  };
 
   if (isLoading) {
     return <div className="p-5">Loading bookings...</div>;
@@ -98,7 +137,11 @@ export default function MyBookingsPage() {
             </div>
           ) : (
             upcomingBookings.map((booking) => (
-              <BookingCard key={booking.id} booking={booking} />
+              <BookingCard
+                key={booking.id}
+                booking={booking}
+                onCancel={() => setCancelId(booking.id)}
+              />
             ))
           )}
         </TabsContent>
@@ -121,7 +164,12 @@ export default function MyBookingsPage() {
         </TabsContent>
       </Tabs>
 
-      <CancelModal open={false} onClose={() => {}} onConfirm={() => {}} />
+      <CancelModal
+        open={!!cancelId}
+        onClose={() => setCancelId(null)}
+        onConfirm={handleConfirmCancel}
+        isLoading={isCancelling}
+      />
     </div>
   );
 }

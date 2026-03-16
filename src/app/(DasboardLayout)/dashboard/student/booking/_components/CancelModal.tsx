@@ -11,10 +11,12 @@ export function CancelModal({
   open,
   onClose,
   onConfirm,
+  isLoading,
 }: {
   open: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  isLoading?: boolean;
 }) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -37,11 +39,21 @@ export function CancelModal({
         </div>
 
         <div className="flex items-center justify-end gap-2 mt-4">
-          <Button variant="outline" size="sm" onClick={onClose}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onClose}
+            disabled={isLoading}
+          >
             Go Back
           </Button>
-          <Button size="sm" variant="destructive" onClick={onConfirm}>
-            Yes, Cancel
+          <Button
+            size="sm"
+            variant="destructive"
+            onClick={onConfirm}
+            disabled={isLoading}
+          >
+            {isLoading ? "Cancelling..." : "Yes, Cancel"}
           </Button>
         </div>
       </DialogContent>

@@ -14,6 +14,7 @@ import { toast } from "sonner";
 interface ISlot {
   startTime: string;
   endTime: string;
+  date: string; // "YYYY-MM-DD"
   isBooked: boolean;
 }
 
@@ -53,6 +54,15 @@ const DAY_ORDER = [
   "Saturday",
 ];
 
+// Format "YYYY-MM-DD" → "Mar 21"
+const formatShortDate = (iso: string) => {
+  const [year, month, day] = iso.split("-").map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+};
+
 export default function Calendar() {
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
@@ -65,19 +75,29 @@ export default function Calendar() {
 
   const availability: IAvailability[] = data?.data || [];
 
-  // Build schedule: group unbooked slots by day
-  const scheduleMap: Record<string, Set<string>> = {};
+  // Build schedule: group unbooked slots by day, keeping the date per slot
+  const scheduleMap: Record<string, { times: Set<string>; date: string }> = {};
+
   availability.forEach((item) => {
-    if (!scheduleMap[item.day]) scheduleMap[item.day] = new Set();
     item.slots
       .filter((s) => !s.isBooked)
-      .forEach((s) => scheduleMap[item.day].add(s.startTime));
+      .forEach((s) => {
+        if (!scheduleMap[item.day]) {
+          scheduleMap[item.day] = { times: new Set(), date: s.date };
+        }
+        scheduleMap[item.day].times.add(s.startTime);
+        // Use the earliest date found for this day
+        if (s.date < scheduleMap[item.day].date) {
+          scheduleMap[item.day].date = s.date;
+        }
+      });
   });
 
   const schedule = Object.entries(scheduleMap)
     .sort(([a], [b]) => DAY_ORDER.indexOf(a) - DAY_ORDER.indexOf(b))
-    .map(([day, times]) => ({
+    .map(([day, { times, date }]) => ({
       day,
+      date,
       times: Array.from(times).sort(),
     }))
     .filter((item) => item.times.length > 0);
@@ -129,6 +149,10 @@ export default function Calendar() {
               <CardContent>
                 <div className="mb-4">
                   <h3 className="font-medium">{item.day}</h3>
+                  {/* Date shown under day name */}
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {formatShortDate(item.date)}
+                  </p>
                 </div>
 
                 <div className="space-y-2">
@@ -190,7 +214,6 @@ export default function Calendar() {
                     </div>
 
                     <div className="flex gap-2 justify-center">
-                      {/* View Profile — opens modal */}
                       <Button
                         variant="outline"
                         size="sm"
@@ -214,7 +237,6 @@ export default function Calendar() {
                         View Profile
                       </Button>
 
-                      {/* Book Class — direct booking, no modal */}
                       <Button
                         size="sm"
                         className="bg-[#A9F877] hover:bg-[#C1FF72] text-black"

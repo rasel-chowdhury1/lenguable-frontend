@@ -10,7 +10,13 @@ const statusStyles: Record<BookingStatus, string> = {
   cancelled: "bg-red-100 text-red-700",
 };
 
-export function BookingCard({ booking }: { booking: Booking }) {
+export function BookingCard({
+  booking,
+  onCancel,
+}: {
+  booking: Booking;
+  onCancel?: () => void;
+}) {
   return (
     <div className="rounded-2xl border border-gray-200 bg-white px-5 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       {/* Left */}
@@ -44,9 +50,9 @@ export function BookingCard({ booking }: { booking: Booking }) {
         </div>
       </div>
 
-      {/* Right */}
-      <div className="flex items-center gap-2">
-        {booking.isUpcoming && (
+      {/* Right — only shown for upcoming bookings */}
+      {booking.isUpcoming && (
+        <div className="flex items-center gap-2">
           <Button
             size="sm"
             onClick={() => window.open(booking.meetLink, "_blank")}
@@ -55,8 +61,11 @@ export function BookingCard({ booking }: { booking: Booking }) {
             <Video className="h-3.5 w-3.5" />
             Join Class
           </Button>
-        )}
-      </div>
+          <Button size="sm" variant="destructive" onClick={onCancel}>
+            ✕
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

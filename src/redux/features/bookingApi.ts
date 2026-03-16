@@ -15,7 +15,20 @@ export const bookingApi = baseApi.injectEndpoints({
       query: () => "/booking",
       providesTags: ["Booking"],
     }),
+
+    cancelBooking: build.mutation({
+      query: ({ bookingId, reason }: { bookingId: string; reason: string }) => ({
+        url: `/booking/${bookingId}/cancel`,
+        method: "PATCH",
+        body: { reason },
+      }),
+      invalidatesTags: ["Booking"],
+    }),
   }),
 });
 
-export const { useCreateBookingMutation, useMyBookingQuery } = bookingApi;
+export const {
+  useCreateBookingMutation,
+  useMyBookingQuery,
+  useCancelBookingMutation,
+} = bookingApi;

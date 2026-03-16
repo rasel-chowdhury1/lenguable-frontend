@@ -18,6 +18,9 @@ import { toast } from "sonner";
 const formatDate = (date: Date) =>
   date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
+// Format date as "YYYY-MM-DD" for storage
+const toISODate = (date: Date) => date.toISOString().split("T")[0];
+
 // Generate slots from startHour, skipping past hours if it's today
 const generateSlots = (startHour = 9, totalHours = 12, currentDate?: Date) => {
   const slots: string[] = [];
@@ -50,9 +53,14 @@ const generateSlots = (startHour = 9, totalHours = 12, currentDate?: Date) => {
   return slots;
 };
 
-// Generate weekdays with slots
+// Generate weekdays with slots and actual dates
 const getWeekDays = (startDate: Date, numberOfDays = 4) => {
-  const week: { day: string; date: string; slots: string[] }[] = [];
+  const week: {
+    day: string;
+    date: string;
+    isoDate: string;
+    slots: string[];
+  }[] = [];
 
   for (let i = 0; i < numberOfDays; i++) {
     const current = new Date(startDate);
@@ -61,6 +69,7 @@ const getWeekDays = (startDate: Date, numberOfDays = 4) => {
     week.push({
       day: current.toLocaleDateString("en-US", { weekday: "long" }),
       date: formatDate(current),
+      isoDate: toISODate(current), // "2026-03-17"
       slots: generateSlots(9, 12, current),
     });
   }
@@ -85,7 +94,9 @@ export function AvailabilityModal({
   const [selected, setSelected] = useState<Record<string, string[]>>({});
   const [createAvailability, { isLoading }] = useCreateAvailabilityMutation();
 
-  // Toggle slot selection
+  const weekDays = getWeekDays(new Date(), 4);
+
+  // Toggle slot selection keyed by day
   const toggle = (day: string, slot: string) => {
     setSelected((prev) => {
       const current = prev[day] ?? [];
@@ -98,7 +109,6 @@ export function AvailabilityModal({
     });
   };
 
-  // Handle submit
   const handleAddAvailability = async () => {
     if (!Object.keys(selected).length) {
       toast.error("Please select at least one slot");
@@ -106,13 +116,20 @@ export function AvailabilityModal({
     }
 
     const payload = {
-      availabilities: Object.entries(selected).map(([day, slots]) => ({
-        day,
-        slots: slots.map((startTime) => ({
-          startTime,
-          endTime: getEndTime(startTime),
-        })),
-      })),
+      availabilities: Object.entries(selected)
+        .filter(([, slots]) => slots.length > 0)
+        .map(([day, slots]) => {
+          // Find the isoDate for this day from weekDays
+          const dayInfo = weekDays.find((d) => d.day === day);
+          return {
+            day,
+            slots: slots.map((startTime) => ({
+              startTime,
+              endTime: getEndTime(startTime),
+              date: dayInfo!.isoDate, // actual calendar date e.g. "2026-03-21"
+            })),
+          };
+        }),
     };
 
     try {
@@ -124,9 +141,6 @@ export function AvailabilityModal({
       toast.error(err?.data?.message || "Failed to save availability!");
     }
   };
-
-  // Start from today
-  const weekDays = getWeekDays(new Date(), 4);
 
   return (
     <Dialog open={open} onOpenChange={onClose}>

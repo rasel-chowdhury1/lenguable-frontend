@@ -13,10 +13,12 @@ export function CancelModal({
   open,
   onClose,
   onSubmit,
+  isLoading,
 }: {
   open: boolean;
   onClose: () => void;
   onSubmit: (reason: string) => void;
+  isLoading?: boolean;
 }) {
   const [reason, setReason] = useState("");
 
@@ -48,19 +50,24 @@ export function CancelModal({
         </div>
 
         <div className="flex items-center justify-end gap-2 mt-4">
-          <Button variant="outline" size="sm" onClick={onClose}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onClose}
+            disabled={isLoading}
+          >
             Cancel
           </Button>
           <Button
             size="sm"
             variant="destructive"
-            disabled={!reason.trim()}
+            disabled={!reason.trim() || isLoading}
             onClick={() => {
               onSubmit(reason);
               setReason("");
             }}
           >
-            Submit Cancellation
+            {isLoading ? "Cancelling..." : "Submit Cancellation"}
           </Button>
         </div>
       </DialogContent>

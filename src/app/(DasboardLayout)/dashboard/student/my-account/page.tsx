@@ -20,13 +20,45 @@ interface FormValues {
   aboutMe: string;
 }
 
+interface IBooking {
+  _id: string;
+  day: string;
+  startTime: string;
+  date: string; // "YYYY-MM-DD"
+  meetLink: string;
+  createdAt: string;
+  teacherId: { _id: string; name: string } | string;
+}
+
+// Returns true if the booking slot is still in the future
+const isUpcoming = (date: string, startTime: string): boolean => {
+  const now = new Date();
+  const todayISO = now.toISOString().split("T")[0];
+  if (date > todayISO) return true;
+  if (date === todayISO) {
+    const [hour, minute] = startTime.split(":").map(Number);
+    const slotTime = new Date();
+    slotTime.setHours(hour, minute, 0, 0);
+    return slotTime > now;
+  }
+  return false;
+};
+
+// Format "YYYY-MM-DD" -> "Mar 15, 2026"
+const formatDate = (iso: string) => {
+  const [year, month, day] = iso.split("-").map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
+
 export default function MyAccountPage() {
   const { data, isLoading } = useGetMeQuery(undefined);
   const userData = data?.data || [];
   const studentData = userData?.student || [];
-  // console.log(studentData, "student data ==>");
 
-  // React Hook Form
   const { register, handleSubmit, reset } = useForm<FormValues>({
     defaultValues: {
       name: userData.name || "",
@@ -37,7 +69,6 @@ export default function MyAccountPage() {
 
   const [updateStudent, { isLoading: isUpdating }] = useUpdateStudentMutation();
 
-  // Reset form when API data changes
   useEffect(() => {
     if (!isLoading && userData) {
       reset({
@@ -50,19 +81,39 @@ export default function MyAccountPage() {
 
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
     if (!studentData._id) return;
-
     try {
       const res = await updateStudent({
         id: studentData._id,
         aboutMe: values.aboutMe,
         interests: values.interests.split(",").map((i) => i.trim()),
       }).unwrap();
-
       toast.success(res?.message || "Profile updated successfully!");
     } catch (err: any) {
       toast.error(err?.data?.message || "Failed to update profile.");
     }
   };
+
+  // Count upcoming and taken classes using booking.date
+  const bookings: IBooking[] = studentData?.booking ?? [];
+  const upcomingCount = bookings.filter((b) =>
+    isUpcoming(b.date, b.startTime),
+  ).length;
+  const takenCount = bookings.length - upcomingCount;
+
+  // Recent activity: show only the earliest upcoming class + past classes (max 5 total)
+  const upcomingBookings = bookings
+    .filter((b) => isUpcoming(b.date, b.startTime))
+    .sort(
+      (a, b) =>
+        a.date.localeCompare(b.date) || a.startTime.localeCompare(b.startTime),
+    );
+
+  const pastBookings = bookings
+    .filter((b) => !isUpcoming(b.date, b.startTime))
+    .sort((a, b) => b.date.localeCompare(a.date));
+
+  const nextUpcoming = upcomingBookings.slice(0, 1);
+  const recentBookings = [...nextUpcoming, ...pastBookings].slice(0, 5);
 
   return (
     <div className="max-w-5xl mx-auto p-5 lg:my-20">
@@ -155,7 +206,7 @@ export default function MyAccountPage() {
                   <p className="text-sm text-muted-foreground">
                     Total Classes Taken
                   </p>
-                  <p className="text-xl font-semibold">12</p>
+                  <p className="text-xl font-semibold">{takenCount}</p>
                 </CardContent>
               </Card>
               <Card className="shadow-none p-0 rounded-md bg-[#F9FAFB] border-none">
@@ -163,9 +214,7 @@ export default function MyAccountPage() {
                   <p className="text-sm text-muted-foreground">
                     Upcoming Classes
                   </p>
-                  <p className="text-xl font-semibold">
-                    {studentData?.booking?.length ?? 0}
-                  </p>
+                  <p className="text-xl font-semibold">{upcomingCount}</p>
                 </CardContent>
               </Card>
             </div>
@@ -173,35 +222,40 @@ export default function MyAccountPage() {
             {/* Recent Activity */}
             <div>
               <h3 className="text-sm font-bold mb-3">Recent Activity</h3>
-              <ul className="space-y-3 text-sm">
-                <li className="flex items-start gap-2">
-                  <span className="mt-1.5 h-2 w-2 rounded-full bg-[#A9F877] shrink-0" />
-                  <div>
-                    <p>Completed A1 Lesson 1</p>
-                    <p className="text-muted-foreground text-xs">
-                      Jan 28, 2026
-                    </p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="mt-1.5 h-2 w-2 rounded-full bg-blue-400 shrink-0" />
-                  <div>
-                    <p>Booked class with John Smith</p>
-                    <p className="text-muted-foreground text-xs">
-                      Jan 27, 2026
-                    </p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="mt-1.5 h-2 w-2 rounded-full bg-[#A9F877] shrink-0" />
-                  <div>
-                    <p>Completed A0 Lesson 2</p>
-                    <p className="text-muted-foreground text-xs">
-                      Jan 25, 2026
-                    </p>
-                  </div>
-                </li>
-              </ul>
+              {recentBookings.length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  No activity yet.
+                </p>
+              ) : (
+                <ul className="space-y-3 text-sm">
+                  {recentBookings.map((b) => {
+                    const teacherName =
+                      typeof b.teacherId === "object" && b.teacherId !== null
+                        ? b.teacherId.name
+                        : "Teacher";
+                    const upcoming = isUpcoming(b.date, b.startTime);
+                    return (
+                      <li key={b._id} className="flex items-start gap-2">
+                        <span
+                          className={`mt-1.5 h-2 w-2 rounded-full shrink-0 ${
+                            upcoming ? "bg-blue-400" : "bg-[#A9F877]"
+                          }`}
+                        />
+                        <div>
+                          <p>
+                            {upcoming ? "Upcoming" : "Completed"} class with{" "}
+                            {teacherName}
+                          </p>
+                          <p className="text-muted-foreground text-xs">
+                            {formatDate(b.date)} &middot; {b.day} at{" "}
+                            {b.startTime}
+                          </p>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
             </div>
           </CardContent>
         </Card>
