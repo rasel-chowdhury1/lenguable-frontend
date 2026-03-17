@@ -14,7 +14,7 @@ import { toast } from "sonner";
 interface ISlot {
   startTime: string;
   endTime: string;
-  date: string; // "YYYY-MM-DD"
+  date: string;
   isBooked: boolean;
 }
 
@@ -54,7 +54,6 @@ const DAY_ORDER = [
   "Saturday",
 ];
 
-// Format "YYYY-MM-DD" → "Mar 21"
 const formatShortDate = (iso: string) => {
   const [year, month, day] = iso.split("-").map(Number);
   return new Date(year, month - 1, day).toLocaleDateString("en-US", {
@@ -75,18 +74,28 @@ export default function Calendar() {
 
   const availability: IAvailability[] = data?.data || [];
 
-  // Build schedule: group unbooked slots by day, keeping the date per slot
+  // NEW: current time filter
+  const now = new Date();
+
   const scheduleMap: Record<string, { times: Set<string>; date: string }> = {};
 
   availability.forEach((item) => {
     item.slots
-      .filter((s) => !s.isBooked)
+      .filter((s) => {
+        if (s.isBooked) return false;
+
+        const slotDateTime = new Date(`${s.date}T${s.startTime}:00`);
+
+        // Only allow current/future slots
+        return slotDateTime >= now;
+      })
       .forEach((s) => {
         if (!scheduleMap[item.day]) {
           scheduleMap[item.day] = { times: new Set(), date: s.date };
         }
+
         scheduleMap[item.day].times.add(s.startTime);
-        // Use the earliest date found for this day
+
         if (s.date < scheduleMap[item.day].date) {
           scheduleMap[item.day].date = s.date;
         }
@@ -102,11 +111,15 @@ export default function Calendar() {
     }))
     .filter((item) => item.times.length > 0);
 
-  // Find teachers available for selected day + time
   const availableTeachers = availability.filter(
     (item) =>
       item.day === selectedDay &&
-      item.slots.some((s) => s.startTime === selectedTime && !s.isBooked),
+      item.slots.some((s) => {
+        const slotDateTime = new Date(`${s.date}T${s.startTime}:00`);
+        return (
+          s.startTime === selectedTime && !s.isBooked && slotDateTime >= now
+        );
+      }),
   );
 
   const handleBookClass = async (teacherId: string) => {
@@ -127,7 +140,6 @@ export default function Calendar() {
 
   return (
     <div className="w-full p-5">
-      {/* HEADER */}
       <div className="mb-5">
         <h1 className="text-2xl font-semibold">Book a Class</h1>
         <p className="text-sm text-muted-foreground">
@@ -135,7 +147,6 @@ export default function Calendar() {
         </p>
       </div>
 
-      {/* SCHEDULE */}
       {isLoading ? (
         <div className="text-sm text-muted-foreground">Loading schedule...</div>
       ) : schedule.length === 0 ? (
@@ -149,7 +160,6 @@ export default function Calendar() {
               <CardContent>
                 <div className="mb-4">
                   <h3 className="font-medium">{item.day}</h3>
-                  {/* Date shown under day name */}
                   <p className="text-xs text-muted-foreground mt-0.5">
                     {formatShortDate(item.date)}
                   </p>
@@ -180,7 +190,6 @@ export default function Calendar() {
         </div>
       )}
 
-      {/* AVAILABLE TEACHERS */}
       {selectedTime && (
         <div className="mt-10">
           <h2 className="text-lg font-semibold mb-6">

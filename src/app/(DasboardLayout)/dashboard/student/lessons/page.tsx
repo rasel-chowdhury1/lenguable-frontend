@@ -7,7 +7,7 @@ import { levels, navSections } from "@/app/data/lessonsData";
 import { HowToBegin } from "./_components/HowToBegin";
 import { LessonList } from "./_components/LessonList";
 import { ResourcePanel } from "./_components/ResourcePanel";
-import { useGetAllLessonsQuery } from "@/redux/features/LessonApi";
+import { useGetMyLessonsQuery } from "@/redux/features/noteApi"; // ← only change
 import { useGetAllResourcesQuery } from "@/redux/features/resourceApi";
 
 export default function MyLessonsPage() {
@@ -16,8 +16,8 @@ export default function MyLessonsPage() {
 
   const [activeLevel, setActiveLevel] = useState("");
 
-  // Lessons API
-  const { data, isLoading } = useGetAllLessonsQuery(undefined);
+  // ← only change: was useGetAllLessonsQuery from LessonApi
+  const { data, isLoading } = useGetMyLessonsQuery(undefined);
   const apiLessons = data?.data || [];
 
   // Resources API

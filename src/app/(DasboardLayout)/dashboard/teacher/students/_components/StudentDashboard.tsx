@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { Student } from "../page";
 import {
@@ -7,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { Lock } from "lucide-react";
+import { Lock, LockOpen } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,46 +20,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
-
-interface Lesson {
-  id: string;
-  label: string;
-  unlocked: boolean;
-}
-
-interface TeacherNote {
-  id: string;
-  date: string;
-  lessonTaught: string;
-  activitiesDone: string;
-  strengths: string;
-  areasToImprove: string;
-  notes: string;
-}
-
-const allLessons: Lesson[] = [
-  { id: "l1", label: "A0 Lesson 1: Greetings", unlocked: true },
-  { id: "l2", label: "A0 Lesson 2: Numbers", unlocked: true },
-  { id: "l3", label: "A0 Lesson 3: Common Objects", unlocked: false },
-  { id: "l4", label: "A1 Lesson 1: Present Simple", unlocked: true },
-  { id: "l5", label: "A1 Lesson 2: Daily Routines", unlocked: false },
-  { id: "l6", label: "A1 Lesson 3: Family", unlocked: false },
-  { id: "l7", label: "A2 Lesson 1: Past Simple", unlocked: false },
-  { id: "l8", label: "A2 Lesson 2: Making Plans", unlocked: false },
-  { id: "l9", label: "A2 Lesson 3: Shopping", unlocked: false },
-];
-
-const initialNotes: TeacherNote[] = [
-  {
-    id: "n1",
-    date: "Jan 28, 2026",
-    lessonTaught: "A1 Lesson 1: Present Simple",
-    activitiesDone: "Presentation + Online Quiz",
-    strengths: "Good pronunciation",
-    areasToImprove: "Verb conjugation",
-    notes: "Student wishes to review next class.",
-  },
-];
+import { toast } from "sonner";
+import { useGetMeQuery } from "@/redux/features/userApi";
+import {
+  useCreateNoteMutation,
+  useGetLessonsForStudentQuery,
+  useGetNotesByStudentQuery,
+  useUnlockLessonMutation,
+} from "@/redux/features/noteApi";
 
 export function StudentDashboard({
   student,
@@ -67,8 +36,6 @@ export function StudentDashboard({
   student: Student;
   onClose: () => void;
 }) {
-  const [lessons, setLessons] = useState<Lesson[]>(allLessons);
-  const [notes, setNotes] = useState<TeacherNote[]>(initialNotes);
   const [form, setForm] = useState({
     lessonTaught: "",
     activitiesDone: "",
@@ -77,31 +44,60 @@ export function StudentDashboard({
     notes: "",
   });
 
-  const toggleLesson = (id: string) => {
-    setLessons((prev) =>
-      prev.map((l) => (l.id === id ? { ...l, unlocked: !l.unlocked } : l)),
-    );
+  // Fetch real lessons with unlock status for this student
+  const { data: lessonsData, isLoading: lessonsLoading } =
+    useGetLessonsForStudentQuery(student.id);
+
+  // Fetch real notes for this student
+  const { data: notesData, isLoading: notesLoading } =
+    useGetNotesByStudentQuery(student.id);
+
+  // Get current teacher id
+  const { data: meData } = useGetMeQuery(undefined);
+  const teacherId = meData?.data?.teacher?._id;
+
+  const [unlockLesson, { isLoading: isUnlocking }] = useUnlockLessonMutation();
+  const [createNote, { isLoading: isSaving }] = useCreateNoteMutation();
+
+  const lessons = lessonsData?.data || [];
+  const notes = notesData?.data || [];
+
+  const handleToggleLesson = async (lessonId: string) => {
+    try {
+      const res = await unlockLesson({
+        studentId: student.id,
+        lessonId,
+      }).unwrap();
+      toast.success(`Lesson ${res.data?.action ?? "updated"} successfully!`);
+    } catch (err: any) {
+      toast.error(err?.data?.message || "Failed to update lesson.");
+    }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.lessonTaught.trim()) return;
-    const newNote: TeacherNote = {
-      id: Date.now().toString(),
-      date: new Date().toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      }),
-      ...form,
-    };
-    setNotes((prev) => [newNote, ...prev]);
-    setForm({
-      lessonTaught: "",
-      activitiesDone: "",
-      strengths: "",
-      areasToImprove: "",
-      notes: "",
-    });
+    if (!teacherId) {
+      toast.error("Teacher ID not found.");
+      return;
+    }
+
+    try {
+      await createNote({
+        studentId: student.id,
+        teacherId,
+        ...form,
+      }).unwrap();
+      toast.success("Note saved successfully!");
+      setForm({
+        lessonTaught: "",
+        activitiesDone: "",
+        strengths: "",
+        areasToImprove: "",
+        notes: "",
+      });
+    } catch (err: any) {
+      toast.error(err?.data?.message || "Failed to save note.");
+    }
   };
 
   return (
@@ -120,23 +116,35 @@ export function StudentDashboard({
             <h3 className="text-sm font-semibold text-gray-800 mb-3">
               Unlock Lesson
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {lessons.map((lesson) => (
-                <button
-                  key={lesson.id}
-                  onClick={() => toggleLesson(lesson.id)}
-                  className={cn(
-                    "flex items-center gap-2.5 text-sm px-4 py-2.5 rounded-lg border transition-all text-left font-medium",
-                    lesson.unlocked
-                      ? "bg-[#A9F877] border-[#A9F877] text-gray-900"
-                      : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50",
-                  )}
-                >
-                  <Lock className="h-3.5 w-3.5 shrink-0" />
-                  {lesson.label}
-                </button>
-              ))}
-            </div>
+            {lessonsLoading ? (
+              <p className="text-sm text-gray-400">Loading lessons...</p>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {lessons.map((lesson: any) => (
+                  <button
+                    key={lesson._id}
+                    onClick={() => handleToggleLesson(lesson._id)}
+                    disabled={isUnlocking}
+                    className={cn(
+                      "flex items-center gap-2.5 text-sm px-4 py-2.5 rounded-lg border transition-all text-left font-medium",
+                      !lesson.isLock
+                        ? "bg-[#A9F877] border-[#A9F877] text-gray-900"
+                        : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50",
+                    )}
+                  >
+                    {lesson.isLock ? (
+                      <Lock className="h-3.5 w-3.5 shrink-0 text-gray-400" />
+                    ) : (
+                      <LockOpen className="h-3.5 w-3.5 shrink-0 text-gray-900" />
+                    )}
+                    <span className="text-xs text-gray-900 mr-1">
+                      {lesson.level}
+                    </span>
+                    {lesson.title}
+                  </button>
+                ))}
+              </div>
+            )}
           </section>
 
           {/* Add Note */}
@@ -213,10 +221,10 @@ export function StudentDashboard({
               <Button
                 size="sm"
                 onClick={handleSave}
-                disabled={!form.lessonTaught.trim()}
-                className="bg-[#A9F877] hover:bg-[#C1FF72] text-gray-900  disabled:opacity-50"
+                disabled={!form.lessonTaught.trim() || isSaving}
+                className="bg-[#A9F877] hover:bg-[#C1FF72] text-gray-900 disabled:opacity-50"
               >
-                Save Note
+                {isSaving ? "Saving..." : "Save Note"}
               </Button>
             </div>
           </section>
@@ -251,32 +259,16 @@ export function StudentDashboard({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {notes.map((note) => (
-                    <TableRow
-                      key={note.id}
-                      className="border-t border-gray-100"
-                    >
-                      <TableCell className="text-xs text-gray-600 py-3 whitespace-nowrap">
-                        {note.date}
-                      </TableCell>
-                      <TableCell className="text-xs text-gray-800 font-medium py-3">
-                        {note.lessonTaught}
-                      </TableCell>
-                      <TableCell className="text-xs text-gray-600 py-3 hidden sm:table-cell">
-                        {note.activitiesDone}
-                      </TableCell>
-                      <TableCell className="text-xs text-gray-600 py-3 hidden md:table-cell">
-                        {note.strengths}
-                      </TableCell>
-                      <TableCell className="text-xs text-gray-600 py-3 hidden md:table-cell">
-                        {note.areasToImprove}
-                      </TableCell>
-                      <TableCell className="text-xs text-gray-500 py-3 hidden lg:table-cell">
-                        {note.notes}
+                  {notesLoading ? (
+                    <TableRow>
+                      <TableCell
+                        colSpan={6}
+                        className="text-center text-xs text-gray-400 py-6"
+                      >
+                        Loading notes...
                       </TableCell>
                     </TableRow>
-                  ))}
-                  {notes.length === 0 && (
+                  ) : notes.length === 0 ? (
                     <TableRow>
                       <TableCell
                         colSpan={6}
@@ -285,6 +277,39 @@ export function StudentDashboard({
                         No notes yet.
                       </TableCell>
                     </TableRow>
+                  ) : (
+                    notes.map((note: any) => (
+                      <TableRow
+                        key={note._id}
+                        className="border-t border-gray-100"
+                      >
+                        <TableCell className="text-xs text-gray-600 py-3 whitespace-nowrap">
+                          {new Date(note.createdAt).toLocaleDateString(
+                            "en-US",
+                            {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                            },
+                          )}
+                        </TableCell>
+                        <TableCell className="text-xs text-gray-800 font-medium py-3">
+                          {note.lessonTaught}
+                        </TableCell>
+                        <TableCell className="text-xs text-gray-600 py-3 hidden sm:table-cell">
+                          {note.activitiesDone}
+                        </TableCell>
+                        <TableCell className="text-xs text-gray-600 py-3 hidden md:table-cell">
+                          {note.strengths}
+                        </TableCell>
+                        <TableCell className="text-xs text-gray-600 py-3 hidden md:table-cell">
+                          {note.areasToImprove}
+                        </TableCell>
+                        <TableCell className="text-xs text-gray-500 py-3 hidden lg:table-cell">
+                          {note.notes}
+                        </TableCell>
+                      </TableRow>
+                    ))
                   )}
                 </TableBody>
               </Table>
