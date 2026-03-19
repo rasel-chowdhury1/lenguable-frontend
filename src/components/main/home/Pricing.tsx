@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/immutability */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -18,7 +19,13 @@ export default function PricingPage() {
   const handlePurchase = async (pkg: PricingPackage) => {
     try {
       const res = await purchase({ packageId: pkg._id! }).unwrap();
-      toast.success(res?.message || "You purchased successfully!");
+
+      // Redirect to Stripe Checkout URL
+      if (res?.data?.url) {
+        window.location.href = res.data.url;
+      } else {
+        toast.error("Could not get payment link. Please try again.");
+      }
     } catch (err: any) {
       toast.error(err?.data?.message || "Purchase failed. Please try again.");
     }
@@ -48,7 +55,8 @@ export default function PricingPage() {
         ) : (
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {packages.map((pkg) => {
-              const isThisLoading = isLoading && originalArgs?.packageId === pkg._id;
+              const isThisLoading =
+                isLoading && originalArgs?.packageId === pkg._id;
               return (
                 <div
                   key={pkg._id}
