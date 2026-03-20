@@ -24,7 +24,7 @@ const AppHeader = () => {
   const { data } = useGetMeQuery(undefined);
   const [logout] = useLogoutMutation();
   const user = data?.data;
-  console.log(user, "From user ==>");
+  // console.log(user, "From user ==>");
 
   const handleLogout = async () => {
     try {

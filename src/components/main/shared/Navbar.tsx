@@ -28,7 +28,7 @@ const Navbar = () => {
   const { data } = useGetMeQuery(undefined);
   const [logout] = useLogoutMutation();
   const user = data?.data;
-  console.log(user, "User data ==>");
+  // console.log(user, "User data ==>");
 
   const handleLanguageChange = (lang: string) => setSelectedLanguage(lang);
 

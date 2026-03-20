@@ -44,7 +44,7 @@ export default function MyAccountPage() {
   const { data } = useGetMeQuery(undefined);
   const user: User | undefined = data?.data;
   const teacher = user?.teacher;
-  console.log(teacher, "from teacher ==>");
+  // console.log(teacher, "from teacher ==>");
 
   // Local form state
   const [formData, setFormData] = useState({

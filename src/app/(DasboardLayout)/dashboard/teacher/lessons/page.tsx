@@ -26,7 +26,7 @@ export default function MyLessonsPage() {
 
   const apiResources = resourceData?.data || [];
 
-  console.log(apiResources, "Resources ==>");
+  // console.log(apiResources, "Resources ==>");
 
   const filteredLessons = apiLessons.filter(
     (l: any) => l.level === activeLevel,
