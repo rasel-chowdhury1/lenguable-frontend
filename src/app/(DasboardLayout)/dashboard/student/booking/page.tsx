@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
@@ -25,21 +25,6 @@ export interface Booking {
   meetLink?: string;
 }
 
-// Returns true if the booking slot is still in the future
-const isUpcomingSlot = (date: string, startTime: string): boolean => {
-  const now = new Date();
-  const todayISO = now.toISOString().split("T")[0];
-
-  if (date > todayISO) return true;
-  if (date === todayISO) {
-    const [hour, minute] = startTime.split(":").map(Number);
-    const slotTime = new Date();
-    slotTime.setHours(hour, minute, 0, 0);
-    return slotTime > now;
-  }
-  return false;
-};
-
 // Format "YYYY-MM-DD" → "Mar 17, 2026"
 const formatDate = (iso: string) => {
   const [year, month, day] = iso.split("-").map(Number);
@@ -60,21 +45,21 @@ export default function MyBookingsPage() {
   const apiBookings = data?.data || [];
 
   const bookings: Booking[] = apiBookings.map((b: any) => {
-    const upcoming = isUpcomingSlot(b.date, b.startTime);
-
     return {
       id: b._id,
       tutorName: b.teacherId?.name || "Teacher",
       date: formatDate(b.date),
       time: b.startTime,
-      status: b.status === "cancelled" ? "cancelled" : upcoming ? "scheduled" : "completed",
-      isUpcoming: upcoming && b.status !== "cancelled",
+      status: b.status as BookingStatus,
+      isUpcoming: b.status === "scheduled",
       meetLink: b.meetLink,
     };
   });
 
   const upcomingBookings = bookings.filter((b) => b.isUpcoming);
-  const pastBookings = bookings.filter((b) => !b.isUpcoming && b.status === "completed");
+  const pastBookings = bookings.filter(
+    (b) => !b.isUpcoming && b.status !== "scheduled",
+  );
 
   const handleConfirmCancel = async () => {
     if (!cancelId) return;

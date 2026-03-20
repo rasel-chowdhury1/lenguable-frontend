@@ -13,7 +13,7 @@ export default function StripeSuccessPage() {
   useEffect(() => {
     if (!isLoading && isOnboarded) {
       setTimeout(() => {
-        router.push("/teacher/dashboard");
+        router.push("/dashboard/teacher/schedules");
       }, 3000);
     }
   }, [isOnboarded, isLoading]);

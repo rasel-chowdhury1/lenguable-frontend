@@ -62,7 +62,7 @@ export default function StripeConnectPage() {
         </div>
       ) : (
         <Button
-          className="w-full bg-[#635BFF] hover:bg-[#4F46E5] text-white"
+          className="w-full bg-[#A9F877] shadow-2xl hover:bg-[#C1FF72] text-black"
           onClick={handleConnect}
           disabled={isLoading}
         >
