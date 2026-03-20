@@ -9,42 +9,39 @@ import { Button } from "@/components/ui/button";
 import { Star } from "lucide-react";
 import { useGetMeQuery } from "@/redux/features/userApi";
 import { useUpdateTeacherMutation } from "@/redux/features/teacherApi";
+import { useGetTeacherReviewsQuery } from "@/redux/features/reviewApi";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 // --- Types ---
-interface Review {
-  text: string;
-  reviewerName: string;
-}
-
-interface Teacher {
-  _id: string;
-  totalClasses: number;
-  bookings?: any[];
-  totalStudents: number;
-  averageRating: number;
-  reviewCount: number;
-  experience?: number;
-  languages?: string[];
-  nationality?: string;
-  interests?: string[];
-  aboutMe?: string;
-  reviews?: Review[];
-}
-
 interface User {
   _id: string;
   name: string;
   email: string;
-  teacher?: Teacher;
+  teacher?: {
+    _id: string;
+    totalClasses: number;
+    bookings?: any[];
+    averageRating?: number;
+    totalReviews?: number;
+    experience?: number;
+    languages?: string[];
+    nationality?: string;
+    interests?: string[];
+    aboutMe?: string;
+  };
 }
 
 export default function MyAccountPage() {
   const { data } = useGetMeQuery(undefined);
   const user: User | undefined = data?.data;
   const teacher = user?.teacher;
-  // console.log(teacher, "from teacher ==>");
+
+  // Fetch teacher reviews
+  const { data: reviewsData } = useGetTeacherReviewsQuery(teacher?._id ?? "", {
+    skip: !teacher?._id,
+  });
+  const reviews = reviewsData?.data || [];
 
   // Local form state
   const [formData, setFormData] = useState({
@@ -97,7 +94,7 @@ export default function MyAccountPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-5">
+    <div className="max-w-7xl mx-auto p-5 mt-10">
       <h1 className="text-2xl font-semibold mb-5">My Account</h1>
 
       <div className="grid lg:grid-cols-2 gap-6">
@@ -206,12 +203,11 @@ export default function MyAccountPage() {
                   <Star className="w-5 h-5 fill-yellow-500" />
                   <p className="text-sm">Average Rating</p>
                 </div>
-
                 <p className="text-2xl font-bold">
                   {(teacher?.averageRating ?? 0).toFixed(1)}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Based on {teacher?.reviewCount ?? 0} reviews
+                  Based on {teacher?.totalReviews ?? 0} reviews
                 </p>
               </div>
 
@@ -231,20 +227,37 @@ export default function MyAccountPage() {
 
               {/* Recent Reviews */}
               <div className="space-y-3">
-                <p className="font-medium">Recent Reviews</p>
-                {(teacher?.reviews || []).slice(0, 2).map((rev, i) => (
-                  <div key={i} className="bg-muted rounded-lg p-3 space-y-1">
-                    <div className="flex gap-1 text-yellow-500">
-                      {Array.from({ length: 5 }).map((_, idx) => (
-                        <Star key={idx} className="w-4 h-4 fill-yellow-500" />
-                      ))}
-                    </div>
-                    <p className="text-sm">{rev.text}</p>
-                    <p className="text-xs text-muted-foreground">
-                      — {rev.reviewerName}
-                    </p>
+                <p className="font-medium">Recent Reviews ({reviews.length})</p>
+                {reviews.length === 0 ? (
+                  <div className="bg-muted rounded-lg p-3 text-center text-sm text-gray-400">
+                    No reviews yet.
                   </div>
-                ))}
+                ) : (
+                  reviews.slice(0, 3).map((rev: any) => (
+                    <div
+                      key={rev._id}
+                      className="bg-muted rounded-lg p-3 space-y-1"
+                    >
+                      {/* Stars */}
+                      <div className="flex gap-1 text-yellow-500">
+                        {Array.from({ length: 5 }).map((_, idx) => (
+                          <Star
+                            key={idx}
+                            className={`w-4 h-4 ${
+                              idx < rev.rating
+                                ? "fill-yellow-500 text-yellow-500"
+                                : "fill-gray-200 text-gray-200"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <p className="text-sm">{rev.comment}</p>
+                      <p className="text-xs text-muted-foreground">
+                        — {rev.studentId?.name || "Student"}
+                      </p>
+                    </div>
+                  ))
+                )}
               </div>
             </CardContent>
           </Card>

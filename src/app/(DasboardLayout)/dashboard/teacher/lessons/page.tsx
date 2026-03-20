@@ -54,7 +54,7 @@ export default function MyLessonsPage() {
   );
 
   return (
-    <div className="min-h-screen p-5">
+    <div className="max-w-7xl mx-auto p-5 mt-10">
       <h1 className="text-2xl font-bold text-gray-900 mb-5">My Lessons</h1>
 
       <div className="flex flex-col md:flex-row gap-5 items-start">

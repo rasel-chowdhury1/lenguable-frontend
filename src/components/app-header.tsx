@@ -1,9 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "./ui/sidebar";
 import { Button } from "./ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,7 +25,6 @@ const AppHeader = () => {
   const { data } = useGetMeQuery(undefined);
   const [logout] = useLogoutMutation();
   const user = data?.data;
-  // console.log(user, "From user ==>");
 
   const handleLogout = async () => {
     try {
@@ -73,6 +73,26 @@ const AppHeader = () => {
                   <span className="hidden sm:inline">Book a Class</span>
                 </Button>
               </Link>
+            </>
+          )}
+
+          {/* Stripe Connect (Teacher only) */}
+          {user?.role === "TEACHER" && (
+            <>
+              {!user?.teacher?.stripeOnboarded ? (
+                <Link href="/dashboard/teacher/stripe/connect">
+                  <Button
+                    size="sm"
+                    className="gap-2 bg-[#A9F877] hover:bg-[#C1FF72] text-black"
+                  >
+                    Connect Stripe
+                  </Button>
+                </Link>
+              ) : (
+                <Badge className="bg-[#A9F877] px-3 py-1 text-xs text-black">
+                  Stripe Connected
+                </Badge>
+              )}
             </>
           )}
 

@@ -61,7 +61,7 @@ export default function MyStudentsPage() {
   });
 
   return (
-    <div className="p-5">
+    <div className="max-w-7xl mx-auto p-5 mt-10">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">My Students</h1>
 
       {/* Students Table */}
