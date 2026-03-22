@@ -28,7 +28,7 @@ const Navbar = () => {
   const { data } = useGetMeQuery(undefined);
   const [logout] = useLogoutMutation();
   const user = data?.data;
-  console.log(user, "User data ==>");
+  // console.log(user, "User data ==>");
 
   const handleLanguageChange = (lang: string) => setSelectedLanguage(lang);
 
@@ -118,24 +118,29 @@ const Navbar = () => {
 
                 {/* Role-based Dashboard */}
                 {user?.role &&
-                  user?.student?.payment?.some(
-                    (p: any) => p.status === "completed",
-                  ) && (
-                    <Link
-                      href={`/dashboard/${
-                        user.role === "STUDENT"
-                          ? "student/lessons"
-                          : "teacher/schedules"
-                      }`}
-                    >
-                      <Button
-                        variant="outline"
-                        className="hover:cursor-pointer"
-                      >
-                        Dashboard
-                      </Button>
-                    </Link>
-                  )}
+                user?.student?.payment?.some(
+                  (p: any) => p.status === "completed",
+                ) ? (
+                  <Link
+                    href={`/dashboard/${
+                      user.role === "STUDENT" && "student/lessons"
+                    }`}
+                  >
+                    <Button variant="outline" className="hover:cursor-pointer">
+                      Dashboard
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link
+                    href={`/dashboard/${
+                      user.role === "TEACHER" && "teacher/schedules"
+                    }`}
+                  >
+                    <Button variant="outline" className="hover:cursor-pointer">
+                      Dashboard
+                    </Button>
+                  </Link>
+                )}
 
                 <Link href="/book">
                   <Button className="bg-[#A9F877] hover:bg-[#C1FF72] text-black">

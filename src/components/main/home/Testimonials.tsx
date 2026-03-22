@@ -13,7 +13,7 @@ export default function Testimonials() {
 
   const { data, isLoading, isError } = useGetAllReviewsQuery(undefined);
   const reviews = data?.data || [];
-  console.log(reviews, "review ==>");
+  // console.log(reviews, "review ==>");
 
   if (isLoading) {
     return (

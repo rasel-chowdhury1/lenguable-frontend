@@ -47,7 +47,7 @@ export default function MyEarningsPage() {
     useMyBookingQuery(undefined);
 
   const teacher = meData?.data?.teacher;
-  console.log(teacher, "from teacher ==>");
+  // console.log(teacher, "from teacher ==>");
   const payouts = payoutsData?.data || [];
   const bookings = bookingsData?.data || [];
 
