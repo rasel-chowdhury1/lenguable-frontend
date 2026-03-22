@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import Script from "next/script";
 import Cookies from "js-cookie";
+import Image from "next/image";
 
 declare global {
   interface Window {
@@ -43,8 +44,8 @@ declare global {
 }
 
 export const languages = [
-  { label: "English", value: "en" },
-  { label: "Spanish", value: "es" },
+  { label: "English", value: "en", src: "https://flagcdn.com/h60/us.png" },
+  { label: "Spanish", value: "es", src: "https://flagcdn.com/h60/es.png" },
 ];
 
 export default function GoogleTranslate() {
@@ -125,6 +126,13 @@ export default function GoogleTranslate() {
             variant="outline"
             className="flex items-center gap-2 notranslate"
           >
+            <Image
+              src={currentLang?.src ?? ""}
+              alt={currentLang?.label ?? ""}
+              height={16}
+              width={24}
+              className="w-6 h-4 object-cover"
+            />
             <span className="notranslate">{currentLang?.label}</span>
             <ChevronDown className="h-4 w-4 opacity-50" />
           </Button>
@@ -136,6 +144,13 @@ export default function GoogleTranslate() {
               onClick={() => handleChange(lang.value)}
               className="flex items-center gap-2 cursor-pointer notranslate"
             >
+              <Image
+                src={lang.src}
+                alt={lang.label}
+                height={6}
+                width={6}
+                className="w-6 h-4 object-cover"
+              />
               <span className="notranslate">{lang.label}</span>
             </DropdownMenuItem>
           ))}
