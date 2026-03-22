@@ -165,3 +165,26 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* Hide only the banner frame, preserve functionality */
+.goog-te-banner-frame {
+  display: none !important;
+}
+
+/* Keep the body positioning normal */
+body {
+  top: 0px !important;
+}
+
+/* Hide the visual bar but keep the underlying elements */
+.skiptranslate iframe {
+  visibility: hidden !important;
+  height: 0 !important;
+  border: none !important;
+}
+
+/* Preserve the container but make it invisible */
+.skiptranslate {
+  height: 0 !important;
+  overflow: hidden !important;
+}

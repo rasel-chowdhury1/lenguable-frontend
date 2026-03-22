@@ -18,6 +18,7 @@ import { useLogoutMutation } from "@/redux/features/authApi";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Link from "next/link";
+import GoogleTranslate from "./main/shared/GoogleTranslate";
 
 const AppHeader = () => {
   const router = useRouter();
@@ -97,28 +98,7 @@ const AppHeader = () => {
           )}
 
           {/* Language Selector */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-1.5 border-none bg-sidebar hover:bg-sidebar hover:cursor-pointer"
-              >
-                <Globe className="h-4 w-4 shrink-0" />
-                <span className="hidden sm:inline text-xs">
-                  {language === "en" ? "EN" : "ES"}
-                </span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setLanguage("en")}>
-                English
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setLanguage("es")}>
-                Spanish
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <GoogleTranslate />
 
           {/* Login / Logout */}
           {user ? (

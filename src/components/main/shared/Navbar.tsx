@@ -17,6 +17,7 @@ import { useGetMeQuery } from "@/redux/features/userApi";
 import { useLogoutMutation } from "@/redux/features/authApi";
 import { useRouter, usePathname } from "next/navigation";
 import { toast } from "sonner";
+import GoogleTranslate from "./GoogleTranslate";
 
 const Navbar = () => {
   const router = useRouter();
@@ -80,31 +81,8 @@ const Navbar = () => {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            {/* Language Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="flex items-center gap-1 bg-transparent hover:bg-transparent hover:cursor-pointer"
-                >
-                  <Globe className="w-4 h-4" />
-                  {selectedLanguage}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  onClick={() => handleLanguageChange("English")}
-                >
-                  English
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => handleLanguageChange("Spanish")}
-                >
-                  Spanish
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
+            {/* Language Translate */}
+            <GoogleTranslate />
             {/* Conditional Auth Buttons */}
             {user ? (
               <>
@@ -195,36 +173,8 @@ const Navbar = () => {
               </Link>
             ))}
 
-            {/* Language Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="w-full flex items-center gap-1"
-                >
-                  <Globe className="w-4 h-4" />
-                  {selectedLanguage}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem
-                  onClick={() => {
-                    handleLanguageChange("English");
-                    setMobileMenuOpen(false);
-                  }}
-                >
-                  English
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    handleLanguageChange("Spanish");
-                    setMobileMenuOpen(false);
-                  }}
-                >
-                  Spanish
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {/* Language Translate */}
+            <GoogleTranslate />
 
             {/* Auth Buttons for Mobile */}
             {user ? (
