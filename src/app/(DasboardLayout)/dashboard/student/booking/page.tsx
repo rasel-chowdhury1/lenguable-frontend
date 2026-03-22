@@ -6,10 +6,12 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { BookingCard } from "./_components/BookingCard";
 import { CancelModal } from "./_components/CancelModal";
+import { LeaveReviewModal } from "./_components/LeaveReviewModal";
 import {
   useMyBookingQuery,
   useCancelBookingMutation,
 } from "@/redux/features/bookingApi";
+import { useGetMyReviewsQuery } from "@/redux/features/reviewApi";
 import { toast } from "sonner";
 
 export type BookingStatus = "scheduled" | "completed" | "cancelled";
@@ -17,6 +19,7 @@ export type BookingStatus = "scheduled" | "completed" | "cancelled";
 export interface Booking {
   id: string;
   tutorName: string;
+  teacherId: string;
   date: string;
   time: string;
   status: BookingStatus;
@@ -25,7 +28,6 @@ export interface Booking {
   meetLink?: string;
 }
 
-// Format "YYYY-MM-DD" → "Mar 17, 2026"
 const formatDate = (iso: string) => {
   const [year, month, day] = iso.split("-").map(Number);
   return new Date(year, month - 1, day).toLocaleDateString("en-US", {
@@ -37,24 +39,35 @@ const formatDate = (iso: string) => {
 
 export default function MyBookingsPage() {
   const [cancelId, setCancelId] = useState<string | null>(null);
+  const [reviewTeacherId, setReviewTeacherId] = useState<string | null>(null);
 
   const { data, isLoading, isError } = useMyBookingQuery(undefined);
   const [cancelBooking, { isLoading: isCancelling }] =
     useCancelBookingMutation();
 
+  // Fetch student's existing reviews
+  const { data: myReviewsData } = useGetMyReviewsQuery(undefined);
+  const myReviews = myReviewsData?.data || [];
+
+  // Build a Set of teacherIds already reviewed
+  const reviewedTeacherIds = new Set<string>(
+    myReviews.map((r: any) => r.teacherId?._id || r.teacherId),
+  );
+
   const apiBookings = data?.data || [];
 
-  const bookings: Booking[] = apiBookings.map((b: any) => {
-    return {
-      id: b._id,
-      tutorName: b.teacherId?.name || "Teacher",
-      date: formatDate(b.date),
-      time: b.startTime,
-      status: b.status as BookingStatus,
-      isUpcoming: b.status === "scheduled",
-      meetLink: b.meetLink,
-    };
-  });
+  const bookings: Booking[] = apiBookings.map((b: any) => ({
+    id: b._id,
+    tutorName: b.teacherId?.name || "Teacher",
+    teacherId: b.teacherId?._id || b.teacherId,
+    date: formatDate(b.date),
+    time: b.startTime,
+    status: b.status as BookingStatus,
+    // reviewed = true if student already has a review for this teacher
+    reviewed: reviewedTeacherIds.has(b.teacherId?._id || b.teacherId),
+    isUpcoming: b.status === "scheduled",
+    meetLink: b.meetLink,
+  }));
 
   const upcomingBookings = bookings.filter((b) => b.isUpcoming);
   const pastBookings = bookings.filter(
@@ -63,7 +76,6 @@ export default function MyBookingsPage() {
 
   const handleConfirmCancel = async () => {
     if (!cancelId) return;
-
     try {
       const res = await cancelBooking({
         bookingId: cancelId,
@@ -77,13 +89,9 @@ export default function MyBookingsPage() {
     }
   };
 
-  if (isLoading) {
-    return <div className="p-5">Loading bookings...</div>;
-  }
-
-  if (isError) {
+  if (isLoading) return <div className="p-5">Loading bookings...</div>;
+  if (isError)
     return <div className="p-5 text-red-500">Failed to load bookings</div>;
-  }
 
   return (
     <div className="p-5">
@@ -101,7 +109,6 @@ export default function MyBookingsPage() {
           >
             Upcoming Class
           </TabsTrigger>
-
           <TabsTrigger
             value="past"
             className={cn(
@@ -136,14 +143,21 @@ export default function MyBookingsPage() {
           <h2 className="text-base font-bold text-gray-900 mb-4">
             Past Classes
           </h2>
-
           {pastBookings.length === 0 ? (
             <div className="rounded-2xl border border-gray-200 bg-white px-5 py-10 text-center text-sm text-gray-400">
               No past classes yet.
             </div>
           ) : (
             pastBookings.map((booking) => (
-              <BookingCard key={booking.id} booking={booking} />
+              <BookingCard
+                key={booking.id}
+                booking={booking}
+                onLeaveReview={
+                  booking.status === "completed" && !booking.reviewed
+                    ? () => setReviewTeacherId(booking.teacherId)
+                    : undefined
+                }
+              />
             ))
           )}
         </TabsContent>
@@ -154,6 +168,12 @@ export default function MyBookingsPage() {
         onClose={() => setCancelId(null)}
         onConfirm={handleConfirmCancel}
         isLoading={isCancelling}
+      />
+
+      <LeaveReviewModal
+        open={!!reviewTeacherId}
+        onClose={() => setReviewTeacherId(null)}
+        teacherId={reviewTeacherId || ""}
       />
     </div>
   );

@@ -28,7 +28,7 @@ const Navbar = () => {
   const { data } = useGetMeQuery(undefined);
   const [logout] = useLogoutMutation();
   const user = data?.data;
-  // console.log(user, "User data ==>");
+  console.log(user, "User data ==>");
 
   const handleLanguageChange = (lang: string) => setSelectedLanguage(lang);
 
@@ -117,19 +117,25 @@ const Navbar = () => {
                 </Button>
 
                 {/* Role-based Dashboard */}
-                {user?.role && (
-                  <Link
-                    href={`/dashboard/${
-                      user.role === "STUDENT"
-                        ? "student/lessons"
-                        : "teacher/schedules"
-                    }`}
-                  >
-                    <Button variant="outline" className="hover:cursor-pointer">
-                      Dashboard
-                    </Button>
-                  </Link>
-                )}
+                {user?.role &&
+                  user?.student?.payment?.some(
+                    (p: any) => p.status === "completed",
+                  ) && (
+                    <Link
+                      href={`/dashboard/${
+                        user.role === "STUDENT"
+                          ? "student/lessons"
+                          : "teacher/schedules"
+                      }`}
+                    >
+                      <Button
+                        variant="outline"
+                        className="hover:cursor-pointer"
+                      >
+                        Dashboard
+                      </Button>
+                    </Link>
+                  )}
 
                 <Link href="/book">
                   <Button className="bg-[#A9F877] hover:bg-[#C1FF72] text-black">
@@ -150,7 +156,7 @@ const Navbar = () => {
                     Sign Up
                   </Button>
                 </Link>
-                <Link href="/book">
+                <Link href="/#">
                   <Button className="bg-[#A9F877] hover:bg-[#C1FF72] text-black hover:cursor-pointer">
                     Book Now
                   </Button>
@@ -235,7 +241,7 @@ const Navbar = () => {
                     </Button>
                   </Link>
                 )}
-                <Link href="/book" onClick={() => setMobileMenuOpen(false)}>
+                <Link href="/#" onClick={() => setMobileMenuOpen(false)}>
                   <Button className="w-full mt-3">Book Now</Button>
                 </Link>
               </>

@@ -78,12 +78,12 @@ export default function PaymentSuccess() {
         <p className="text-gray-600 mb-6">
           Your credits have been added to your account.
         </p>
-        <a
+        {/* <a
           href="/dashboard/student/lessons"
           className="bg-[#A9F877] hover:bg-[#C1FF72] text-gray-900 font-semibold px-6 py-2 rounded-lg"
         >
           Go to Dashboard
-        </a>
+        </a> */}
       </div>
     </div>
   );

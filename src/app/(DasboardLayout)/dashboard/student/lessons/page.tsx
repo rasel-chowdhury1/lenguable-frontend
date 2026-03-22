@@ -19,6 +19,7 @@ export default function MyLessonsPage() {
   // ← only change: was useGetAllLessonsQuery from LessonApi
   const { data, isLoading } = useGetMyLessonsQuery(undefined);
   const apiLessons = data?.data || [];
+  // console.log(apiLessons, "Lesson ==>");
 
   // Resources API
   const { data: resourceData, isLoading: resourceLoading } =

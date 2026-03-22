@@ -13,9 +13,11 @@ const statusStyles: Record<BookingStatus, string> = {
 export function BookingCard({
   booking,
   onCancel,
+  onLeaveReview,
 }: {
   booking: Booking;
   onCancel?: () => void;
+  onLeaveReview?: () => void;
 }) {
   return (
     <div className="rounded-2xl border border-gray-200 bg-white px-5 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -28,8 +30,15 @@ export function BookingCard({
               statusStyles[booking.status],
             )}
           >
-            {booking.status}
+            {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
           </Badge>
+
+          {/* Reviewed badge */}
+          {booking.status === "completed" && booking.reviewed && (
+            <Badge className="text-xs font-medium px-2.5 py-0.5 rounded-full border border-gray-200 bg-white text-gray-400">
+              Reviewed
+            </Badge>
+          )}
         </div>
 
         <div className="flex items-center gap-2">
@@ -50,22 +59,34 @@ export function BookingCard({
         </div>
       </div>
 
-      {/* Right — only shown for upcoming bookings */}
-      {booking.isUpcoming && (
-        <div className="flex items-center gap-2">
-          <Button
-            size="sm"
-            onClick={() => window.open(booking.meetLink, "_blank")}
-            className="flex items-center gap-1.5 bg-[#A9F877] hover:bg-[#C1FF72] text-gray-900"
-          >
-            <Video className="h-3.5 w-3.5" />
-            Join Class
-          </Button>
-          <Button size="sm" variant="destructive" onClick={onCancel}>
-            ✕
-          </Button>
-        </div>
-      )}
+      {/* Right */}
+      <div className="flex items-center gap-2">
+        {/* Upcoming — Join + Cancel */}
+        {booking.isUpcoming && (
+          <>
+            <Button
+              size="sm"
+              onClick={() => window.open(booking.meetLink, "_blank")}
+              className="flex items-center gap-1.5 bg-[#A9F877] hover:bg-[#C1FF72] text-gray-900"
+            >
+              <Video className="h-3.5 w-3.5" />
+              Join Class
+            </Button>
+            <Button size="sm" variant="destructive" onClick={onCancel}>
+              ✕
+            </Button>
+          </>
+        )}
+
+        {/* Completed + not reviewed — Leave Review */}
+        {booking.status === "completed" &&
+          !booking.reviewed &&
+          onLeaveReview && (
+            <Button variant="outline" size="sm" onClick={onLeaveReview}>
+              Leave Review
+            </Button>
+          )}
+      </div>
     </div>
   );
 }
