@@ -149,9 +149,11 @@ export default function Login() {
                     Remember me
                   </label>
                 </div>
-                <Button variant="link" className="text-primary">
-                  Forgot Password?
-                </Button>
+                <Link href="forgot-password">
+                  <Button variant="link" className="text-primary">
+                    Forgot Password?
+                  </Button>
+                </Link>
               </div>
 
               {/* Submit */}
