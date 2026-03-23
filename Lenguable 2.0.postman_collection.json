@@ -1,0 +1,1510 @@
+{
+  "info": {
+    "_postman_id": "17aed8fe-3070-48b1-b331-b5234acfff12",
+    "name": "Lenguable 2.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "45337696"
+  },
+  "item": [
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Get Me",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWJjYzFhZDM3Yzk0YjZmN2Y5ZDY1ZDUiLCJlbWFpbCI6InRlYWNoZXIxQGdtYWlsLmNvbSIsInJvbGUiOiJURUFDSEVSIiwiaWF0IjoxNzczOTg3NzQ0LCJleHAiOjE3NzY1Nzk3NDR9.9wDNt54yZSbBIwRJkbRvMU7MthfU4RgoCva98voE-ag",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user/getMe",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "getMe"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Student",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Liton Mia\",\r\n    \"email\": \"liton.mahmud178@gmail.com\",\r\n    \"password\": \"123456@Lm\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/student",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "student"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Teacher",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWI1Yzg5ZTM5MTliYzlmZGIyNjBkYTIiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3MzYwOTUyMiwiZXhwIjoxNzc2MjAxNTIyfQ.WxLOG7qM_40nf08nz9_2xuCu85P_LUjKAhPkeffOQnk",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Teacher\",\r\n    \"email\": \"teacher1@gmail.com\",\r\n    \"password\": \"123456@Tc\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/teacher",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "teacher"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "// {\r\n//     \"email\": \"admin@gmail.com\",\r\n//     \"password\": \"admin@123\"\r\n// }\r\n// {\r\n//     \"email\": \"teacher1@gmail.com\",\r\n//     \"password\": \"123456@Tc\"\r\n// }\r\n// {\r\n//     \"email\": \"liton.mahmud178@gmail.com\",\r\n//     \"password\": \"123456@Lm\"\r\n// }\r\n{\r\n    \"email\": \"liton.mahmud178@gmail.com\",\r\n    \"password\": \"123456@Lm\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Log Out",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"john@gmail.com\",\r\n    \"password\": \"123456@Jd\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTg4ZTIwODM3YWY1YmViYTI1ZDhkZTYiLCJlbWFpbCI6ImpvaG4yQGdtYWlsLmNvbSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzcwNTc5OTMyLCJleHAiOjE3NzMxNzE5MzJ9.-oXtWU-_-t6NtOzK_1dsOvE10AjZvKXHJP3jvifV_V8",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"John Doe\",\r\n    \"email\": \"john2@gmail.com\",\r\n    \"password\": \"123456@Jd\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh-token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "refresh-token"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTg4ZTIwODM3YWY1YmViYTI1ZDhkZTYiLCJlbWFpbCI6ImpvaG4yQGdtYWlsLmNvbSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzcwNTgwMjYyLCJleHAiOjE3NzMxNzIyNjJ9.CrsNheKxOM6AgAM9fo70u83Q0PfbANtYlixjyrLa8vU",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"oldPassword\": \"123456@Jd\",\r\n    \"newPassword\": \"654321@Jd\"\r\n} ",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/change-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "change-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"liton.mahmud178@gmail.com\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/forgot-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "forgot-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWEzNzYxNWM5YTdkMjM1OWFhZGRmOTMiLCJlbWFpbCI6ImxpdG9uLm1haG11ZDE3OEBnbWFpbC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc3MjMyMjU5MSwiZXhwIjoxNzcyMzIzMTkxfQ.6nyvu62ry2sRRqGDdLXcqshgUzz_evvDeDSuRiQTvDM",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id\": \"69a37615c9a7d2359aaddf93\",\r\n    \"newPassword\": \"123456@New\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/reset-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "reset-password"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Student",
+      "item": [
+        {
+          "name": "Update Student",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OThiN2E3NDYzMmI2NjdhYjNiZDg4OTEiLCJlbWFpbCI6InN0dWRlbnRAZ21haWwuY29tIiwicm9sZSI6IlNUVURFTlQiLCJpYXQiOjE3NzA3NDg1OTgsImV4cCI6MTc3MzM0MDU5OH0.gCMQR829x_YtXXjMPMywIqCnqQd_a1tNVbZ6hpfTNdk",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Liton Mia\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/student/698b7a73632b667ab3bd888f",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "student",
+                "698b7a73632b667ab3bd888f"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Student",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OThiN2E2MzYzMmI2NjdhYjNiZDg4OGIiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3MDc1MTAzNiwiZXhwIjoxNzczMzQzMDM2fQ.BVHkI9AyKIGYsuJnkVf1_bTzE-He7c9Mud1HWbhwSOc",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Liton Mia\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/student/698b7a73632b667ab3bd888f",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "student",
+                "698b7a73632b667ab3bd888f"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Single Student",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OThhM2FlMDE0ZmFjNmY3N2ExODVlMzciLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3MDc0NTk2NCwiZXhwIjoxNzczMzM3OTY0fQ.4sOEyR-LJ0vpLOw0kAMCcn2ca1qeP3SnxZa9t_LvCnw",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/student/698b7a73632b667ab3bd888f",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "student",
+                "698b7a73632b667ab3bd888f"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Students",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWI1Yzg5ZTM5MTliYzlmZGIyNjBkYTIiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3MzUyMTE5MywiZXhwIjoxNzc2MTEzMTkzfQ.q2pKFDSqVpNqRR5gdehiv5UUPX8l-yKyNV7oNzg8kyo",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/student",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "student"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "teacher",
+      "item": [
+        {
+          "name": "All Teachers",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWI1Yzg5ZTM5MTliYzlmZGIyNjBkYTIiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3MzUyMTE5MywiZXhwIjoxNzc2MTEzMTkzfQ.q2pKFDSqVpNqRR5gdehiv5UUPX8l-yKyNV7oNzg8kyo",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Teacher\",\r\n    \"email\": \"teacher@gmail.com\",\r\n    \"password\": \"123456@St\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/teacher",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "teacher"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Single Teacher",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWIzMmI3NDU4ZmNhNjdhYWRmNmZiMjgiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3MzUxODQwNywiZXhwIjoxNzc2MTEwNDA3fQ.I_0SKxqygXoJWE0OjxI-Hg9O7RdkWZqLUAKCDJSjwNY",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Teacher\",\r\n    \"email\": \"teacher@gmail.com\",\r\n    \"password\": \"123456@St\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/teacher/69b5c9f46ac785fe0fe95d21",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "teacher",
+                "69b5c9f46ac785fe0fe95d21"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Teacher",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OThhM2FlMDE0ZmFjNmY3N2ExODVlMzciLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3MDY3Njg4OCwiZXhwIjoxNzczMjY4ODg4fQ.JNTq1ccuAS_aNl91qIov9T3DYPwO2v4BFTJakVUvgKA",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Teacher Update\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/teacher/698b87093db60cdbac6dfd5f",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "teacher",
+                "698b87093db60cdbac6dfd5f"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Teacher",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OThhM2FlMDE0ZmFjNmY3N2ExODVlMzciLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3MDY3Njg4OCwiZXhwIjoxNzczMjY4ODg4fQ.JNTq1ccuAS_aNl91qIov9T3DYPwO2v4BFTJakVUvgKA",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Teacher Update\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/teacher/698b87093db60cdbac6dfd5f",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "teacher",
+                "698b87093db60cdbac6dfd5f"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Course",
+      "item": [
+        {
+          "name": "Create Course",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OThhM2FlMDE0ZmFjNmY3N2ExODVlMzciLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3MDY3Njg4OCwiZXhwIjoxNzczMjY4ODg4fQ.JNTq1ccuAS_aNl91qIov9T3DYPwO2v4BFTJakVUvgKA",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Complete English Course\",\r\n    \"description\": \"Structured course from A0 to C1 for Spanish-speaking learners\",\r\n    \"levels\": [\r\n        {\r\n            \"levelName\": \"A0\",\r\n            \"lessons\": [\r\n                {\r\n                    \"title\": \"Introduction to English\",\r\n                    \"description\": \"Basic greetings, alphabet, and numbers\",\r\n                    \"level\": \"A0\",\r\n                    \"order\": 1,\r\n                    \"practiceExercises\": [\r\n                        \"exercise1.pdf\",\r\n                        \"exercise2.pdf\"\r\n                    ],\r\n                    \"resources\": [\r\n                        \"video1.mp4\",\r\n                        \"slides1.pdf\"\r\n                    ]\r\n                },\r\n                {\r\n                    \"title\": \"Simple Sentences\",\r\n                    \"description\": \"Forming basic sentences\",\r\n                    \"level\": \"A0\",\r\n                    \"order\": 2,\r\n                    \"practiceExercises\": [\r\n                        \"exercise3.pdf\"\r\n                    ],\r\n                    \"resources\": [\r\n                        \"video2.mp4\"\r\n                    ]\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"levelName\": \"A1\",\r\n            \"lessons\": [\r\n                {\r\n                    \"title\": \"Past Simple\",\r\n                    \"description\": \"Learn how to form and use past simple tense\",\r\n                    \"level\": \"A1\",\r\n                    \"order\": 1,\r\n                    \"practiceExercises\": [\r\n                        \"exercise1.pdf\"\r\n                    ],\r\n                    \"resources\": [\r\n                        \"video1.mp4\"\r\n                    ]\r\n                },\r\n                {\r\n                    \"title\": \"Future Tense\",\r\n                    \"description\": \"Introduction to simple future tense\",\r\n                    \"level\": \"A1\",\r\n                    \"order\": 2,\r\n                    \"practiceExercises\": [\r\n                        \"exercise2.pdf\"\r\n                    ],\r\n                    \"resources\": [\r\n                        \"video2.mp4\"\r\n                    ]\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"levelName\": \"A2\",\r\n            \"lessons\": [\r\n                {\r\n                    \"title\": \"Present Perfect\",\r\n                    \"description\": \"Using present perfect in conversation\",\r\n                    \"level\": \"A2\",\r\n                    \"order\": 1,\r\n                    \"practiceExercises\": [\r\n                        \"exercise1.pdf\"\r\n                    ],\r\n                    \"resources\": [\r\n                        \"video1.mp4\"\r\n                    ]\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/course",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "course"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Courses",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Complete English Course\",\r\n    \"description\": \"Structured course from A0 to C1 for Spanish-speaking learners\",\r\n    \"levels\": [\r\n        {\r\n            \"levelName\": \"A0\",\r\n            \"lessons\": [\r\n                {\r\n                    \"title\": \"Introduction to English\",\r\n                    \"description\": \"Basic greetings, alphabet, and numbers\",\r\n                    \"level\": \"A0\",\r\n                    \"order\": 1,\r\n                    \"practiceExercises\": [\r\n                        \"exercise1.pdf\",\r\n                        \"exercise2.pdf\"\r\n                    ],\r\n                    \"resources\": [\r\n                        \"video1.mp4\",\r\n                        \"slides1.pdf\"\r\n                    ]\r\n                },\r\n                {\r\n                    \"title\": \"Simple Sentences\",\r\n                    \"description\": \"Forming basic sentences\",\r\n                    \"level\": \"A0\",\r\n                    \"order\": 2,\r\n                    \"practiceExercises\": [\r\n                        \"exercise3.pdf\"\r\n                    ],\r\n                    \"resources\": [\r\n                        \"video2.mp4\"\r\n                    ]\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"levelName\": \"A1\",\r\n            \"lessons\": [\r\n                {\r\n                    \"title\": \"Past Simple\",\r\n                    \"description\": \"Learn how to form and use past simple tense\",\r\n                    \"level\": \"A1\",\r\n                    \"order\": 1,\r\n                    \"practiceExercises\": [\r\n                        \"exercise1.pdf\"\r\n                    ],\r\n                    \"resources\": [\r\n                        \"video1.mp4\"\r\n                    ]\r\n                },\r\n                {\r\n                    \"title\": \"Future Tense\",\r\n                    \"description\": \"Introduction to simple future tense\",\r\n                    \"level\": \"A1\",\r\n                    \"order\": 2,\r\n                    \"practiceExercises\": [\r\n                        \"exercise2.pdf\"\r\n                    ],\r\n                    \"resources\": [\r\n                        \"video2.mp4\"\r\n                    ]\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"levelName\": \"A2\",\r\n            \"lessons\": [\r\n                {\r\n                    \"title\": \"Present Perfect\",\r\n                    \"description\": \"Using present perfect in conversation\",\r\n                    \"level\": \"A2\",\r\n                    \"order\": 1,\r\n                    \"practiceExercises\": [\r\n                        \"exercise1.pdf\"\r\n                    ],\r\n                    \"resources\": [\r\n                        \"video1.mp4\"\r\n                    ]\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/course/all-courses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "course",
+                "all-courses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Single Course",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Complete English Course\",\r\n    \"description\": \"Structured course from A0 to C1 for Spanish-speaking learners\",\r\n    \"levels\": [\r\n        {\r\n            \"levelName\": \"A0\",\r\n            \"lessons\": [\r\n                {\r\n                    \"title\": \"Introduction to English\",\r\n                    \"description\": \"Basic greetings, alphabet, and numbers\",\r\n                    \"level\": \"A0\",\r\n                    \"order\": 1,\r\n                    \"practiceExercises\": [\r\n                        \"exercise1.pdf\",\r\n                        \"exercise2.pdf\"\r\n                    ],\r\n                    \"resources\": [\r\n                        \"video1.mp4\",\r\n                        \"slides1.pdf\"\r\n                    ]\r\n                },\r\n                {\r\n                    \"title\": \"Simple Sentences\",\r\n                    \"description\": \"Forming basic sentences\",\r\n                    \"level\": \"A0\",\r\n                    \"order\": 2,\r\n                    \"practiceExercises\": [\r\n                        \"exercise3.pdf\"\r\n                    ],\r\n                    \"resources\": [\r\n                        \"video2.mp4\"\r\n                    ]\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"levelName\": \"A1\",\r\n            \"lessons\": [\r\n                {\r\n                    \"title\": \"Past Simple\",\r\n                    \"description\": \"Learn how to form and use past simple tense\",\r\n                    \"level\": \"A1\",\r\n                    \"order\": 1,\r\n                    \"practiceExercises\": [\r\n                        \"exercise1.pdf\"\r\n                    ],\r\n                    \"resources\": [\r\n                        \"video1.mp4\"\r\n                    ]\r\n                },\r\n                {\r\n                    \"title\": \"Future Tense\",\r\n                    \"description\": \"Introduction to simple future tense\",\r\n                    \"level\": \"A1\",\r\n                    \"order\": 2,\r\n                    \"practiceExercises\": [\r\n                        \"exercise2.pdf\"\r\n                    ],\r\n                    \"resources\": [\r\n                        \"video2.mp4\"\r\n                    ]\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"levelName\": \"A2\",\r\n            \"lessons\": [\r\n                {\r\n                    \"title\": \"Present Perfect\",\r\n                    \"description\": \"Using present perfect in conversation\",\r\n                    \"level\": \"A2\",\r\n                    \"order\": 1,\r\n                    \"practiceExercises\": [\r\n                        \"exercise1.pdf\"\r\n                    ],\r\n                    \"resources\": [\r\n                        \"video1.mp4\"\r\n                    ]\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/course/698b9566b47768aba63cd2d9",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "course",
+                "698b9566b47768aba63cd2d9"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Course",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OThiN2E2MzYzMmI2NjdhYjNiZDg4OGIiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3MDc1NTk5OCwiZXhwIjoxNzczMzQ3OTk4fQ.68Rvbp-13XY-4vX-pnp3CDL6sHjq4nN56GyvnTo1-Z8",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Complete English Course updated by liton\",\r\n    \"description\": \"Structured course from A0 to C1 for Spanish-speaking learners\",\r\n    \"levels\": [\r\n        {\r\n            \"levelName\": \"A0\",\r\n            \"lessons\": [\r\n                {\r\n                    \"title\": \"Introduction to English\",\r\n                    \"description\": \"Basic greetings, alphabet, and numbers\",\r\n                    \"level\": \"A0\",\r\n                    \"order\": 1,\r\n                    \"practiceExercises\": [\r\n                        \"exercise1.pdf\",\r\n                        \"exercise2.pdf\"\r\n                    ],\r\n                    \"resources\": [\r\n                        \"video1.mp4\",\r\n                        \"slides1.pdf\"\r\n                    ]\r\n                },\r\n                {\r\n                    \"title\": \"Simple Sentences\",\r\n                    \"description\": \"Forming basic sentences\",\r\n                    \"level\": \"A0\",\r\n                    \"order\": 2,\r\n                    \"practiceExercises\": [\r\n                        \"exercise3.pdf\"\r\n                    ],\r\n                    \"resources\": [\r\n                        \"video2.mp4\"\r\n                    ]\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"levelName\": \"A1\",\r\n            \"lessons\": [\r\n                {\r\n                    \"title\": \"Past Simple\",\r\n                    \"description\": \"Learn how to form and use past simple tense\",\r\n                    \"level\": \"A1\",\r\n                    \"order\": 1,\r\n                    \"practiceExercises\": [\r\n                        \"exercise1.pdf\"\r\n                    ],\r\n                    \"resources\": [\r\n                        \"video1.mp4\"\r\n                    ]\r\n                },\r\n                {\r\n                    \"title\": \"Future Tense\",\r\n                    \"description\": \"Introduction to simple future tense\",\r\n                    \"level\": \"A1\",\r\n                    \"order\": 2,\r\n                    \"practiceExercises\": [\r\n                        \"exercise2.pdf\"\r\n                    ],\r\n                    \"resources\": [\r\n                        \"video2.mp4\"\r\n                    ]\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"levelName\": \"A2\",\r\n            \"lessons\": [\r\n                {\r\n                    \"title\": \"Present Perfect\",\r\n                    \"description\": \"Using present perfect in conversation\",\r\n                    \"level\": \"A2\",\r\n                    \"order\": 1,\r\n                    \"practiceExercises\": [\r\n                        \"exercise1.pdf\"\r\n                    ],\r\n                    \"resources\": [\r\n                        \"video1.mp4\"\r\n                    ]\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/course/698b9566b47768aba63cd2d9",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "course",
+                "698b9566b47768aba63cd2d9"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Course",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OThiN2E2MzYzMmI2NjdhYjNiZDg4OGIiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3MDc1NTk5OCwiZXhwIjoxNzczMzQ3OTk4fQ.68Rvbp-13XY-4vX-pnp3CDL6sHjq4nN56GyvnTo1-Z8",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Complete English Course updated by liton\",\r\n    \"description\": \"Structured course from A0 to C1 for Spanish-speaking learners\",\r\n    \"levels\": [\r\n        {\r\n            \"levelName\": \"A0\",\r\n            \"lessons\": [\r\n                {\r\n                    \"title\": \"Introduction to English\",\r\n                    \"description\": \"Basic greetings, alphabet, and numbers\",\r\n                    \"level\": \"A0\",\r\n                    \"order\": 1,\r\n                    \"practiceExercises\": [\r\n                        \"exercise1.pdf\",\r\n                        \"exercise2.pdf\"\r\n                    ],\r\n                    \"resources\": [\r\n                        \"video1.mp4\",\r\n                        \"slides1.pdf\"\r\n                    ]\r\n                },\r\n                {\r\n                    \"title\": \"Simple Sentences\",\r\n                    \"description\": \"Forming basic sentences\",\r\n                    \"level\": \"A0\",\r\n                    \"order\": 2,\r\n                    \"practiceExercises\": [\r\n                        \"exercise3.pdf\"\r\n                    ],\r\n                    \"resources\": [\r\n                        \"video2.mp4\"\r\n                    ]\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"levelName\": \"A1\",\r\n            \"lessons\": [\r\n                {\r\n                    \"title\": \"Past Simple\",\r\n                    \"description\": \"Learn how to form and use past simple tense\",\r\n                    \"level\": \"A1\",\r\n                    \"order\": 1,\r\n                    \"practiceExercises\": [\r\n                        \"exercise1.pdf\"\r\n                    ],\r\n                    \"resources\": [\r\n                        \"video1.mp4\"\r\n                    ]\r\n                },\r\n                {\r\n                    \"title\": \"Future Tense\",\r\n                    \"description\": \"Introduction to simple future tense\",\r\n                    \"level\": \"A1\",\r\n                    \"order\": 2,\r\n                    \"practiceExercises\": [\r\n                        \"exercise2.pdf\"\r\n                    ],\r\n                    \"resources\": [\r\n                        \"video2.mp4\"\r\n                    ]\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"levelName\": \"A2\",\r\n            \"lessons\": [\r\n                {\r\n                    \"title\": \"Present Perfect\",\r\n                    \"description\": \"Using present perfect in conversation\",\r\n                    \"level\": \"A2\",\r\n                    \"order\": 1,\r\n                    \"practiceExercises\": [\r\n                        \"exercise1.pdf\"\r\n                    ],\r\n                    \"resources\": [\r\n                        \"video1.mp4\"\r\n                    ]\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/course/698b9566b47768aba63cd2d9",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "course",
+                "698b9566b47768aba63cd2d9"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "OTP",
+      "item": [
+        {
+          "name": "Send OTP",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"liton.mahmud178@gmail.com\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/otp/send",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "otp",
+                "send"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify OTP",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Package",
+      "item": [
+        {
+          "name": "Create Package",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWIzMmI3NDU4ZmNhNjdhYWRmNmZiMjgiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3MzUxNjUxMiwiZXhwIjoxNzc2MTA4NTEyfQ.aUAv-ZhZWKar9Cd8UaZ815ERb1hEyLvqoMrx0pIyFao",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"15 Classes\",\r\n    \"price\": 300,\r\n    \"credits\": 10,\r\n    \"perClassPrice\": 30,\r\n    \"features\": [\r\n        \"5 hours of lessons\",\r\n        \"Priority booking\",\r\n        \"Progress reports\",\r\n        \"Lesson materials\"\r\n    ],\r\n    \"isMostPopular\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/package",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "package"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Package",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OThiN2E2MzYzMmI2NjdhYjNiZDg4OGIiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3MzA4NDAzNSwiZXhwIjoxNzc1Njc2MDM1fQ.rtUeas8uWyT1MhzAYz8QQ3sMamlNcbx-0FtC1N3xg24",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"10 Classes\",\r\n    \"price\": 150,\r\n    \"credits\": 5,\r\n    \"perClassPrice\": 30,\r\n    \"features\": [\r\n        \"5 hours of lessons\",\r\n        \"Priority booking\",\r\n        \"Progress reports\",\r\n        \"Lesson materials\",\r\n        \"New features added\"\r\n    ],\r\n    \"isMostPopular\": false\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/package/69b344717152f316d733ab30",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "package",
+                "69b344717152f316d733ab30"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Package",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OThiN2E2MzYzMmI2NjdhYjNiZDg4OGIiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3MzA4NDAzNSwiZXhwIjoxNzc1Njc2MDM1fQ.rtUeas8uWyT1MhzAYz8QQ3sMamlNcbx-0FtC1N3xg24",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/package/69b344717152f316d733ab30",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "package",
+                "69b344717152f316d733ab30"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "All Package",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/package",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "package"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Lesson",
+      "item": [
+        {
+          "name": "Create Lesson",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OThiN2E2MzYzMmI2NjdhYjNiZDg4OGIiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3MzA4NDAzNSwiZXhwIjoxNzc1Njc2MDM1fQ.rtUeas8uWyT1MhzAYz8QQ3sMamlNcbx-0FtC1N3xg24",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Simple\",\r\n    \"level\": \"A0\",\r\n    \"content\": \"Present simple is used for daily routines.\",\r\n    \"exercises\": \"Write 5 sentences using present simple.\",\r\n    \"isLock\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/lesson",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "lesson"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Lesson",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OThiN2E2MzYzMmI2NjdhYjNiZDg4OGIiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3MzA4NDAzNSwiZXhwIjoxNzc1Njc2MDM1fQ.rtUeas8uWyT1MhzAYz8QQ3sMamlNcbx-0FtC1N3xg24",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Present Simple\",\r\n    \"level\": \"A1\",\r\n    \"content\": \"Present simple is used for daily routines.\",\r\n    \"exercises\": \"Write 5 sentences using present simple.\",\r\n    \"isLock\": false\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/lesson/69b34def5d6c32f1bc3ad7fa",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "lesson",
+                "69b34def5d6c32f1bc3ad7fa"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Lesson",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OThiN2E2MzYzMmI2NjdhYjNiZDg4OGIiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3MzA4NDAzNSwiZXhwIjoxNzc1Njc2MDM1fQ.rtUeas8uWyT1MhzAYz8QQ3sMamlNcbx-0FtC1N3xg24",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/lesson/69b34def5d6c32f1bc3ad7fa",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "lesson",
+                "69b34def5d6c32f1bc3ad7fa"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "All Lesson",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/lesson",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "lesson"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Resource",
+      "item": [
+        {
+          "name": "Create Resource",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OThiN2E2MzYzMmI2NjdhYjNiZDg4OGIiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3MzA4NDAzNSwiZXhwIjoxNzc1Njc2MDM1fQ.rtUeas8uWyT1MhzAYz8QQ3sMamlNcbx-0FtC1N3xg24",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Grammar Reference Guide5\",\r\n    \"type\": \"PDF\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/resource",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "resource"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Resource",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OThiN2E2MzYzMmI2NjdhYjNiZDg4OGIiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3MzA4NDAzNSwiZXhwIjoxNzc1Njc2MDM1fQ.rtUeas8uWyT1MhzAYz8QQ3sMamlNcbx-0FtC1N3xg24",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Pronunciation Practice updated by Liton\",\r\n    \"type\": \"Video\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/resource/69b35195fe1902f5f0f626cc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "resource",
+                "69b35195fe1902f5f0f626cc"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Resource",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OThiN2E2MzYzMmI2NjdhYjNiZDg4OGIiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3MzA4NDAzNSwiZXhwIjoxNzc1Njc2MDM1fQ.rtUeas8uWyT1MhzAYz8QQ3sMamlNcbx-0FtC1N3xg24",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/resource/69b35195fe1902f5f0f626cc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "resource",
+                "69b35195fe1902f5f0f626cc"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "All Resource",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/resource",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "resource"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Single Resource",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/resource/69b35195fe1902f5f0f626cc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "resource",
+                "69b35195fe1902f5f0f626cc"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Availability",
+      "item": [
+        {
+          "name": "Create Availability",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWI3MjI0NjU4MTIwZTFmYjYwYjkzN2UiLCJlbWFpbCI6InRlYWNoZXIxQGdtYWlsLmNvbSIsInJvbGUiOiJURUFDSEVSIiwiaWF0IjoxNzczNjA5NTg3LCJleHAiOjE3NzYyMDE1ODd9.9bW7cBQMj7S2zOnzm-dZ_9UVC3uaODy1YIDT7SggreM",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"teacherId\": \"69b7224658120e1fb60b937c\",\r\n    \"availabilities\": [\r\n        {\r\n            \"day\": \"Monday\",\r\n            \"slots\": [\r\n                {\r\n                    \"startTime\": \"15:00\",\r\n                    \"endTime\": \"16:00\"\r\n                },\r\n                {\r\n                    \"startTime\": \"10:00\",\r\n                    \"endTime\": \"11:00\"\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"day\": \"Wednesday\",\r\n            \"slots\": [\r\n                {\r\n                    \"startTime\": \"14:00\",\r\n                    \"endTime\": \"15:00\"\r\n                },\r\n                {\r\n                    \"startTime\": \"15:00\",\r\n                    \"endTime\": \"16:00\"\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"day\": \"Friday\",\r\n            \"slots\": [\r\n                {\r\n                    \"startTime\": \"11:00\",\r\n                    \"endTime\": \"12:00\"\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/availability",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "availability"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "My Availability",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWI1YzlmNDZhYzc4NWZlMGZlOTVkMjMiLCJlbWFpbCI6InRlYWNoZXJAZ21haWwuY29tIiwicm9sZSI6IlRFQUNIRVIiLCJpYXQiOjE3NzM1MjE3NDMsImV4cCI6MTc3NjExMzc0M30.YhiMohEXLY5Kdf58RxrbJT86iEdsFAjMIFXkLGVQe98",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/availability/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "availability",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "All Availability",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/availability",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "availability"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Availability",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWI1YzkwNDM5MTliYzlmZGIyNjBkYTciLCJlbWFpbCI6ImxpdG9uLm1haG11ZDE3OEBnbWFpbC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc3MzUyODc3NCwiZXhwIjoxNzc2MTIwNzc0fQ.b6d_LXDmaQez1lasub6P7zBIFVAJOayGNfuhMqUiF24",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/availability/search?day=Wednesday&time=14:00",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "availability",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "day",
+                  "value": "Wednesday"
+                },
+                {
+                  "key": "time",
+                  "value": "14:00"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Purchase",
+      "item": [
+        {
+          "name": "Purchase Package",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWI1YzkwNDM5MTliYzlmZGIyNjBkYTciLCJlbWFpbCI6ImxpdG9uLm1haG11ZDE3OEBnbWFpbC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc3MzUzMDAxMCwiZXhwIjoxNzc2MTIyMDEwfQ.HvmuraEnTEFs49lDz-BpG_VuSJ8slFdOnngjPO_X-LY",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"packageId\": \"69b5ca2e6ac785fe0fe95d27\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/purchase",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "purchase"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "All Package",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OThiN2E2MzYzMmI2NjdhYjNiZDg4OGIiLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3MzM0MTQ2MiwiZXhwIjoxNzc1OTMzNDYyfQ.smVaTEe0531P-Y4bFa4U4IqacUcdsaluZxv9N1JRha4",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/purchase",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "purchase"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Note",
+      "item": [
+        {
+          "name": "Create Note",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWIzNDA5MTVlMDlmNDVjMDRiMTYzNTIiLCJlbWFpbCI6InRlYWNoZXJAZ21haWwuY29tIiwicm9sZSI6IlRFQUNIRVIiLCJpYXQiOjE3NzM1MDk2NjYsImV4cCI6MTc3NjEwMTY2Nn0.qDp_PqsPNGhRBogcocaCPss4qDWpa0DsyPha3bPYxKk",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"studentId\": \"69b33b29cadd7c7f32517da6\",\r\n  \"teacherId\": \"69b33b29cadd7c7f32517da9\",\r\n  \"lessonTaught\": \"A2 Lesson 1: Past Simple\",\r\n  \"activitiesDone\": \"Presentation + Online Quiz\",\r\n  \"strengths\": \"Good pronunciation\",\r\n  \"areasToImprove\": \"Needs more grammar practice\",\r\n  \"notes\": \"Student was very active\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/note",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "note"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Booking",
+      "item": [
+        {
+          "name": "Create Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWI1YzkwNDM5MTliYzlmZGIyNjBkYTciLCJlbWFpbCI6ImxpdG9uLm1haG11ZDE3OEBnbWFpbC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc3MzUzMDAxMCwiZXhwIjoxNzc2MTIyMDEwfQ.HvmuraEnTEFs49lDz-BpG_VuSJ8slFdOnngjPO_X-LY",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"teacherId\": \"69b5c9f46ac785fe0fe95d21\",\r\n    \"day\": \"Thursday\",\r\n    \"startTime\": \"09:00\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/booking",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "booking"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Booking",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWI1YzkwNDM5MTliYzlmZGIyNjBkYTciLCJlbWFpbCI6ImxpdG9uLm1haG11ZDE3OEBnbWFpbC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc3MzUzMDAxMCwiZXhwIjoxNzc2MTIyMDEwfQ.HvmuraEnTEFs49lDz-BpG_VuSJ8slFdOnngjPO_X-LY",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/booking/69b86390d102d4110651de31/cancel",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "booking",
+                "69b86390d102d4110651de31",
+                "cancel"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "My Booking",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWJjYzFhZDM3Yzk0YjZmN2Y5ZDY1ZDUiLCJlbWFpbCI6InRlYWNoZXIxQGdtYWlsLmNvbSIsInJvbGUiOiJURUFDSEVSIiwiaWF0IjoxNzczOTg3NzQ0LCJleHAiOjE3NzY1Nzk3NDR9.9wDNt54yZSbBIwRJkbRvMU7MthfU4RgoCva98voE-ag",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{baseUrl}}/booking",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "booking"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Payout",
+      "item": [
+        {
+          "name": "New Request",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Review",
+      "item": [
+        {
+          "name": "Create Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWJjYzFiMjM3Yzk0YjZmN2Y5ZDY1ZGIiLCJlbWFpbCI6ImxpdG9uLm1haG11ZDE3OEBnbWFpbC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc3Mzk5MTQ0NSwiZXhwIjoxNzc2NTgzNDQ1fQ.Wih0tYFtJ37c_LVWskopq4XYgs2og5KtwflqNou1rC8",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"teacherId\": \"69bcc1ad37c94b6f7f9d65d3\",\r\n  \"rating\": 5,\r\n  \"comment\": \"Excellent teacher! Very patient and knowledgeable.\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/review",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "review"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

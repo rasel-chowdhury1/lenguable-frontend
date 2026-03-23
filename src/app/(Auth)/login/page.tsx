@@ -38,7 +38,7 @@ export default function Login() {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormValues>({
-    defaultValues: { email: "liton.mahmud178@gmail.com", password: "123456@Lm", rememberMe: false },
+    defaultValues: { email: "", password: "", rememberMe: false },
   });
 
   const onSubmit = async (data: LoginFormValues) => {
