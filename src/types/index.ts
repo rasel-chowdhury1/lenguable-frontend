@@ -43,6 +43,7 @@ export interface PricingPackage {
   perClassPrice?: number;
   features: string[];
   isMostPopular: boolean;
+  discount?: number;
 }
 
 export type PackageFormValues = {
@@ -52,6 +53,7 @@ export type PackageFormValues = {
   perClassPrice?: number;
   isMostPopular: boolean;
   features: { value: string }[];
+  discount?: number;
 };
 
 export type Lesson = {

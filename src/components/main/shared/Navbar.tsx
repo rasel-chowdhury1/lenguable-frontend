@@ -5,33 +5,24 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Globe, Menu, X } from "lucide-react";
 import logo from "../../../../public/images/logo.png";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { useGetMeQuery } from "@/redux/features/userApi";
 import { useLogoutMutation } from "@/redux/features/authApi";
 import { useRouter, usePathname } from "next/navigation";
 import { toast } from "sonner";
 import GoogleTranslate from "./GoogleTranslate";
+import { Menu, X } from "lucide-react";
 
 const Navbar = () => {
   const router = useRouter();
   const pathname = usePathname();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState("English");
 
   const { data } = useGetMeQuery(undefined);
   const [logout] = useLogoutMutation();
   const user = data?.data;
   // console.log(user, "User data ==>");
-
-  const handleLanguageChange = (lang: string) => setSelectedLanguage(lang);
 
   const handleLogout = async () => {
     try {

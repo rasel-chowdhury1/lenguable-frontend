@@ -88,6 +88,11 @@ export default function PricingPage() {
                           </span>
                         )}
                       </div>
+                      {pkg.discount && (
+                        <p className="text-sm font-semibold text-orange-400 mt-1">
+                          {pkg.discount}% off
+                        </p>
+                      )}
                       <p className="text-sm font-semibold text-[#A9F877] mt-3">
                         {pkg.credits} Credit
                       </p>
