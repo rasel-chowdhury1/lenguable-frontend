@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { baseApi } from "../api/baseApi";
 
 export const teacherApi = baseApi.injectEndpoints({
@@ -10,11 +9,18 @@ export const teacherApi = baseApi.injectEndpoints({
       }),
     }),
     updateTeacher: build.mutation({
-      query: ({ id, ...data }: { id: string; [key: string]: any }) => ({
-        url: `/teacher/${id}`,
-        method: "PATCH",
-        body: data,
-      }),
+      query: ({ id, file, ...data }) => {
+        const formData = new FormData();
+        formData.append("data", JSON.stringify(data));
+        if (file) {
+          formData.append("file", file);
+        }
+        return {
+          url: `/teacher/${id}`,
+          method: "PATCH",
+          body: formData,
+        };
+      },
       invalidatesTags: ["Teacher", "User"],
     }),
   }),

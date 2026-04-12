@@ -2,14 +2,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { CreditCard } from "lucide-react";
+import { CreditCard, Camera } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useGetMeQuery } from "@/redux/features/userApi";
 import { useUpdateStudentMutation } from "@/redux/features/studentApi";
 import { toast } from "sonner";
@@ -24,13 +24,12 @@ interface IBooking {
   _id: string;
   day: string;
   startTime: string;
-  date: string; // "YYYY-MM-DD"
+  date: string;
   meetLink: string;
   createdAt: string;
   teacherId: { _id: string; name: string } | string;
 }
 
-// Returns true if the booking slot is still in the future
 const isUpcoming = (date: string, startTime: string): boolean => {
   const now = new Date();
   const todayISO = now.toISOString().split("T")[0];
@@ -44,7 +43,6 @@ const isUpcoming = (date: string, startTime: string): boolean => {
   return false;
 };
 
-// Format "YYYY-MM-DD" -> "Mar 15, 2026"
 const formatDate = (iso: string) => {
   const [year, month, day] = iso.split("-").map(Number);
   return new Date(year, month - 1, day).toLocaleDateString("en-US", {
@@ -56,8 +54,12 @@ const formatDate = (iso: string) => {
 
 export default function MyAccountPage() {
   const { data, isLoading } = useGetMeQuery(undefined);
-  const userData = data?.data || [];
-  const studentData = userData?.student || [];
+  const userData = data?.data || {};
+  const studentData = userData?.student || {};
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const { register, handleSubmit, reset } = useForm<FormValues>({
     defaultValues: {
@@ -77,30 +79,41 @@ export default function MyAccountPage() {
         aboutMe: studentData?.aboutMe || "",
       });
     }
-  }, [isLoading, userData, studentData, reset]);
+  }, [isLoading]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setSelectedFile(file);
+    setPreviewImage(URL.createObjectURL(file));
+  };
 
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
     if (!studentData._id) return;
     try {
       const res = await updateStudent({
         id: studentData._id,
+        name: values.name,
         aboutMe: values.aboutMe,
-        interests: values.interests.split(",").map((i) => i.trim()),
+        interests: values.interests
+          .split(",")
+          .map((i) => i.trim())
+          .filter(Boolean),
+        ...(selectedFile && { file: selectedFile }),
       }).unwrap();
       toast.success(res?.message || "Profile updated successfully!");
+      setSelectedFile(null);
     } catch (err: any) {
       toast.error(err?.data?.message || "Failed to update profile.");
     }
   };
 
-  // Count upcoming and taken classes using booking.date
   const bookings: IBooking[] = studentData?.booking ?? [];
   const upcomingCount = bookings.filter((b) =>
     isUpcoming(b.date, b.startTime),
   ).length;
   const takenCount = bookings.length - upcomingCount;
 
-  // Recent activity: show only the earliest upcoming class + past classes (max 5 total)
   const upcomingBookings = bookings
     .filter((b) => isUpcoming(b.date, b.startTime))
     .sort(
@@ -115,6 +128,13 @@ export default function MyAccountPage() {
   const nextUpcoming = upcomingBookings.slice(0, 1);
   const recentBookings = [...nextUpcoming, ...pastBookings].slice(0, 5);
 
+  const avatarSrc = previewImage || studentData.profilePicture || null;
+
+  const avatarFallback = (studentData.name || userData.name || "NA")
+    .split(" ")
+    .map((n: string) => n[0])
+    .join("");
+
   return (
     <div className="max-w-5xl mx-auto p-5 lg:my-20">
       <h1 className="text-2xl font-semibold mb-5">My Account</h1>
@@ -126,15 +146,31 @@ export default function MyAccountPage() {
             <CardTitle className="text-base">Personal Information</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
+            {/* Avatar with upload button */}
             <div className="flex justify-center">
-              <Avatar className="h-20 w-20">
-                <AvatarFallback className="text-lg font-medium bg-gray-100 text-gray-600">
-                  {(userData.name || "NA")
-                    .split(" ")
-                    .map((n: string) => n[0])
-                    .join("")}
-                </AvatarFallback>
-              </Avatar>
+              <div className="relative">
+                <Avatar className="h-20 w-20">
+                  {avatarSrc && <AvatarImage src={avatarSrc} alt="Profile" />}
+                  <AvatarFallback className="text-lg font-medium bg-gray-100 text-gray-600">
+                    {avatarFallback}
+                  </AvatarFallback>
+                </Avatar>
+                {/* Camera icon overlay */}
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="absolute bottom-0 right-0 bg-white border border-gray-200 rounded-full p-1 shadow-sm hover:bg-gray-50"
+                >
+                  <Camera className="h-3.5 w-3.5 text-gray-600" />
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
+              </div>
             </div>
 
             <form className="space-y-3" onSubmit={handleSubmit(onSubmit)}>
@@ -150,14 +186,17 @@ export default function MyAccountPage() {
 
               <div className="space-y-1.5">
                 <label className="text-sm font-medium">Interests</label>
-                <Input {...register("interests")} />
+                <Input
+                  {...register("interests")}
+                  placeholder="e.g. Math, Science, History"
+                />
               </div>
 
               <div className="space-y-1.5">
                 <label className="text-sm font-medium">About Me</label>
                 <Textarea
                   {...register("aboutMe")}
-                  placeholder="About me"
+                  placeholder="Tell us about yourself"
                   className="resize-none min-h-20"
                 />
               </div>
