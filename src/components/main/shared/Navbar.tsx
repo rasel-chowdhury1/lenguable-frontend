@@ -35,6 +35,12 @@ const Navbar = () => {
     }
   };
 
+  const getDashboardUrl = () => {
+    if (user?.role === "STUDENT") return "/dashboard/student/lessons";
+    if (user?.role === "TEACHER") return "/dashboard/teacher/schedules";
+    return "/";
+  };
+
   const links = [
     { name: "Our Pricing", href: "/#pricing" },
     { name: "About Us", href: "/about-us" },
@@ -72,9 +78,7 @@ const Navbar = () => {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            {/* Language Translate */}
             <GoogleTranslate />
-            {/* Conditional Auth Buttons */}
             {user ? (
               <>
                 <Button
@@ -85,33 +89,13 @@ const Navbar = () => {
                   Logout
                 </Button>
 
-                {/* Role-based Dashboard */}
-                {user?.role &&
-                user?.student?.payment?.some(
-                  (p: any) => p.status === "completed",
-                ) ? (
-                  <Link
-                    href={`/dashboard/${
-                      user.role === "STUDENT" && "student/lessons"
-                    }`}
-                  >
-                    <Button variant="outline" className="hover:cursor-pointer">
-                      Dashboard
-                    </Button>
-                  </Link>
-                ) : (
-                  <Link
-                    href={`/dashboard/${
-                      user.role === "TEACHER" && "teacher/schedules"
-                    }`}
-                  >
-                    <Button variant="outline" className="hover:cursor-pointer">
-                      Dashboard
-                    </Button>
-                  </Link>
-                )}
+                <Link href={getDashboardUrl()}>
+                  <Button variant="outline" className="hover:cursor-pointer">
+                    Dashboard
+                  </Button>
+                </Link>
 
-                <Link href="/book">
+                <Link href="#">
                   <Button className="bg-[#A9F877] hover:bg-[#C1FF72] text-black">
                     Book Now
                   </Button>
@@ -130,7 +114,7 @@ const Navbar = () => {
                     Sign Up
                   </Button>
                 </Link>
-                <Link href="/#">
+                <Link href="#">
                   <Button className="bg-[#A9F877] hover:bg-[#C1FF72] text-black hover:cursor-pointer">
                     Book Now
                   </Button>
@@ -164,10 +148,8 @@ const Navbar = () => {
               </Link>
             ))}
 
-            {/* Language Translate */}
             <GoogleTranslate />
 
-            {/* Auth Buttons for Mobile */}
             {user ? (
               <>
                 <Button
@@ -180,14 +162,15 @@ const Navbar = () => {
                 >
                   Logout
                 </Button>
-                {user.role && (
-                  <Link href={`/dashboard/${user.role.toLowerCase()}`}>
-                    <Button variant="outline" className="w-full mt-3">
-                      Dashboard
-                    </Button>
-                  </Link>
-                )}
-                <Link href="/#" onClick={() => setMobileMenuOpen(false)}>
+                <Link
+                  href={getDashboardUrl()}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <Button variant="outline" className="w-full mt-3">
+                    Dashboard
+                  </Button>
+                </Link>
+                <Link href="#" onClick={() => setMobileMenuOpen(false)}>
                   <Button className="w-full mt-3">Book Now</Button>
                 </Link>
               </>
@@ -203,7 +186,7 @@ const Navbar = () => {
                     Sign Up
                   </Button>
                 </Link>
-                <Link href="/book" onClick={() => setMobileMenuOpen(false)}>
+                <Link href="#" onClick={() => setMobileMenuOpen(false)}>
                   <Button className="w-full mt-3">Book Now</Button>
                 </Link>
               </>
