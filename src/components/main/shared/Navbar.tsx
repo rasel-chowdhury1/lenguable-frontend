@@ -95,7 +95,7 @@ const Navbar = () => {
                   </Button>
                 </Link>
 
-                <Link href="#">
+                <Link href="/#pricing">
                   <Button className="bg-[#A9F877] hover:bg-[#C1FF72] text-black">
                     Book Now
                   </Button>
@@ -114,7 +114,7 @@ const Navbar = () => {
                     Sign Up
                   </Button>
                 </Link>
-                <Link href="#">
+                <Link href="/#pricing">
                   <Button className="bg-[#A9F877] hover:bg-[#C1FF72] text-black hover:cursor-pointer">
                     Book Now
                   </Button>
@@ -170,7 +170,7 @@ const Navbar = () => {
                     Dashboard
                   </Button>
                 </Link>
-                <Link href="#" onClick={() => setMobileMenuOpen(false)}>
+                <Link href="/#pricing" onClick={() => setMobileMenuOpen(false)}>
                   <Button className="w-full mt-3">Book Now</Button>
                 </Link>
               </>

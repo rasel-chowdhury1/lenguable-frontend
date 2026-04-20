@@ -44,8 +44,18 @@ export default function Login() {
   const onSubmit = async (data: LoginFormValues) => {
     try {
       const res = await login(data).unwrap();
+
       toast.success(res?.message || "Logged in successfully!");
-      router.push("/");
+
+      const role = res?.data?.user?.role;
+
+      if (role === "STUDENT") {
+        router.push("/dashboard/student/lessons");
+      } else if (role === "TEACHER") {
+        router.push("/dashboard/teacher/schedules");
+      } else {
+        router.push("/");
+      }
     } catch (err: any) {
       toast.error(err?.data?.message || "Login failed!");
     }

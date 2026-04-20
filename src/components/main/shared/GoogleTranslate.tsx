@@ -124,7 +124,7 @@ export default function GoogleTranslate() {
         <DropdownMenuTrigger asChild className="w-full">
           <Button
             variant="outline"
-            className="flex items-center gap-2 notranslate"
+            className="flex items-center gap-2 notranslate cursor-pointer"
           >
             <Image
               src={currentLang?.src ?? ""}

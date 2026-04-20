@@ -4,6 +4,7 @@ import img1 from "../../../../public/images/img (1).jpg";
 import img2 from "../../../../public/images/img (2).jpg";
 import img3 from "../../../../public/images/img (3).jpg";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Hero() {
   return (
@@ -25,15 +26,19 @@ export default function Hero() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button
-                size="lg"
-                className="bg-[#A9F877] hover:bg-[#C1FF72] text-black"
-              >
-                Book Now
-              </Button>
-              <Button variant="outline" size="lg">
-                Learn More
-              </Button>
+              <Link href="/#pricing">
+                <Button
+                  size="lg"
+                  className="bg-[#A9F877] hover:bg-[#C1FF72] text-black cursor-pointer"
+                >
+                  Book Now
+                </Button>
+              </Link>
+              <Link href="/about-us">
+                <Button variant="outline" size="lg" className="cursor-pointer">
+                  Learn More
+                </Button>
+              </Link>
             </div>
           </div>
 
@@ -64,7 +69,11 @@ export default function Hero() {
                   <p className="text-xs text-gray-600 mb-3">
                     We matched the student and native English-speaking tutors
                   </p>
-                  <Button className="w-full text-sm bg-[#A9F877] hover:bg-[#C1FF72] text-black">Learn more</Button>
+                  <Link href="/about-us">
+                    <Button className="w-full text-sm bg-[#A9F877] hover:bg-[#C1FF72] text-black cursor-pointer">
+                      Learn more
+                    </Button>
+                  </Link>
                 </div>
               </div>
               <div className="mt-8">
