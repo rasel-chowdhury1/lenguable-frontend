@@ -18,7 +18,7 @@ export const baseApi = createApi({
     "Booking",
     "Note",
     "Payout",
-    "Review"
+    "Review",
   ],
   endpoints: () => ({}),
 });

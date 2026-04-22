@@ -315,6 +315,7 @@ import {
   useGetMyAvailabilityQuery,
   useUpdateSlotMutation,
 } from "@/redux/features/availabilityApi";
+import Schedule from "./_components/Schedule";
 
 type SlotItem = {
   _id: string;
@@ -358,7 +359,6 @@ export default function Calendar() {
     const dateObj = new Date(dateString);
     return dateObj.toLocaleDateString(undefined, { weekday: "long" });
   };
-  
 
   // Create new schedule
   const handleCreateSchedule = async () => {
@@ -514,6 +514,8 @@ export default function Calendar() {
           </Card>
         ))}
       </div>
+      {/* SCHEDULE COMPONENT */}
+      <Schedule />
 
       {/* CREATE MODAL */}
       <Dialog open={open} onOpenChange={setOpen}>
@@ -536,7 +538,7 @@ export default function Calendar() {
             <Input
               type="time"
               value={endTime}
-              onChange={(e) => setEndTime(e.target.value)}  
+              onChange={(e) => setEndTime(e.target.value)}
             />
           </div>
 

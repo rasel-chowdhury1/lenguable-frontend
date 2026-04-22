@@ -37,7 +37,7 @@ const Navbar = () => {
 
   const getDashboardUrl = () => {
     if (user?.role === "STUDENT") return "/dashboard/student/lessons";
-    if (user?.role === "TEACHER") return "/dashboard/teacher/schedules";
+    if (user?.role === "TEACHER") return "/dashboard/teacher/my-schedules";
     return "/";
   };
 
