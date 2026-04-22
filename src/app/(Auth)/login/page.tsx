@@ -52,7 +52,7 @@ export default function Login() {
       if (role === "STUDENT") {
         router.push("/dashboard/student/lessons");
       } else if (role === "TEACHER") {
-        router.push("/dashboard/teacher/schedules");
+        router.push("/dashboard/teacher/my-schedules");
       } else {
         router.push("/");
       }
