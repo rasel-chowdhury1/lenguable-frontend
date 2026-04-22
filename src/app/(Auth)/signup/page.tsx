@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -146,6 +146,19 @@ export default function Signup() {
                         value: 6,
                         message: "Password must be at least 6 characters",
                       },
+                      validate: {
+                        hasUppercase: (v) =>
+                          /[A-Z]/.test(v) ||
+                          "Must contain at least one uppercase letter",
+                        hasLowercase: (v) =>
+                          /[a-z]/.test(v) ||
+                          "Must contain at least one lowercase letter",
+                        hasNumber: (v) =>
+                          /\d/.test(v) || "Must contain at least one number",
+                        hasSpecial: (v) =>
+                          /[@$!%*?&#]/.test(v) ||
+                          "Must contain at least one special character (@$!%*?&#)",
+                      },
                     })}
                   />
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -166,6 +179,15 @@ export default function Signup() {
                     {errors.password.message}
                   </p>
                 )}
+
+                {/* Password requirements hint */}
+                {/* <ul className="text-xs text-muted-foreground space-y-0.5 mt-1">
+                  <li>• At least 8 characters</li>
+                  <li>• One uppercase letter (A-Z)</li>
+                  <li>• One lowercase letter (a-z)</li>
+                  <li>• One number (0-9)</li>
+                  <li>• One special character (@$!%*?&#)</li>
+                </ul> */}
               </div>
 
               {/* Submit */}

@@ -10,11 +10,11 @@ import TeacherProfileModal from "./_components/TeacherProfileModal";
 import { useGetAllAvailabilityQuery } from "@/redux/features/availabilityApi";
 import { useCreateBookingMutation } from "@/redux/features/bookingApi";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface ISlot {
   startTime: string;
   endTime: string;
-  date: string;
   isBooked: boolean;
 }
 
@@ -34,6 +34,7 @@ interface IAvailability {
   _id: string;
   teacherId: ITeacher;
   day: string;
+  date: string;
   slots: ISlot[];
 }
 
@@ -44,16 +45,6 @@ const getInitials = (name: string) =>
     .join("")
     .toUpperCase();
 
-const DAY_ORDER = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-];
-
 const formatShortDate = (iso: string) => {
   const [year, month, day] = iso.split("-").map(Number);
   return new Date(year, month - 1, day).toLocaleDateString("en-US", {
@@ -63,8 +54,10 @@ const formatShortDate = (iso: string) => {
 };
 
 export default function Calendar() {
+  const router = useRouter();
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [openProfile, setOpenProfile] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState<any>(null);
   const [bookingTeacherId, setBookingTeacherId] = useState<string | null>(null);
@@ -74,7 +67,6 @@ export default function Calendar() {
 
   const availability: IAvailability[] = data?.data || [];
 
-  // NEW: current time filter
   const now = new Date();
 
   const scheduleMap: Record<string, { times: Set<string>; date: string }> = {};
@@ -83,27 +75,22 @@ export default function Calendar() {
     item.slots
       .filter((s) => {
         if (s.isBooked) return false;
-
-        const slotDateTime = new Date(`${s.date}T${s.startTime}:00`);
-
-        // Only allow current/future slots
+        const slotDateTime = new Date(`${item.date}T${s.startTime}:00`);
         return slotDateTime >= now;
       })
       .forEach((s) => {
         if (!scheduleMap[item.day]) {
-          scheduleMap[item.day] = { times: new Set(), date: s.date };
+          scheduleMap[item.day] = { times: new Set(), date: item.date };
         }
-
         scheduleMap[item.day].times.add(s.startTime);
-
-        if (s.date < scheduleMap[item.day].date) {
-          scheduleMap[item.day].date = s.date;
+        if (item.date < scheduleMap[item.day].date) {
+          scheduleMap[item.day].date = item.date;
         }
       });
   });
 
   const schedule = Object.entries(scheduleMap)
-    .sort(([a], [b]) => DAY_ORDER.indexOf(a) - DAY_ORDER.indexOf(b))
+    .sort(([, a], [, b]) => a.date.localeCompare(b.date))
     .map(([day, { times, date }]) => ({
       day,
       date,
@@ -114,8 +101,9 @@ export default function Calendar() {
   const availableTeachers = availability.filter(
     (item) =>
       item.day === selectedDay &&
+      item.date === selectedDate &&
       item.slots.some((s) => {
-        const slotDateTime = new Date(`${s.date}T${s.startTime}:00`);
+        const slotDateTime = new Date(`${item.date}T${s.startTime}:00`);
         return (
           s.startTime === selectedTime && !s.isBooked && slotDateTime >= now
         );
@@ -127,10 +115,11 @@ export default function Calendar() {
       setBookingTeacherId(teacherId);
       await createBooking({
         teacherId,
-        day: selectedDay,
+        date: selectedDate,
         startTime: selectedTime,
       }).unwrap();
       toast.success("Class booked successfully!");
+      router.push("/dashboard/student/booking");
     } catch (err: any) {
       toast.error(err?.data?.message || "Failed to book class.");
     } finally {
@@ -177,6 +166,7 @@ export default function Calendar() {
                       onClick={() => {
                         setSelectedTime(time);
                         setSelectedDay(item.day);
+                        setSelectedDate(item.date);
                       }}
                     >
                       <Clock className="h-4 w-4" />
@@ -238,6 +228,7 @@ export default function Calendar() {
                             languages: teacherId.languages ?? [],
                             profile: teacherId.profile,
                             day: selectedDay,
+                            date: selectedDate,
                             startTime: selectedTime,
                           });
                           setOpenProfile(true);

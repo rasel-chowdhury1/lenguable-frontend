@@ -74,16 +74,16 @@ const menus: Record<string, any[]> = {
 
   TEACHER: [
     // { title: "Dashboard", url: "/dashboard/teacher", icon: LayoutDashboard },
-    {
-      title: "My Schedule",
-      url: "/dashboard/teacher/schedules",
-      icon: Clock,
-    },
     // {
     //   title: "My Schedule",
-    //   url: "/dashboard/teacher/my-schedules",
+    //   url: "/dashboard/teacher/schedules",
     //   icon: Clock,
     // },
+    {
+      title: "My Schedule",
+      url: "/dashboard/teacher/my-schedules",
+      icon: Clock,
+    },
     {
       title: "My Students",
       url: "/dashboard/teacher/students",

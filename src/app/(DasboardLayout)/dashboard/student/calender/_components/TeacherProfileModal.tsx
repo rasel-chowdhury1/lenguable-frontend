@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Star } from "lucide-react";
 import { useCreateBookingMutation } from "@/redux/features/bookingApi";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type Teacher = {
   _id: string;
@@ -18,8 +19,8 @@ type Teacher = {
   interests: string[];
   languages: string[];
   profile?: string;
-  // booking context
   day: string;
+  date: string;
   startTime: string;
 };
 
@@ -29,7 +30,16 @@ interface Props {
   teacher: Teacher | null;
 }
 
+const formatShortDate = (iso: string) => {
+  const [year, month, day] = iso.split("-").map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+};
+
 export default function TeacherProfileModal({ open, onClose, teacher }: Props) {
+  const router = useRouter();
   const [createBooking, { isLoading }] = useCreateBookingMutation();
 
   if (!teacher) return null;
@@ -38,11 +48,12 @@ export default function TeacherProfileModal({ open, onClose, teacher }: Props) {
     try {
       await createBooking({
         teacherId: teacher._id,
-        day: teacher.day,
+        date: teacher.date,
         startTime: teacher.startTime,
       }).unwrap();
 
       toast.success("Class booked successfully!");
+      router.push("/dashboard/student/booking");
       onClose();
     } catch (err: any) {
       toast.error(err?.data?.message || "Failed to book class.");
@@ -52,14 +63,12 @@ export default function TeacherProfileModal({ open, onClose, teacher }: Props) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-md p-0 overflow-hidden">
-        {/* BODY */}
         <div className="p-5 space-y-4">
           {/* Avatar + Name */}
           <div className="flex items-center gap-4">
             <Avatar className="h-14 w-14">
               <AvatarFallback>{teacher.initials}</AvatarFallback>
             </Avatar>
-
             <div>
               <h3 className="font-medium">{teacher.name}</h3>
               <div className="flex items-center gap-1 text-sm text-muted-foreground">
@@ -136,6 +145,10 @@ export default function TeacherProfileModal({ open, onClose, teacher }: Props) {
             <p>
               <span className="font-medium text-gray-900">Day: </span>
               {teacher.day}
+            </p>
+            <p>
+              <span className="font-medium text-gray-900">Date: </span>
+              {formatShortDate(teacher.date)}
             </p>
             <p>
               <span className="font-medium text-gray-900">Time: </span>
