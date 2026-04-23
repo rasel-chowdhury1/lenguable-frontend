@@ -1,44 +1,55 @@
-import { Button } from "@/components/ui/button";
-import img1 from "../../../../public/images/img (4).jpg";
+"use client";
+
 import Image from "next/image";
-import Link from "next/link";
+import { useGetCTAQuery } from "@/redux/features/ctaApi";
 
 const CTA1 = () => {
+  const { data, isLoading } = useGetCTAQuery(undefined);
+
+  const cta = data?.data;
+
+  // loading state
+  if (isLoading) {
+    return (
+      <div className="mt-40 flex justify-center">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    );
+  }
+
+  // empty state (important for CMS)
+  if (!cta) {
+    return null;
+  }
+
   return (
     <div className="mt-40">
       <div className="max-w-7xl mx-auto px-5">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* LEFT CONTENT */}
           <div>
+            {/* badge */}
             <div className="inline-block bg-white rounded-full px-4 py-2 text-sm text-gray-700 border border-gray-200 mb-5">
-              GET STARTED
+              {cta.badgeText}
             </div>
+
+            {/* title */}
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
-              Upgrade Your Skills, Build Your Future With Lenguable !
+              {cta.title}
             </h2>
-            <p className="mb-5">
-              At Lenguable, our story is built around one simple goal — helping
-              students speak English with confidence. We combine structured
-              lessons, experienced native tutors, and a clear step-by-step
-              learning path to make progress simple and effective. Every class
-              is designed with purpose, so you always know what you’re learning.
-            </p>
-            <Link href="/about-us">
-              <Button className="text-sm bg-[#A9F877] hover:bg-[#C1FF72] text-black cursor-pointer">
-                Learn more
-              </Button>
-            </Link>
+
+            {/* description */}
+            <p className="text-gray-700">{cta.description}</p>
           </div>
 
-          <div className="bg-gray-200 rounded-lg h-96 overflow-hidden">
-            <div className="w-full h-full bg-linear-to-br from-gray-300 to-gray-200">
-              <Image
-                src={img1}
-                alt="CTA Image"
-                height={384}
-                width={512}
-                className="w-full h-full object-cover rounded-lg"
-              />
-            </div>
+          {/* RIGHT IMAGE */}
+          <div className="bg-gray-200 rounded-lg h-96 overflow-hidden relative">
+            <Image
+              src={cta.image}
+              alt="CTA Image"
+              fill
+              className="object-cover rounded-lg"
+            />
           </div>
         </div>
       </div>
