@@ -1,30 +1,28 @@
-// import { Button } from "@/components/ui/button";
+"use client";
+
+import { useGetCTA2Query } from "@/redux/features/cta2Api";
 
 const CTA2 = () => {
+  const { data, isLoading } = useGetCTA2Query(undefined);
+
+  const cta = Array.isArray(data?.data) ? data.data[0] : data?.data;
+
+  if (isLoading) {
+    return (
+      <div className="mt-40 py-20 bg-[#EEFEE4] text-center">Loading...</div>
+    );
+  }
+
+  if (!cta) return null;
+
   return (
     <div className="mt-40 py-20 bg-[#EEFEE4]">
       <div className="max-w-3xl mx-auto px-5 text-center">
         <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-          Unlock Your Potential With Lenguable
+          {cta.title}
         </h2>
-        <p className="text-gray-600">
-          Lorem ipsum dolor sit amet consectetur. Duis vitae tempus magna ipsum
-          at amet consectetur adipiscing elit sed do eiusmod tempor.
-        </p>
-        {/* <div className="flex flex-wrap justify-center gap-4">
-                    <Button variant="outline">
-                        Join For Free
-                    </Button>
-                    <Button variant="outline">
-                        Join For Free
-                    </Button>
-                    <Button variant="outline">
-                        Join For Free
-                    </Button>
-                    <Button variant="outline">
-                        Join For Free
-                    </Button>
-                </div> */}
+
+        <p className="text-gray-600">{cta.description}</p>
       </div>
     </div>
   );
