@@ -1,9 +1,4 @@
-import {
-  Facebook,
-  Instagram,
-  Linkedin,
-  Youtube,
-} from "lucide-react";
+import { Facebook, Instagram, Linkedin, Mail, Phone } from "lucide-react";
 import logo from "../../../../public/images/logo.png";
 import Image from "next/image";
 
@@ -23,28 +18,28 @@ const Footer = () => {
             />
             <div className="flex space-x-3">
               <a
-                href="#"
+                href="https://www.facebook.com/share/18m4PLKoGs/?mibextid=wwXIfr"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-[#A9F877]"
               >
                 <Facebook className="w-4 h-4" />
               </a>
               <a
-                href="#"
+                href="https://www.instagram.com/lenguable?igsh=MW4wa2E0MDJxMTllaw=="
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-[#A9F877]"
               >
                 <Instagram className="w-4 h-4" />
               </a>
               <a
-                href="#"
+                href="https://www.linkedin.com/company/lenguable/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-[#A9F877]"
               >
                 <Linkedin className="w-4 h-4" />
-              </a>
-              <a
-                href="#"
-                className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-[#A9F877]"
-              >
-                <Youtube className="w-4 h-4" />
               </a>
             </div>
           </div>
@@ -63,13 +58,13 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold text-gray-900 mb-4">Location</h4>
             <address className="text-sm text-gray-600 not-italic">
-              1234 Learning Street
-              <br />
+              The United States of America (USA)
+              {/* <br />
               Education City
               <br />
               State 12345
               <br />
-              Brazil
+              Brazil */}
             </address>
           </div>
 
@@ -77,8 +72,15 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold text-gray-900 mb-4">Contact Info</h4>
             <div className="space-y-2 text-sm text-gray-600">
-              <p>+1 234 567 8900</p>
-              <p>lenguable@gmail.com</p>
+              <div className="flex items-center gap-2">
+                <Phone className="h-4 w-4 text-gray-400" />
+                <p>2108302212</p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Mail className="h-4 w-4 text-gray-400" />
+                <p>lenguable@gmail.com</p>
+              </div>
             </div>
           </div>
         </div>

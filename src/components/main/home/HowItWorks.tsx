@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import img1 from "../../../../public/images/img (4).jpg";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function HowItWorks() {
   return (
@@ -33,9 +34,11 @@ export default function HowItWorks() {
                   </p>
                 </div>
               </div>
-              <Button className="w-full text-sm bg-[#A9F877] hover:bg-[#C1FF72] text-black">
-                Start Learning
-              </Button>
+              <Link href="/about-us">
+                <Button className="w-full text-sm bg-[#A9F877] hover:bg-[#C1FF72] text-black cursor-pointer">
+                  Learn more
+                </Button>
+              </Link>
             </div>
           </div>
 

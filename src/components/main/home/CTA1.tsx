@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import img1 from "../../../../public/images/img (4).jpg";
 import Image from "next/image";
+import Link from "next/link";
 
 const CTA1 = () => {
   return (
@@ -21,9 +22,11 @@ const CTA1 = () => {
               learning path to make progress simple and effective. Every class
               is designed with purpose, so you always know what you’re learning.
             </p>
-            <Button className="bg-[#A9F877] hover:bg-[#C1FF72] text-black">
-              Start Learning
-            </Button>
+            <Link href="/about-us">
+              <Button className="text-sm bg-[#A9F877] hover:bg-[#C1FF72] text-black cursor-pointer">
+                Learn more
+              </Button>
+            </Link>
           </div>
 
           <div className="bg-gray-200 rounded-lg h-96 overflow-hidden">
