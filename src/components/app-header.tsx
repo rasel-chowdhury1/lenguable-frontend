@@ -5,24 +5,18 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "./ui/sidebar";
 import { Button } from "./ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { LogOut, Globe, CreditCard, CalendarPlus, LogIn } from "lucide-react";
-import { useState } from "react";
+import { LogOut, CreditCard, CalendarPlus, LogIn } from "lucide-react";
 import { useGetMeQuery } from "@/redux/features/userApi";
 import { useLogoutMutation } from "@/redux/features/authApi";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Link from "next/link";
 import GoogleTranslate from "./main/shared/GoogleTranslate";
+import { baseApi } from "@/redux/api/baseApi";
+import { store } from "@/redux/store";
 
 const AppHeader = () => {
   const router = useRouter();
-  const [language, setLanguage] = useState<"en" | "es">("en");
   const { data } = useGetMeQuery(undefined);
   const [logout] = useLogoutMutation();
   const user = data?.data;
@@ -31,9 +25,7 @@ const AppHeader = () => {
     try {
       const res = await logout(undefined).unwrap();
       toast.success(res?.message || "User logout successfully!");
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      store.dispatch(baseApi.util.resetApiState());
       router.push("/");
     } catch (err: any) {
       toast.error(err?.data?.message || "Logout failed!");

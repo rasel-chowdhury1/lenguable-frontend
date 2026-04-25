@@ -3,7 +3,6 @@
 
 import { useGetTeacherQuery } from "@/redux/features/teacherApi";
 import { useCreateBookingMutation } from "@/redux/features/bookingApi";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -19,8 +18,6 @@ import {
   Clock,
   Star,
   BookOpen,
-  Globe,
-  Briefcase,
   CheckCircle2,
   Loader2,
 } from "lucide-react";

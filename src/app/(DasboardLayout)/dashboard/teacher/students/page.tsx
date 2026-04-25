@@ -44,13 +44,13 @@ const getCurrentLevel = (unlockedCount: number) => {
 
 export default function MyStudentsPage() {
   const [activeStudent, setActiveStudent] = useState<Student | null>(null);
+  const [search, setSearch] = useState("");
   const { data, isLoading } = useGetMyStudentsQuery(undefined);
 
   const rawStudents = data?.data || [];
 
   const students: Student[] = rawStudents.map((s: any) => {
     const unlockedCount = s.unlockedLessons?.length ?? 0;
-
     return {
       id: s._id,
       name: s.name,
@@ -60,9 +60,22 @@ export default function MyStudentsPage() {
     };
   });
 
+  const filteredStudents = students.filter((s) =>
+    s.name.toLowerCase().includes(search.toLowerCase()),
+  );
+
   return (
     <div className="max-w-7xl mx-auto p-5 mt-10">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">My Students</h1>
+
+      {/* Search */}
+      <input
+        type="text"
+        placeholder="Search students..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="mb-4 w-full max-w-sm border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#A9F877]"
+      />
 
       {/* Students Table */}
       <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
@@ -93,17 +106,19 @@ export default function MyStudentsPage() {
                   Loading students...
                 </TableCell>
               </TableRow>
-            ) : students.length === 0 ? (
+            ) : filteredStudents.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={4}
                   className="text-center text-sm text-gray-400 py-10"
                 >
-                  No students yet.
+                  {search
+                    ? "No students match your search."
+                    : "No students yet."}
                 </TableCell>
               </TableRow>
             ) : (
-              students.map((student) => (
+              filteredStudents.map((student) => (
                 <TableRow key={student.id} className="border-t border-gray-100">
                   <TableCell className="pl-5">
                     <div className="flex items-center gap-3">

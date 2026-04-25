@@ -459,60 +459,64 @@ export default function Calendar() {
 
       {/* SCHEDULE GRID */}
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-5">
-        {schedule.map((item) => (
-          <Card key={item._id} className="min-w-45">
-            <CardContent>
-              <div className="mb-4">
-                <h3 className="font-medium">{item.day}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {new Date(item.date).toLocaleDateString(undefined, {
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </p>
-              </div>
+        {schedule
+          .filter((item) => item.slots.some((slot) => !slot.isBooked))
+          .map((item) => (
+            <Card key={item._id} className="min-w-45">
+              <CardContent>
+                <div className="mb-4">
+                  <h3 className="font-medium">{item.day}</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {new Date(item.date).toLocaleDateString(undefined, {
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </p>
+                </div>
 
-              <div className="space-y-2">
-                {item.slots.map((slot) => (
-                  <div
-                    key={slot._id}
-                    className="flex items-center justify-between gap-2 border rounded-md px-2 py-1"
-                  >
-                    {/* Time display */}
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4" />
-                      <span className="text-sm">
-                        {slot.startTime} - {slot.endTime}
-                      </span>
-                    </div>
+                <div className="space-y-2">
+                  {item.slots
+                    .filter((slot) => !slot.isBooked)
+                    .map((slot) => (
+                      <div
+                        key={slot._id}
+                        className="flex items-center justify-between gap-2 border rounded-md px-2 py-1"
+                      >
+                        {/* Time display */}
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-4 w-4" />
+                          <span className="text-sm">
+                            {slot.startTime} - {slot.endTime}
+                          </span>
+                        </div>
 
-                    {/* Edit & Delete — disabled if booked */}
-                    <div className="flex gap-1">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="p-1"
-                        disabled={slot.isBooked || isUpdating}
-                        onClick={() => handleEdit(item._id, slot)}
-                      >
-                        <Edit className="w-4 h-4 text-primary" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="p-1"
-                        disabled={slot.isBooked || isDeleting}
-                        onClick={() => handleDelete(item._id, slot._id)}
-                      >
-                        <Trash2 className="w-4 h-4 text-destructive" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                        {/* Edit & Delete — disabled if booked */}
+                        <div className="flex gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="p-1"
+                            disabled={slot.isBooked || isUpdating}
+                            onClick={() => handleEdit(item._id, slot)}
+                          >
+                            <Edit className="w-4 h-4 text-primary" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="p-1"
+                            disabled={slot.isBooked || isDeleting}
+                            onClick={() => handleDelete(item._id, slot._id)}
+                          >
+                            <Trash2 className="w-4 h-4 text-destructive" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
       </div>
       {/* SCHEDULE COMPONENT */}
       <Schedule />

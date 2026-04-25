@@ -104,11 +104,11 @@ const menus: Record<string, any[]> = {
     //   url: "/dashboard/teacher/my-students",
     //   icon: Users,
     // },
-    {
-      title: "My Lessons",
-      url: "/dashboard/teacher/lessons",
-      icon: GraduationCap,
-    },
+    // {
+    //   title: "My Lessons",
+    //   url: "/dashboard/teacher/lessons",
+    //   icon: GraduationCap,
+    // },
     {
       title: "My Earnings",
       url: "/dashboard/teacher/my-earnings",
