@@ -15,7 +15,7 @@ interface IApiLesson {
   _id: string;
   title: string;
   level: string;
-  content: string;
+  file: string;
   exercises: string;
   isLock: boolean;
 }
@@ -104,18 +104,12 @@ export function LessonCard({ lesson }: LessonCardProps) {
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-5xl! w-full h-[80vh] flex flex-col">
-          {/* Header */}
           <DialogHeader>
             <DialogTitle>{lesson.title}</DialogTitle>
           </DialogHeader>
 
-          {/* Content (Iframe fills remaining space) */}
           <div className="flex-1">
-            <iframe
-              src={lesson.content.replace("/view", "/preview")}
-              className="w-full h-full border-0"
-              allow="autoplay"
-            />
+            <iframe src={lesson.file} className="w-full h-full border-0" />
           </div>
         </DialogContent>
       </Dialog>

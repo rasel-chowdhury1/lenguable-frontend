@@ -4,7 +4,7 @@ interface IApiLesson {
   _id: string;
   title: string;
   level: string;
-  content: string;
+  file: string; 
   exercises: string;
   isLock: boolean;
 }
