@@ -43,6 +43,11 @@ const menus: Record<string, any[]> = {
       url: "/dashboard/student/lessons",
       icon: GraduationCap,
     },
+    {
+      title: "Teachers",
+      url: "/dashboard/student/teachers",
+      icon: Users,
+    },
     // {
     //   title: "My Lessons",
     //   url: "/dashboard/student/my-lessons",
@@ -132,7 +137,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavItems items={navItems} />
       </SidebarContent>
-{/* 
+      {/* 
       {user && (
         <SidebarFooter>
           <NavUser user={user} />
