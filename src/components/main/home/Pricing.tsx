@@ -20,7 +20,6 @@ export default function PricingPage() {
     try {
       const res = await purchase({ packageId: pkg._id! }).unwrap();
 
-      // Redirect to Stripe Checkout URL
       if (res?.data?.url) {
         window.location.href = res.data.url;
       } else {
@@ -57,6 +56,13 @@ export default function PricingPage() {
             {packages.map((pkg) => {
               const isThisLoading =
                 isLoading && originalArgs?.packageId === pkg._id;
+
+              // Calculate discounted price
+              const finalPrice =
+                pkg.discount && pkg.discount > 0
+                  ? pkg.price - (pkg.price * pkg.discount) / 100
+                  : null;
+
               return (
                 <div
                   key={pkg._id}
@@ -78,25 +84,43 @@ export default function PricingPage() {
                     </h3>
 
                     <div className="mb-1">
+                      {/* Price section */}
                       <div className="flex items-baseline gap-2 flex-wrap">
-                        <span className="text-4xl font-extrabold text-foreground tracking-tight">
-                          ${pkg.price}
-                        </span>
-                        {pkg.perClassPrice && (
-                          <span className="text-sm text-muted-foreground font-medium">
-                            (${pkg.perClassPrice.toFixed(2)} per class)
+                        {finalPrice ? (
+                          <>
+                            {/* Discounted current price */}
+                            <span className="text-4xl font-extrabold text-foreground tracking-tight">
+                              ${finalPrice.toFixed(2)}
+                            </span>
+                            {/* Original price crossed out */}
+                            <span className="text-lg text-muted-foreground line-through">
+                              ${pkg.price}
+                            </span>
+                            {/* Discount badge */}
+                            <span className="text-xs font-semibold bg-orange-400/10 text-orange-400 px-2 py-0.5 rounded-full">
+                              {pkg.discount}% off
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-4xl font-extrabold text-foreground tracking-tight">
+                            ${pkg.price}
                           </span>
                         )}
                       </div>
-                      {pkg.discount && (
-                        <p className="text-sm font-semibold text-orange-400 mt-1">
-                          {pkg.discount}% off
+
+                      {/* Per class price */}
+                      {pkg.perClassPrice && (
+                        <p className="text-sm text-muted-foreground font-medium mt-1">
+                          (${pkg.perClassPrice.toFixed(2)} per class)
                         </p>
                       )}
+
+                      {/* Credits */}
                       <p className="text-sm font-semibold text-[#A9F877] mt-3">
                         {pkg.credits} Credit
                       </p>
 
+                      {/* Features */}
                       <ul className="space-y-2 my-5">
                         {pkg.features.map((feature, index) => (
                           <li
@@ -110,7 +134,7 @@ export default function PricingPage() {
                       </ul>
 
                       <Button
-                        className="w-full mt-auto bg-[#A9F877] hover:bg-[#C1FF72]"
+                        className="w-full mt-auto bg-[#A9F877] hover:bg-[#C1FF72] text-black"
                         onClick={() => handlePurchase(pkg)}
                         disabled={isThisLoading}
                       >
