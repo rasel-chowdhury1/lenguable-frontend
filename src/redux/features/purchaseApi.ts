@@ -24,7 +24,7 @@ import { baseApi } from "../api/baseApi";
 export const purchaseApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     purchase: build.mutation({
-      query: (data: { packageId: string }) => ({
+      query: (data: { packageId: string; discountCode?: string }) => ({
         url: "/purchase/checkout",
         method: "POST",
         body: data,
@@ -43,4 +43,8 @@ export const purchaseApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { usePurchaseMutation, useGetAllPurchasesQuery, useVerifySessionQuery } = purchaseApi;
+export const {
+  usePurchaseMutation,
+  useGetAllPurchasesQuery,
+  useVerifySessionQuery,
+} = purchaseApi;

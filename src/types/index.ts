@@ -81,3 +81,8 @@ export type ResourceFormData = {
   title: string;
   type: string;
 };
+
+export type PurchasePayload = {
+  packageId: string;
+  discountCode?: string;
+}

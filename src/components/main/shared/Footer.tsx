@@ -86,7 +86,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-gray-100 pt-8 flex flex-col sm:flex-row justify-between items-center text-sm text-gray-600">
-          <p>© 2025 Lenguable. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Lenguable. All rights reserved.</p>
           <div className="flex space-x-4 mt-4 sm:mt-0">
             <a href="#" className="hover:text-gray-900">
               Terms

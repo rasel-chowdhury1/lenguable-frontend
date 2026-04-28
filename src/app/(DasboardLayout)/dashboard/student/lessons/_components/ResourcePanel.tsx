@@ -1,9 +1,12 @@
 "use client";
 
+import { ExternalLink } from "lucide-react";
+
 interface ResourceItem {
   _id: string;
   title: string;
   type: string;
+  url: string;
 }
 
 interface ResourcePanelProps {
@@ -14,10 +17,20 @@ interface ResourcePanelProps {
 function ResourceCard({ item }: { item: ResourceItem }) {
   return (
     <div className="border border-gray-200 rounded-xl p-5">
-      <div>
-        <p className="text-sm font-semibold text-gray-900">{item.title}</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm font-semibold text-gray-900">{item.title}</p>
+          <p className="text-xs text-gray-500 mt-1">Type: {item.type}</p>
+        </div>
 
-        <p className="text-xs text-gray-500 mt-1">Type: {item.type}</p>
+        <a
+          href={item.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="p-2 text-sm font-medium border border-gray-300 rounded-md hover:bg-gray-50 transition"
+        >
+          <ExternalLink size={20} className="text-gray-400" />
+        </a>
       </div>
     </div>
   );

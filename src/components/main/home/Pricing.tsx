@@ -1,24 +1,63 @@
-/* eslint-disable react-hooks/immutability */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { Check, Sparkles } from "lucide-react";
+import { useState } from "react";
+import { Check, Sparkles, X } from "lucide-react";
 import { PricingPackage } from "@/types";
 import { useGetAllPackagesQuery } from "@/redux/features/packageApi";
 import { usePurchaseMutation } from "@/redux/features/purchaseApi";
+// import { useValidateDiscountCodeMutation } from "@/redux/features/discountCodeApi";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
+import { useValidateDiscountCodeMutation } from "@/redux/features/discountCodeApi";
 
 export default function PricingPage() {
   const { data } = useGetAllPackagesQuery(undefined);
   const packages: PricingPackage[] = data?.data || [];
 
   const [purchase, { isLoading, originalArgs }] = usePurchaseMutation();
+  const [validateDiscountCode] = useValidateDiscountCodeMutation();
+
+  // Per-package discount code state
+  const [discountCodes, setDiscountCodes] = useState<Record<string, string>>({});
+  const [appliedCodes, setAppliedCodes] = useState<Record<string, boolean>>({});
+  const [validatingId, setValidatingId] = useState<string | null>(null);
+
+  const handleValidateCode = async (pkg: PricingPackage) => {
+    const code = discountCodes[pkg._id!];
+    if (!code?.trim()) return;
+
+    setValidatingId(pkg._id!);
+    try {
+      await validateDiscountCode({
+        code,
+        packageId: pkg._id!,
+      }).unwrap();
+
+      setAppliedCodes((prev) => ({ ...prev, [pkg._id!]: true }));
+      toast.success("Discount code applied!");
+    } catch (err: any) {
+      toast.error(err?.data?.message || "Invalid code");
+    } finally {
+      setValidatingId(null);
+    }
+  };
+
+  const handleRemoveCode = (pkgId: string) => {
+    setAppliedCodes((prev) => ({ ...prev, [pkgId]: false }));
+    setDiscountCodes((prev) => ({ ...prev, [pkgId]: "" }));
+  };
 
   const handlePurchase = async (pkg: PricingPackage) => {
     try {
-      const res = await purchase({ packageId: pkg._id! }).unwrap();
+      const res = await purchase({
+        packageId: pkg._id!,
+        discountCode: appliedCodes[pkg._id!]
+          ? discountCodes[pkg._id!]
+          : undefined,
+      }).unwrap();
 
       if (res?.data?.url) {
         window.location.href = res.data.url;
@@ -47,17 +86,16 @@ export default function PricingPage() {
             <div className="w-16 h-16 mx-auto mb-4 rounded-lg border border-border flex items-center justify-center">
               <Sparkles className="w-8 h-8 text-muted-foreground/40" />
             </div>
-            <p className="font-semibold text-foreground">
-              No packages available
-            </p>
+            <p className="font-semibold text-foreground">No packages available</p>
           </div>
         ) : (
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {packages.map((pkg) => {
               const isThisLoading =
                 isLoading && originalArgs?.packageId === pkg._id;
+              const isThisValidating = validatingId === pkg._id;
+              const isCodeApplied = appliedCodes[pkg._id!];
 
-              // Calculate discounted price
               const finalPrice =
                 pkg.discount && pkg.discount > 0
                   ? pkg.price - (pkg.price * pkg.discount) / 100
@@ -83,20 +121,17 @@ export default function PricingPage() {
                       {pkg.name}
                     </h3>
 
+                    {/* Price */}
                     <div className="mb-1">
-                      {/* Price section */}
                       <div className="flex items-baseline gap-2 flex-wrap">
                         {finalPrice ? (
                           <>
-                            {/* Discounted current price */}
                             <span className="text-4xl font-extrabold text-foreground tracking-tight">
                               ${finalPrice.toFixed(2)}
                             </span>
-                            {/* Original price crossed out */}
                             <span className="text-lg text-muted-foreground line-through">
                               ${pkg.price}
                             </span>
-                            {/* Discount badge */}
                             <span className="text-xs font-semibold bg-orange-400/10 text-orange-400 px-2 py-0.5 rounded-full">
                               {pkg.discount}% off
                             </span>
@@ -108,14 +143,12 @@ export default function PricingPage() {
                         )}
                       </div>
 
-                      {/* Per class price */}
                       {pkg.perClassPrice && (
                         <p className="text-sm text-muted-foreground font-medium mt-1">
                           (${pkg.perClassPrice.toFixed(2)} per class)
                         </p>
                       )}
 
-                      {/* Credits */}
                       <p className="text-sm font-semibold text-[#A9F877] mt-3">
                         {pkg.credits} Credit
                       </p>
@@ -132,6 +165,50 @@ export default function PricingPage() {
                           </li>
                         ))}
                       </ul>
+
+                      {/* ✅ Discount code input — shown for every package */}
+                      <div className="mb-3">
+                        {!isCodeApplied ? (
+                          <div className="flex gap-2">
+                            <Input
+                              placeholder="Discount code"
+                              value={discountCodes[pkg._id!] || ""}
+                              onChange={(e) =>
+                                setDiscountCodes((prev) => ({
+                                  ...prev,
+                                  [pkg._id!]: e.target.value,
+                                }))
+                              }
+                              className="text-sm h-9"
+                            />
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="shrink-0 h-9 text-xs px-3"
+                              onClick={() => handleValidateCode(pkg)}
+                              disabled={
+                                isThisValidating ||
+                                !discountCodes[pkg._id!]?.trim()
+                              }
+                            >
+                              {isThisValidating ? <Spinner /> : "Apply"}
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-green-50 border border-green-200">
+                            <Check className="w-3.5 h-3.5 text-green-600 shrink-0" />
+                            <span className="text-xs text-green-600 font-medium flex-1">
+                              Discount applied
+                            </span>
+                            <button
+                              onClick={() => handleRemoveCode(pkg._id!)}
+                              className="text-muted-foreground hover:text-destructive transition-colors"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        )}
+                      </div>
 
                       <Button
                         className="w-full mt-auto bg-[#A9F877] hover:bg-[#C1FF72] text-black"
