@@ -61,7 +61,7 @@ export type Lesson = {
   level: string;
   title: string;
   content: string;
-  exercises: string;
+  exercises: string[];
 };
 
 export type Resource = {
@@ -74,7 +74,7 @@ export type LessonFormData = {
   level: string;
   title: string;
   content: string;
-  exercises: string;
+  exercises: string[];
 };
 
 export type ResourceFormData = {

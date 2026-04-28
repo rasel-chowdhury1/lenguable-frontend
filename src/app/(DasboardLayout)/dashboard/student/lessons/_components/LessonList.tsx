@@ -4,8 +4,8 @@ interface IApiLesson {
   _id: string;
   title: string;
   level: string;
-  file: string; 
-  exercises: string;
+  file: string;
+  exercises: string[];
   isLock: boolean;
 }
 
