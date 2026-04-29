@@ -26,7 +26,7 @@ export default function OurStory() {
         {/* Paragraphs */}
         <div className="space-y-5 md:space-y-7 text-center text-gray-700 leading-relaxed text-sm md:text-[15px]">
           {story?.paragraphs?.map((paragraph: string, index: number) => (
-            <p key={index}>{paragraph}</p>
+            <p key={index} className="text-justify">{paragraph}</p>
           ))}
         </div>
 
