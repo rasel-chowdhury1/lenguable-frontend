@@ -90,7 +90,9 @@ const AppHeader = () => {
           )}
 
           {/* Language Selector */}
-          <GoogleTranslate />
+          <div className="hidden md:block">
+            <GoogleTranslate />
+          </div>
 
           {/* Login / Logout */}
           {user ? (

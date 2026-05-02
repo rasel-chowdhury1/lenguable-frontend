@@ -84,6 +84,12 @@ function getInitials(name: string): string {
     .slice(0, 2);
 }
 
+// ✅ Helper: check if a slot datetime is in the future
+function isSlotInFuture(date: string, startTime: string): boolean {
+  const slotDateTime = new Date(`${date}T${startTime}:00`);
+  return slotDateTime > new Date();
+}
+
 // Slot Modal
 function SlotModal({
   teacher,
@@ -96,19 +102,26 @@ function SlotModal({
 }) {
   const [createBooking] = useCreateBookingMutation();
   const [loadingSlot, setLoadingSlot] = useState<string | null>(null);
-  // Track which slot was just booked so we can show a brief success state
   const [justBookedKey, setJustBookedKey] = useState<string | null>(null);
   const router = useRouter();
 
   if (!teacher) return null;
 
-  // Only show days that have at least one free slot
+  const todayStr = new Date().toLocaleDateString("en-CA"); // "YYYY-MM-DD"
+
+  // ✅ Filter 1: remove past dates entirely
+  // ✅ Filter 2: for today, remove slots whose time has passed
+  // ✅ Filter 3: remove booked slots
   const availabilities = (teacher.availabilities ?? [])
+    .filter((avail) => avail.date >= todayStr) // skip past dates
     .map((avail) => ({
       ...avail,
-      slots: avail.slots.filter((s) => !s.isBooked),
+      slots: avail.slots.filter(
+        (s) => !s.isBooked && isSlotInFuture(avail.date, s.startTime),
+      ),
     }))
-    .filter((avail) => avail.slots.length > 0);
+    .filter((avail) => avail.slots.length > 0) // remove days with no valid slots
+    .sort((a, b) => a.date.localeCompare(b.date)); // sort by date ascending
 
   const slotKey = (date: string, startTime: string) => `${date}__${startTime}`;
 
@@ -274,11 +287,20 @@ function TeacherCard({
   teacher: Teacher;
   onViewSlots: () => void;
 }) {
+  const todayStr = new Date().toLocaleDateString("en-CA");
+
+  // ✅ Free slots count also excludes past slots
   const freeSlots =
-    teacher.availabilities?.reduce(
-      (acc, a) => acc + a.slots.filter((s) => !s.isBooked).length,
-      0,
-    ) ?? 0;
+    teacher.availabilities
+      ?.filter((a) => a.date >= todayStr)
+      .reduce(
+        (acc, a) =>
+          acc +
+          a.slots.filter(
+            (s) => !s.isBooked && isSlotInFuture(a.date, s.startTime),
+          ).length,
+        0,
+      ) ?? 0;
 
   return (
     <Card className="bg-white border border-gray-100 text-gray-900 rounded-xl overflow-hidden group hover:-translate-y-1 transition-all duration-300 hover:shadow-xl hover:shadow-gray-200/80 hover:border-[#A9F877]/40">
@@ -286,11 +308,7 @@ function TeacherCard({
         {/* Top */}
         <div className="flex items-center gap-4 px-5 pt-5 pb-4">
           <Avatar className="h-17 w-17 shrink-0 ring-2 ring-gray-100 group-hover:ring-[#A9F877]/50 transition-all">
-            <AvatarImage
-              src={teacher.profilePicture}
-              alt={teacher.name}
-              // className="object-cover"
-            />
+            <AvatarImage src={teacher.profilePicture} alt={teacher.name} />
             <AvatarFallback className="bg-[#A9F877] text-gray-900 font-bold text-xl">
               {getInitials(teacher.name)}
             </AvatarFallback>
@@ -311,44 +329,6 @@ function TeacherCard({
             )}
           </div>
         </div>
-
-        {/* Badges */}
-        {/* <div className="flex flex-wrap gap-1.5 px-5 pb-3">
-          {teacher.languages?.map((lang) => (
-            <Badge
-              key={lang}
-              variant="outline"
-              className="text-gray-600 border-gray-200 bg-gray-50 text-[11px] font-medium"
-            >
-              {lang}
-            </Badge>
-          ))}
-          {teacher.nationality && (
-            <Badge
-              variant="outline"
-              className="text-gray-500 border-gray-200 bg-gray-50 text-[11px]"
-            >
-              <Globe className="w-2.5 h-2.5 mr-1" />
-              {teacher.nationality}
-            </Badge>
-          )}
-          {teacher.experience != null && (
-            <Badge
-              variant="outline"
-              className="text-gray-500 border-gray-200 bg-gray-50 text-[11px]"
-            >
-              <Briefcase className="w-2.5 h-2.5 mr-1" />
-              {teacher.experience}yr exp
-            </Badge>
-          )}
-        </div> */}
-
-        {/* About */}
-        {/* {teacher.aboutMe && (
-          <p className="px-5 pb-3 text-gray-400 text-sm leading-relaxed line-clamp-2">
-            {teacher.aboutMe}
-          </p>
-        )} */}
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-2 px-5 pb-4">
@@ -389,10 +369,11 @@ function TeacherCard({
         <div className="px-5 pb-5">
           <Button
             onClick={onViewSlots}
-            className="w-full bg-[#A9F877] hover:bg-[#C1FF72] text-gray-900 font-semibold text-sm rounded-lg h-10 shadow-none border-0 transition-colors"
+            disabled={freeSlots === 0}
+            className="w-full bg-[#A9F877] hover:bg-[#C1FF72] text-gray-900 font-semibold text-sm rounded-lg h-10 shadow-none border-0 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <CalendarDays className="w-4 h-4 mr-2" />
-            View Available Slots
+            {freeSlots === 0 ? "No Slots Available" : "View Available Slots"}
           </Button>
         </div>
       </CardContent>

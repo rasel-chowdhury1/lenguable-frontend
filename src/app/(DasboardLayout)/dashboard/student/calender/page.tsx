@@ -143,7 +143,7 @@ export default function Calendar() {
           No availability found.
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-5">
           {schedule.map((item) => (
             <Card key={item.day} className="min-w-45">
               <CardContent>

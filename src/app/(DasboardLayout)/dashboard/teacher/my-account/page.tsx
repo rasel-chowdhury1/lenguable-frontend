@@ -26,7 +26,7 @@ interface User {
     totalReviews?: number;
     experience?: number;
     languages?: string[];
-    nationality?: string;
+    country?: string;
     interests?: string[];
     aboutMe?: string;
     profilePicture?: string;
@@ -49,7 +49,7 @@ export default function MyAccountPage() {
 
   const [formData, setFormData] = useState({
     name: user?.name || "",
-    nationality: teacher?.nationality || "",
+    country: teacher?.country || "",
     experience: teacher?.experience ?? 0,
     languages: (teacher?.languages || []).join(", "),
     interests: (teacher?.interests || []).join(", "),
@@ -60,7 +60,7 @@ export default function MyAccountPage() {
     if (!isLoading && user) {
       setFormData({
         name: user?.name || "",
-        nationality: teacher?.nationality || "",
+        country: teacher?.country || "",
         experience: teacher?.experience ?? 0,
         languages: (teacher?.languages || []).join(", "),
         interests: (teacher?.interests || []).join(", "),
@@ -88,7 +88,7 @@ export default function MyAccountPage() {
       await updateTeacher({
         id: teacher._id,
         name: formData.name,
-        nationality: formData.nationality,
+        country: formData.country,
         experience: Number(formData.experience),
         languages: formData.languages.split(",").map((l) => l.trim()),
         interests: formData.interests.split(",").map((i) => i.trim()),
@@ -161,11 +161,11 @@ export default function MyAccountPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-sm font-medium">Nationality</label>
+                <label className="text-sm font-medium">country</label>
                 <Input
-                  value={formData.nationality}
-                  placeholder="Nationality"
-                  onChange={(e) => handleChange("nationality", e.target.value)}
+                  value={formData.country}
+                  placeholder="country"
+                  onChange={(e) => handleChange("country", e.target.value)}
                 />
               </div>
 
