@@ -11,8 +11,22 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useGetMeQuery } from "@/redux/features/userApi";
 import { useUpdateTeacherMutation } from "@/redux/features/teacherApi";
 import { useGetTeacherReviewsQuery } from "@/redux/features/reviewApi";
+import { useConnectStripeMutation } from "@/redux/features/payoutApi";
 import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
+import { CreditCard, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import countries from "i18n-iso-countries";
+
+// Register English locale
+countries.registerLocale(require("i18n-iso-countries/langs/en.json"));
+
+// Generate country list
+const countryList = Object.entries(countries.getNames("en", { select: "official" })).map(
+  ([code, name]) => ({
+    code,
+    name,
+  })
+);
 
 interface User {
   _id: string;
@@ -30,6 +44,9 @@ interface User {
     interests?: string[];
     aboutMe?: string;
     profilePicture?: string;
+    stripeOnboarded?: boolean;
+    unpaidEarnings?: number;
+    totalPaidOut?: number;
   };
 }
 
@@ -70,6 +87,8 @@ export default function MyAccountPage() {
   }, [user, teacher, isLoading]);
 
   const [updateTeacher, { isLoading: isUpdating }] = useUpdateTeacherMutation();
+  const [connectStripe, { isLoading: isConnecting }] =
+    useConnectStripeMutation();
 
   const handleChange = (key: string, value: string | number) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -99,6 +118,21 @@ export default function MyAccountPage() {
       setSelectedFile(null);
     } catch (err: any) {
       toast.error(err?.data?.message || "Failed to update profile.");
+    }
+  };
+
+  const handleStripeConnect = async () => {
+    if (formData.country !== (teacher?.country || "")) {
+      toast.error("Please save your profile changes (including country) before setting up Stripe payouts.");
+      return;
+    }
+    try {
+      const res = await connectStripe(undefined).unwrap();
+      if (res.url) {
+        window.location.href = res.url;
+      }
+    } catch (err: any) {
+      toast.error(err?.data?.message || "Failed to start Stripe onboarding.");
     }
   };
 
@@ -161,12 +195,19 @@ export default function MyAccountPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-sm font-medium">country</label>
-                <Input
+                <label className="text-sm font-medium">Country</label>
+                <select
                   value={formData.country}
-                  placeholder="country"
                   onChange={(e) => handleChange("country", e.target.value)}
-                />
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <option value="">Select a country</option>
+                  {countryList.map((c) => (
+                    <option key={c.code} value={c.name}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="space-y-1.5">
@@ -286,6 +327,78 @@ export default function MyAccountPage() {
                   ))
                 )}
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Payout Settings */}
+          <Card className="rounded-xl border-2 border-primary/10">
+            <CardContent className="p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="font-semibold">Payout Settings</h2>
+                <CreditCard className="w-5 h-5 text-muted-foreground" />
+              </div>
+
+              {teacher?.stripeOnboarded ? (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-green-600 bg-green-50 p-3 rounded-lg border border-green-100">
+                    <CheckCircle2 className="w-5 h-5" />
+                    <p className="text-sm font-medium">Stripe Account Active</p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-muted p-3 rounded-lg space-y-1">
+                      <p className="text-xs text-muted-foreground">
+                        Unpaid Earnings
+                      </p>
+                      <p className="text-lg font-bold">
+                        ${(teacher?.unpaidEarnings ?? 0).toFixed(2)}
+                      </p>
+                    </div>
+                    <div className="bg-muted p-3 rounded-lg space-y-1">
+                      <p className="text-xs text-muted-foreground">
+                        Total Paid Out
+                      </p>
+                      <p className="text-lg font-bold">
+                        ${(teacher?.totalPaidOut ?? 0).toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-muted-foreground text-center">
+                    Payouts are processed weekly on Sundays.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3 text-amber-600 bg-amber-50 p-3 rounded-lg border border-amber-100">
+                    <AlertCircle className="w-5 h-5 mt-0.5 shrink-0" />
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium">
+                        Onboarding Required
+                      </p>
+                      <p className="text-xs">
+                        Set up your Stripe Connect account to start receiving
+                        payouts for your classes.
+                      </p>
+                    </div>
+                  </div>
+
+                  <Button
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+                    onClick={handleStripeConnect}
+                    disabled={isConnecting}
+                  >
+                    {isConnecting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Connecting...
+                      </>
+                    ) : (
+                      "Set up Stripe Payouts"
+                    )}
+                  </Button>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

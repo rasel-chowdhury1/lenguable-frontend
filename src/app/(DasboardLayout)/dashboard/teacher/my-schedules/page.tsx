@@ -388,7 +388,7 @@ export default function Calendar() {
 
   const getDayName = (dateString: string) => {
     if (!dateString) return "";
-    return new Date(dateString + "T00:00").toLocaleDateString(undefined, {
+    return new Date(dateString + "T00:00").toLocaleDateString("en-US", {
       weekday: "long",
     });
   };
@@ -400,8 +400,32 @@ export default function Calendar() {
     });
   };
 
+  const formatTime = (timeString: string) => {
+    if (!timeString) return "";
+    if (timeString.includes("T")) {
+      return new Date(timeString).toLocaleTimeString(undefined, {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    }
+    return timeString;
+  };
+
+  const get24hTime = (timeString: string) => {
+    if (!timeString) return "";
+    if (timeString.includes("T")) {
+      const date = new Date(timeString);
+      return `${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
+    }
+    return timeString;
+  };
+
   // ✅ Helper: check if a slot is in the future (for today's date)
   const isSlotInFuture = (slotStartTime: string) => {
+    if (!slotStartTime) return false;
+    if (slotStartTime.includes("T")) {
+      return new Date(slotStartTime) > now;
+    }
     const [hour, minute] = slotStartTime.split(":").map(Number);
     const slotTime = new Date();
     slotTime.setHours(hour, minute, 0, 0);
@@ -433,12 +457,15 @@ export default function Calendar() {
     }
 
     try {
+      const startIso = new Date(`${date}T${startTime}:00`).toISOString();
+      const endIso = new Date(`${date}T${endTime}:00`).toISOString();
+
       await createAvailability({
         availabilities: [
           {
             day: getDayName(date),
             date,
-            slots: [{ startTime, endTime }],
+            slots: [{ startTime: startIso, endTime: endIso }],
           },
         ],
       }).unwrap();
@@ -457,10 +484,10 @@ export default function Calendar() {
     setEditingSlot({
       availabilityId,
       slotId: slot._id,
-      time: `${slot.startTime} - ${slot.endTime}`,
+      time: `${formatTime(slot.startTime)} - ${formatTime(slot.endTime)}`,
     });
-    setStartTime(slot.startTime);
-    setEndTime(slot.endTime);
+    setStartTime(get24hTime(slot.startTime));
+    setEndTime(get24hTime(slot.endTime));
     setEditOpen(true);
   };
 
@@ -565,7 +592,7 @@ export default function Calendar() {
                         <div className="flex items-center gap-2">
                           <Clock className="h-4 w-4" />
                           <span className="text-sm">
-                            {slot.startTime} - {slot.endTime}
+                            {formatTime(slot.startTime)} - {formatTime(slot.endTime)}
                           </span>
                         </div>
 
