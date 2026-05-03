@@ -1,14 +1,14 @@
 import Hero from "@/components/main/about/Hero";
-import Vision from "@/components/main/about/Vision";
+import HowItWorks from "@/components/main/about/HowItWorks";
+import CTA1 from "@/components/main/home/CTA1";
 import CTA2 from "@/components/main/home/CTA2";
-import HowItWorks from "@/components/main/home/HowItWorks";
 import Testimonials from "@/components/main/home/Testimonials";
 
 const page = () => {
   return (
     <div className="pt-5">
       <Hero />
-      <Vision />
+      <CTA1 />
       <HowItWorks />
       <Testimonials />
       <CTA2 />

@@ -21,7 +21,7 @@ export default function MyLessonsPage() {
   const { data, isLoading } = useGetMyLessonsQuery(undefined);
   // const { data, isLoading } = useGetAllLessonsQuery(undefined);
   const apiLessons = data?.data || [];
-  console.log(apiLessons, "Lesson ==>");
+  // console.log(apiLessons, "Lesson ==>");
 
   // Resources API
   const { data: resourceData, isLoading: resourceLoading } =

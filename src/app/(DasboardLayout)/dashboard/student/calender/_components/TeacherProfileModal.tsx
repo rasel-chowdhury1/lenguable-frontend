@@ -38,6 +38,18 @@ const formatShortDate = (iso: string) => {
   });
 };
 
+// Format ISO or HH:MM time string to readable time
+const formatTime = (timeString: string) => {
+  if (!timeString) return "";
+  if (timeString.includes("T")) {
+    return new Date(timeString).toLocaleTimeString(undefined, {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+  return timeString;
+};
+
 export default function TeacherProfileModal({ open, onClose, teacher }: Props) {
   const router = useRouter();
   const [createBooking, { isLoading }] = useCreateBookingMutation();
@@ -50,6 +62,7 @@ export default function TeacherProfileModal({ open, onClose, teacher }: Props) {
         teacherId: teacher._id,
         date: teacher.date,
         startTime: teacher.startTime,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       }).unwrap();
 
       toast.success("Class booked successfully!");
@@ -152,7 +165,7 @@ export default function TeacherProfileModal({ open, onClose, teacher }: Props) {
             </p>
             <p>
               <span className="font-medium text-gray-900">Time: </span>
-              {teacher.startTime}
+              {formatTime(teacher.startTime)}
             </p>
           </div>
         </div>

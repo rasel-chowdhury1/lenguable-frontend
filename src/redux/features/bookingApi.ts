@@ -12,7 +12,11 @@ export const bookingApi = baseApi.injectEndpoints({
     }),
 
     myBooking: build.query({
-      query: () => "/booking",
+      query: () => ({
+        url: "/booking",
+        method: "GET",
+        params: { timezone: Intl.DateTimeFormat().resolvedOptions().timeZone }, 
+      }),
       providesTags: ["Booking"],
     }),
 

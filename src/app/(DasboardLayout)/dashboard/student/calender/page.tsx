@@ -68,30 +68,60 @@ export default function Calendar() {
   const availability: IAvailability[] = data?.data || [];
 
   const now = new Date();
+  const todayStr = new Date().toLocaleDateString("en-CA"); // "YYYY-MM-DD"
 
-  const scheduleMap: Record<string, { times: Set<string>; date: string }> = {};
+  // Format ISO or HH:MM time string to readable time
+  const formatTime = (timeString: string) => {
+    if (!timeString) return "";
+    if (timeString.includes("T")) {
+      return new Date(timeString).toLocaleTimeString(undefined, {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    }
+    return timeString;
+  };
+
+  // Check if a slot is in the future
+  const isSlotInFuture = (slotStartTime: string) => {
+    if (!slotStartTime) return false;
+    if (slotStartTime.includes("T")) {
+      return new Date(slotStartTime) > now;
+    }
+    const [hour, minute] = slotStartTime.split(":").map(Number);
+    const slotTime = new Date();
+    slotTime.setHours(hour, minute, 0, 0);
+    return slotTime > now;
+  };
+
+  const scheduleMap: Record<
+    string,
+    { times: Set<string>; date: string; day: string }
+  > = {};
 
   availability.forEach((item) => {
     item.slots
       .filter((s) => {
         if (s.isBooked) return false;
-        const slotDateTime = new Date(`${item.date}T${s.startTime}:00`);
-        return slotDateTime >= now;
+        if (item.date > todayStr) return true;
+        if (item.date === todayStr) return isSlotInFuture(s.startTime);
+        return false;
       })
       .forEach((s) => {
-        if (!scheduleMap[item.day]) {
-          scheduleMap[item.day] = { times: new Set(), date: item.date };
+        if (!scheduleMap[item.date]) {
+          scheduleMap[item.date] = {
+            times: new Set(),
+            date: item.date,
+            day: item.day,
+          };
         }
-        scheduleMap[item.day].times.add(s.startTime);
-        if (item.date < scheduleMap[item.day].date) {
-          scheduleMap[item.day].date = item.date;
-        }
+        scheduleMap[item.date].times.add(s.startTime);
       });
   });
 
   const schedule = Object.entries(scheduleMap)
-    .sort(([, a], [, b]) => a.date.localeCompare(b.date))
-    .map(([day, { times, date }]) => ({
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([, { times, date, day }]) => ({
       day,
       date,
       times: Array.from(times).sort(),
@@ -103,9 +133,10 @@ export default function Calendar() {
       item.day === selectedDay &&
       item.date === selectedDate &&
       item.slots.some((s) => {
-        const slotDateTime = new Date(`${item.date}T${s.startTime}:00`);
         return (
-          s.startTime === selectedTime && !s.isBooked && slotDateTime >= now
+          s.startTime === selectedTime &&
+          !s.isBooked &&
+          (item.date > todayStr || isSlotInFuture(s.startTime))
         );
       }),
   );
@@ -117,6 +148,7 @@ export default function Calendar() {
         teacherId,
         date: selectedDate,
         startTime: selectedTime,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       }).unwrap();
       toast.success("Class booked successfully!");
       router.push("/dashboard/student/booking");
@@ -170,7 +202,7 @@ export default function Calendar() {
                       }}
                     >
                       <Clock className="h-4 w-4" />
-                      {time}
+                      {formatTime(time)}
                     </Button>
                   ))}
                 </div>
@@ -183,7 +215,7 @@ export default function Calendar() {
       {selectedTime && (
         <div className="mt-10">
           <h2 className="text-lg font-semibold mb-6">
-            Available Teachers – {selectedDay} at {selectedTime}
+            Available Teachers – {selectedDay} at {formatTime(selectedTime)}
           </h2>
 
           {availableTeachers.length === 0 ? (

@@ -30,7 +30,16 @@ export const formatShortDate = (iso: string): string => {
   });
 };
 
+// Handles both ISO strings and HH:MM format
 export const formatTime = (time24: string, dateISO?: string): string => {
+  // If it's an ISO string, parse directly — browser converts to local automatically
+  if (time24.includes("T")) {
+    return new Date(time24).toLocaleTimeString(getLocale(), {
+      hour: "numeric",
+      minute: "2-digit",
+    });
+  }
+
   const date = dateISO
     ? convertUTCTimeToLocal(dateISO, time24)
     : (() => {
@@ -39,6 +48,7 @@ export const formatTime = (time24: string, dateISO?: string): string => {
         d.setHours(h, m, 0, 0);
         return d;
       })();
+
   return date.toLocaleTimeString(getLocale(), {
     hour: "numeric",
     minute: "2-digit",
@@ -53,7 +63,27 @@ export const formatTimestamp = (isoTimestamp: string): string => {
   });
 };
 
+// Handles both ISO strings and HH:MM format
 export const isUpcoming = (date: string, startTime: string): boolean => {
+  if (startTime.includes("T")) {
+    return new Date(startTime) > new Date();
+  }
   const slotUTC = convertUTCTimeToLocal(date, startTime);
   return slotUTC > new Date();
+};
+
+// Extract local YYYY-MM-DD and HH:MM from ISO or plain HH:MM
+// Use this before sending time to backend
+export const extractLocalDateTime = (
+  date: string,
+  time: string,
+): { bookingDate: string; bookingTime: string } => {
+  if (time.includes("T")) {
+    const dt = new Date(time);
+    return {
+      bookingDate: dt.toLocaleDateString("en-CA"), // YYYY-MM-DD
+      bookingTime: `${dt.getHours().toString().padStart(2, "0")}:${dt.getMinutes().toString().padStart(2, "0")}`,
+    };
+  }
+  return { bookingDate: date, bookingTime: time };
 };

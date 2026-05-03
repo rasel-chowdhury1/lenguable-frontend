@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
@@ -11,22 +12,20 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useGetMeQuery } from "@/redux/features/userApi";
 import { useUpdateTeacherMutation } from "@/redux/features/teacherApi";
 import { useGetTeacherReviewsQuery } from "@/redux/features/reviewApi";
-import { useConnectStripeMutation } from "@/redux/features/payoutApi";
 import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
-import { CreditCard, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import countries from "i18n-iso-countries";
 
 // Register English locale
 countries.registerLocale(require("i18n-iso-countries/langs/en.json"));
 
 // Generate country list
-const countryList = Object.entries(countries.getNames("en", { select: "official" })).map(
-  ([code, name]) => ({
-    code,
-    name,
-  })
-);
+const countryList = Object.entries(
+  countries.getNames("en", { select: "official" }),
+).map(([code, name]) => ({
+  code,
+  name,
+}));
 
 interface User {
   _id: string;
@@ -41,6 +40,7 @@ interface User {
     experience?: number;
     languages?: string[];
     country?: string;
+    nationality?: string;
     interests?: string[];
     aboutMe?: string;
     profilePicture?: string;
@@ -67,6 +67,7 @@ export default function MyAccountPage() {
   const [formData, setFormData] = useState({
     name: user?.name || "",
     country: teacher?.country || "",
+    nationality: teacher?.country || "",
     experience: teacher?.experience ?? 0,
     languages: (teacher?.languages || []).join(", "),
     interests: (teacher?.interests || []).join(", "),
@@ -78,6 +79,7 @@ export default function MyAccountPage() {
       setFormData({
         name: user?.name || "",
         country: teacher?.country || "",
+        nationality: teacher?.nationality || "",
         experience: teacher?.experience ?? 0,
         languages: (teacher?.languages || []).join(", "),
         interests: (teacher?.interests || []).join(", "),
@@ -87,8 +89,6 @@ export default function MyAccountPage() {
   }, [user, teacher, isLoading]);
 
   const [updateTeacher, { isLoading: isUpdating }] = useUpdateTeacherMutation();
-  const [connectStripe, { isLoading: isConnecting }] =
-    useConnectStripeMutation();
 
   const handleChange = (key: string, value: string | number) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -108,6 +108,7 @@ export default function MyAccountPage() {
         id: teacher._id,
         name: formData.name,
         country: formData.country,
+        nationality: formData.nationality,
         experience: Number(formData.experience),
         languages: formData.languages.split(",").map((l) => l.trim()),
         interests: formData.interests.split(",").map((i) => i.trim()),
@@ -118,21 +119,6 @@ export default function MyAccountPage() {
       setSelectedFile(null);
     } catch (err: any) {
       toast.error(err?.data?.message || "Failed to update profile.");
-    }
-  };
-
-  const handleStripeConnect = async () => {
-    if (formData.country !== (teacher?.country || "")) {
-      toast.error("Please save your profile changes (including country) before setting up Stripe payouts.");
-      return;
-    }
-    try {
-      const res = await connectStripe(undefined).unwrap();
-      if (res.url) {
-        window.location.href = res.url;
-      }
-    } catch (err: any) {
-      toast.error(err?.data?.message || "Failed to start Stripe onboarding.");
     }
   };
 
@@ -193,9 +179,16 @@ export default function MyAccountPage() {
                 <label className="text-sm font-medium">Email</label>
                 <Input value={user?.email || ""} disabled />
               </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium">Nationality</label>
+                <Input
+                  value={formData.nationality}
+                  onChange={(e) => handleChange("nationality", e.target.value)}
+                />
+              </div>
 
               <div className="space-y-1.5">
-                <label className="text-sm font-medium">Country</label>
+                <label className="text-sm font-medium">Banking Country</label>
                 <select
                   value={formData.country}
                   onChange={(e) => handleChange("country", e.target.value)}
@@ -327,78 +320,6 @@ export default function MyAccountPage() {
                   ))
                 )}
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Payout Settings */}
-          <Card className="rounded-xl border-2 border-primary/10">
-            <CardContent className="p-6 space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="font-semibold">Payout Settings</h2>
-                <CreditCard className="w-5 h-5 text-muted-foreground" />
-              </div>
-
-              {teacher?.stripeOnboarded ? (
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-green-600 bg-green-50 p-3 rounded-lg border border-green-100">
-                    <CheckCircle2 className="w-5 h-5" />
-                    <p className="text-sm font-medium">Stripe Account Active</p>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-muted p-3 rounded-lg space-y-1">
-                      <p className="text-xs text-muted-foreground">
-                        Unpaid Earnings
-                      </p>
-                      <p className="text-lg font-bold">
-                        ${(teacher?.unpaidEarnings ?? 0).toFixed(2)}
-                      </p>
-                    </div>
-                    <div className="bg-muted p-3 rounded-lg space-y-1">
-                      <p className="text-xs text-muted-foreground">
-                        Total Paid Out
-                      </p>
-                      <p className="text-lg font-bold">
-                        ${(teacher?.totalPaidOut ?? 0).toFixed(2)}
-                      </p>
-                    </div>
-                  </div>
-
-                  <p className="text-xs text-muted-foreground text-center">
-                    Payouts are processed weekly on Sundays.
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <div className="flex items-start gap-3 text-amber-600 bg-amber-50 p-3 rounded-lg border border-amber-100">
-                    <AlertCircle className="w-5 h-5 mt-0.5 shrink-0" />
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium">
-                        Onboarding Required
-                      </p>
-                      <p className="text-xs">
-                        Set up your Stripe Connect account to start receiving
-                        payouts for your classes.
-                      </p>
-                    </div>
-                  </div>
-
-                  <Button
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
-                    onClick={handleStripeConnect}
-                    disabled={isConnecting}
-                  >
-                    {isConnecting ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Connecting...
-                      </>
-                    ) : (
-                      "Set up Stripe Payouts"
-                    )}
-                  </Button>
-                </div>
-              )}
             </CardContent>
           </Card>
         </div>

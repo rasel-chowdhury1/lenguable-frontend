@@ -36,20 +36,31 @@ const formatDate = (iso: string) => {
   });
 };
 
-// Format time "10:00" -> "10:00 AM"
+// Handles both HH:MM and ISO strings
 const formatTime = (time: string) => {
+  if (!time) return "";
+  if (time.includes("T")) {
+    return new Date(time).toLocaleTimeString(undefined, {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
   const [hour, minute] = time.split(":").map(Number);
   const ampm = hour >= 12 ? "PM" : "AM";
   const h = hour % 12 || 12;
   return `${h}:${minute.toString().padStart(2, "0")} ${ampm}`;
 };
 
+// Handles both HH:MM and ISO strings
 const isUpcoming = (
   date: string,
   startTime: string,
   now: Date,
   todayISO: string,
 ) => {
+  if (startTime.includes("T")) {
+    return new Date(startTime) > now;
+  }
   if (date > todayISO) return true;
   if (date === todayISO) {
     const [hour, minute] = startTime.split(":").map(Number);
@@ -163,7 +174,6 @@ export default function Schedule() {
         </div>
       </section>
 
-      {/* Modals */}
       <CancelModal
         open={!!cancelId}
         onClose={() => setCancelId(null)}

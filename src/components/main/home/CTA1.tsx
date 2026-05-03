@@ -17,7 +17,7 @@ const CTA1 = () => {
     );
   }
 
-  // empty state (important for CMS)
+  // empty state
   if (!cta) {
     return null;
   }

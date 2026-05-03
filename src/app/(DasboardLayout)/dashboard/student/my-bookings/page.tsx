@@ -154,7 +154,7 @@ export default function MyBookingsPage() {
     };
 
     const handleConfirmCancel = () => {
-        console.log("Class canceled:", selectedBooking);
+        // console.log("Class canceled:", selectedBooking);
         setCancelModalOpen(false);
         setSelectedBooking(null);
     };

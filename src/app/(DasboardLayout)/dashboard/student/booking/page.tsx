@@ -37,6 +37,22 @@ const formatDate = (iso: string) => {
   });
 };
 
+// Handles both HH:MM and ISO strings
+const formatTime = (time: string) => {
+  if (!time) return "";
+  if (time.includes("T")) {
+    return new Date(time).toLocaleTimeString(undefined, {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+  const [hourStr, minute] = time.split(":");
+  const hour = parseInt(hourStr, 10);
+  const ampm = hour >= 12 ? "PM" : "AM";
+  const h12 = hour % 12 || 12;
+  return `${h12}:${minute} ${ampm}`;
+};
+
 export default function MyBookingsPage() {
   const [cancelId, setCancelId] = useState<string | null>(null);
   const [reviewTeacherId, setReviewTeacherId] = useState<string | null>(null);
@@ -45,11 +61,9 @@ export default function MyBookingsPage() {
   const [cancelBooking, { isLoading: isCancelling }] =
     useCancelBookingMutation();
 
-  // Fetch student's existing reviews
   const { data: myReviewsData } = useGetMyReviewsQuery(undefined);
   const myReviews = myReviewsData?.data || [];
 
-  // Build a Set of teacherIds already reviewed
   const reviewedTeacherIds = new Set<string>(
     myReviews.map((r: any) => r.teacherId?._id || r.teacherId),
   );
@@ -61,9 +75,8 @@ export default function MyBookingsPage() {
     tutorName: b.teacherId?.name || "Teacher",
     teacherId: b.teacherId?._id || b.teacherId,
     date: formatDate(b.date),
-    time: b.startTime,
+    time: formatTime(b.startTime), // format properly
     status: b.status as BookingStatus,
-    // reviewed = true if student already has a review for this teacher
     reviewed: reviewedTeacherIds.has(b.teacherId?._id || b.teacherId),
     isUpcoming: b.status === "scheduled",
     meetLink: b.meetLink,

@@ -58,8 +58,15 @@ interface Teacher {
   availabilities?: Availability[];
 }
 
-// Helpers
+// ✅ Handles both ISO strings and HH:MM format
 function formatTime(time: string): string {
+  if (!time) return "";
+  if (time.includes("T")) {
+    return new Date(time).toLocaleTimeString(undefined, {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
   const [hourStr, minute] = time.split(":");
   const hour = parseInt(hourStr, 10);
   const ampm = hour >= 12 ? "PM" : "AM";
@@ -84,9 +91,11 @@ function getInitials(name: string): string {
     .slice(0, 2);
 }
 
-// ✅ Helper: check if a slot datetime is in the future
+// ✅ Handles both ISO strings and HH:MM format
 function isSlotInFuture(date: string, startTime: string): boolean {
-  const slotDateTime = new Date(`${date}T${startTime}:00`);
+  const slotDateTime = startTime.includes("T")
+    ? new Date(startTime)
+    : new Date(`${date}T${startTime}:00`);
   return slotDateTime > new Date();
 }
 
@@ -107,21 +116,18 @@ function SlotModal({
 
   if (!teacher) return null;
 
-  const todayStr = new Date().toLocaleDateString("en-CA"); // "YYYY-MM-DD"
+  const todayStr = new Date().toLocaleDateString("en-CA");
 
-  // ✅ Filter 1: remove past dates entirely
-  // ✅ Filter 2: for today, remove slots whose time has passed
-  // ✅ Filter 3: remove booked slots
   const availabilities = (teacher.availabilities ?? [])
-    .filter((avail) => avail.date >= todayStr) // skip past dates
+    .filter((avail) => avail.date >= todayStr)
     .map((avail) => ({
       ...avail,
       slots: avail.slots.filter(
         (s) => !s.isBooked && isSlotInFuture(avail.date, s.startTime),
       ),
     }))
-    .filter((avail) => avail.slots.length > 0) // remove days with no valid slots
-    .sort((a, b) => a.date.localeCompare(b.date)); // sort by date ascending
+    .filter((avail) => avail.slots.length > 0)
+    .sort((a, b) => a.date.localeCompare(b.date));
 
   const slotKey = (date: string, startTime: string) => `${date}__${startTime}`;
 
@@ -129,11 +135,24 @@ function SlotModal({
     const key = slotKey(date, startTime);
     setLoadingSlot(key);
 
+    // ✅ Extract local YYYY-MM-DD and HH:MM from ISO string
+    let bookingDate = date;
+    let bookingTime = startTime;
+
+    if (startTime.includes("T")) {
+      const dt = new Date(startTime);
+      bookingDate = dt.toLocaleDateString("en-CA");
+      bookingTime = `${dt.getHours().toString().padStart(2, "0")}:${dt.getMinutes().toString().padStart(2, "0")}`;
+    }
+
+    // console.log("📦 Booking payload:", { bookingDate, bookingTime });
+
     try {
       await createBooking({
         teacherId: teacher._id,
-        date,
-        startTime,
+        date: bookingDate,
+        startTime: bookingTime,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       }).unwrap();
 
       setJustBookedKey(key);
@@ -289,7 +308,6 @@ function TeacherCard({
 }) {
   const todayStr = new Date().toLocaleDateString("en-CA");
 
-  // ✅ Free slots count also excludes past slots
   const freeSlots =
     teacher.availabilities
       ?.filter((a) => a.date >= todayStr)
@@ -383,7 +401,8 @@ function TeacherCard({
 
 // Page
 const Page = () => {
-  const { data, isLoading, isError } = useGetTeacherQuery(undefined);
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone; // ✅
+  const { data, isLoading, isError } = useGetTeacherQuery(timezone); // ✅
   const teachers: Teacher[] = data?.data || [];
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
 
