@@ -46,15 +46,17 @@ const AppHeader = () => {
           {/* Credits & Book a Class (Student only) */}
           {user?.role === "STUDENT" && (
             <>
-              <Button
-                size="sm"
-                className="gap-2 bg-[#A9F877] hover:bg-[#C1FF72] text-black"
-              >
-                <CreditCard className="h-4 w-4 shrink-0" />
-                <span className="hidden sm:inline">
-                  {user?.student?.credits} Credit Class
-                </span>
-              </Button>
+              <Link href="/#pricing">
+                <Button
+                  size="sm"
+                  className="gap-2 bg-[#A9F877] hover:bg-[#C1FF72] text-black"
+                >
+                  <CreditCard className="h-4 w-4 shrink-0" />
+                  <span className="hidden sm:inline">
+                    {user?.student?.credits} Credit Class
+                  </span>
+                </Button>
+              </Link>
 
               <Link href="/dashboard/student/calender" passHref>
                 <Button

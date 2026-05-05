@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useGetMeQuery } from "@/redux/features/userApi";
 import { useUpdateStudentMutation } from "@/redux/features/studentApi";
 import { toast } from "sonner";
+import Link from "next/link";
 
 interface FormValues {
   name: string;
@@ -232,9 +233,11 @@ export default function MyAccountPage() {
                     {studentData.credits ?? 0}
                   </h3>
                 </div>
-                <Button size="sm" className="bg-blue-500 hover:bg-blue-600">
-                  Add Credits
-                </Button>
+                <Link href="/#pricing">
+                  <Button size="sm" className="bg-blue-500 hover:bg-blue-600">
+                    Add Credits
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 

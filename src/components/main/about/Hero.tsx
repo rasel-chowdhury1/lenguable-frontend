@@ -1,67 +1,73 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+
 import Image from "next/image";
-import img from "../../../../public/images/img (5).jpg";
+import { useGetAllAboutQuery } from "@/redux/features/aboutApi";
 
 export default function Hero() {
+  const { data, isLoading } = useGetAllAboutQuery(undefined);
+  const about = data?.data?.[0];
+
+  if (isLoading) {
+    return (
+      <div className="mx-auto max-w-7xl px-5 mt-20 animate-pulse">
+        <div className="mb-10 space-y-4">
+          <div className="h-10 bg-gray-200 rounded w-3/4 mx-auto" />
+          <div className="h-4 bg-gray-200 rounded w-full" />
+          <div className="h-4 bg-gray-200 rounded w-5/6 mx-auto" />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
+          <div className="mt-10 space-y-8">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="space-y-2">
+                <div className="h-8 bg-gray-200 rounded w-20" />
+                <div className="h-4 bg-gray-200 rounded w-32" />
+                <div className="h-3 bg-gray-200 rounded w-64" />
+              </div>
+            ))}
+          </div>
+          <div className="h-[50vh] bg-gray-200 rounded-2xl" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!about) return null;
+
   return (
     <div className="mx-auto max-w-7xl px-5 mt-20">
       <div className="mb-10">
         <h2 className="text-2xl lg:text-5xl font-bold text-gray-900 leading-tight text-center">
-          Building Confidence Through <br />
-          Structured English Learning
+          {about.title}
         </h2>
 
         <p className="mt-8 text-gray-600 leading-relaxed lg:text-center text-justify">
-          We are dedicated to helping learners achieve real confidence in
-          English through structured courses and expert guidance. Our platform
-          connects passionate students with experienced native-level teachers
-          who focus on practical communication, fluency, and real-world skills.
-          With a step-by-step curriculum from beginner to advanced levels, we
-          ensure every learner progresses with clarity and purpose. Our goal is
-          not just to teach English but to build confidence, open global
-          opportunities, and create lasting success.
+          {about.description}
         </p>
       </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
-        {/* LEFT CONTENT */}
+        {/* LEFT CONTENT — stats */}
         <div className="mt-10 space-y-8">
-          <div>
-            <h3 className="text-4xl font-bold text-[#A9F877]">30+</h3>
-            <p className="mt-1 font-semibold text-gray-900">Expert Tutors</p>
-            <p className="mt-1 text-sm text-gray-600 max-w-sm">
-              Carefully selected, highly qualified instructors committed to your
-              growth.
-            </p>
-          </div>
-
-          <div>
-            <h3 className="text-4xl font-bold text-[#A9F877]">100+</h3>
-            <p className="mt-1 font-semibold text-gray-900">
-              Structured Lessons
-            </p>
-            <p className="mt-1 text-sm text-gray-600 max-w-sm">
-              Well-designed lessons that build skills step by step.
-            </p>
-          </div>
-
-          <div>
-            <h3 className="text-4xl font-bold text-[#A9F877]">1M+</h3>
-            <p className="mt-1 font-semibold text-gray-900">
-              Learning Hours Delivered
-            </p>
-            <p className="mt-1 text-sm text-gray-600 max-w-sm">
-              Proven impact through consistent, high-quality teaching
-              experience.
-            </p>
-          </div>
+          {about.stats?.map((stat: any, i: number) => (
+            <div key={i}>
+              <h3 className="text-4xl font-bold text-[#A9F877]">
+                {stat.value}
+              </h3>
+              <p className="mt-1 font-semibold text-gray-900">{stat.label}</p>
+              <p className="mt-1 text-sm text-gray-600 max-w-sm">
+                {stat.description}
+              </p>
+            </div>
+          ))}
         </div>
 
         {/* RIGHT IMAGE */}
         <div className="relative w-full">
           <div className="overflow-hidden rounded-2xl">
             <Image
-              src={img}
-              alt="English learning session"
+              src={about.image}
+              alt={about.title}
               width={600}
               height={520}
               className="w-full h-[50vh] object-cover"
