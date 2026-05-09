@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable react-hooks/set-state-in-effect */
@@ -51,7 +52,7 @@ interface User {
 }
 
 export default function MyAccount() {
-  const { data, isLoading } = useGetMeQuery(undefined);
+  const { data, isLoading, refetch } = useGetMeQuery(undefined);
   const user: User | undefined = data?.data;
   const teacher = user?.teacher;
 
@@ -60,6 +61,7 @@ export default function MyAccount() {
   // Show success toast if redirected back from Google OAuth
   useEffect(() => {
     if (searchParams.get("google") === "connected") {
+      refetch(); // Refresh user data to get updated teacher info
       toast.success("Google account connected successfully!");
     }
   }, [searchParams]);
