@@ -5,6 +5,7 @@ import { useGetTeacherQuery } from "@/redux/features/teacherApi";
 import { useCreateBookingMutation } from "@/redux/features/bookingApi";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -20,6 +21,7 @@ import {
   BookOpen,
   CheckCircle2,
   Loader2,
+  Search,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -58,7 +60,6 @@ interface Teacher {
   availabilities?: Availability[];
 }
 
-// ✅ Handles both ISO strings and HH:MM format
 function formatTime(time: string): string {
   if (!time) return "";
   if (time.includes("T")) {
@@ -91,7 +92,6 @@ function getInitials(name: string): string {
     .slice(0, 2);
 }
 
-// ✅ Handles both ISO strings and HH:MM format
 function isSlotInFuture(date: string, startTime: string): boolean {
   const slotDateTime = startTime.includes("T")
     ? new Date(startTime)
@@ -135,7 +135,6 @@ function SlotModal({
     const key = slotKey(date, startTime);
     setLoadingSlot(key);
 
-    // ✅ Extract local YYYY-MM-DD and HH:MM from ISO string
     let bookingDate = date;
     let bookingTime = startTime;
 
@@ -144,8 +143,6 @@ function SlotModal({
       bookingDate = dt.toLocaleDateString("en-CA");
       bookingTime = `${dt.getHours().toString().padStart(2, "0")}:${dt.getMinutes().toString().padStart(2, "0")}`;
     }
-
-    // console.log("📦 Booking payload:", { bookingDate, bookingTime });
 
     try {
       await createBooking({
@@ -179,7 +176,6 @@ function SlotModal({
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-lg bg-white border-gray-100 text-gray-900 p-0 overflow-hidden rounded-2xl shadow-2xl">
-        {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b border-gray-100">
           <DialogHeader>
             <div className="flex items-center gap-3">
@@ -201,7 +197,6 @@ function SlotModal({
           </DialogHeader>
         </div>
 
-        {/* Slot list */}
         <ScrollArea className="max-h-[58vh]">
           <div className="px-6 py-5 space-y-6">
             {availabilities.length === 0 ? (
@@ -215,7 +210,6 @@ function SlotModal({
             ) : (
               availabilities.map((avail) => (
                 <div key={avail._id}>
-                  {/* Day label */}
                   <div className="flex items-center gap-2 mb-3">
                     <CalendarDays className="w-3.5 h-3.5 text-gray-400 shrink-0" />
                     <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">
@@ -227,7 +221,6 @@ function SlotModal({
                     <div className="flex-1 h-px bg-gray-100" />
                   </div>
 
-                  {/* Slots */}
                   <div className="space-y-2">
                     {avail.slots.map((slot) => {
                       const key = slotKey(avail.date, slot.startTime);
@@ -244,7 +237,6 @@ function SlotModal({
                               : "bg-gray-50 border-gray-100 hover:border-[#A9F877]/60 hover:bg-[#A9F877]/5"
                           }`}
                         >
-                          {/* Time */}
                           <div className="flex items-center gap-2">
                             <Clock
                               className={`w-3.5 h-3.5 ${
@@ -259,7 +251,6 @@ function SlotModal({
                             </span>
                           </div>
 
-                          {/* Action */}
                           {isThisBooked ? (
                             <div className="flex items-center gap-1.5 text-green-600 text-xs font-semibold">
                               <CheckCircle2 className="w-4 h-4" />
@@ -323,7 +314,6 @@ function TeacherCard({
   return (
     <Card className="bg-white border border-gray-100 text-gray-900 rounded-xl overflow-hidden group hover:-translate-y-1 transition-all duration-300 hover:shadow-xl hover:shadow-gray-200/80 hover:border-[#A9F877]/40">
       <CardContent className="p-0">
-        {/* Top */}
         <div className="flex items-center gap-4 px-5 pt-5 pb-4">
           <Avatar className="h-17 w-17 shrink-0 ring-2 ring-gray-100 group-hover:ring-[#A9F877]/50 transition-all">
             <AvatarImage src={teacher.profilePicture} alt={teacher.name} />
@@ -348,7 +338,6 @@ function TeacherCard({
           </div>
         </div>
 
-        {/* Stats */}
         <div className="grid grid-cols-3 gap-2 px-5 pb-4">
           {[
             {
@@ -383,7 +372,6 @@ function TeacherCard({
           ))}
         </div>
 
-        {/* CTA */}
         <div className="px-5 pb-5">
           <Button
             onClick={onViewSlots}
@@ -401,10 +389,22 @@ function TeacherCard({
 
 // Page
 const Page = () => {
-  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone; // ✅
-  const { data, isLoading, isError } = useGetTeacherQuery(timezone); // ✅
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const { data, isLoading, isError } = useGetTeacherQuery(timezone);
   const teachers: Teacher[] = data?.data || [];
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
+  const [searchQuery, setSearchQuery] = useState(""); // 👈 search state
+
+  // 👇 filter teachers by name, nationality, or language
+  const filteredTeachers = teachers.filter((teacher) => {
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return true;
+    return (
+      teacher.name.toLowerCase().includes(q) ||
+      teacher.nationality?.toLowerCase().includes(q) ||
+      teacher.languages?.some((lang) => lang.toLowerCase().includes(q))
+    );
+  });
 
   if (isLoading) {
     return (
@@ -430,7 +430,7 @@ const Page = () => {
   return (
     <div className="min-h-screen px-6 py-12">
       {/* Header */}
-      <header className="text-center mb-10 max-w-xl mx-auto">
+      <header className="text-center mb-8 max-w-xl mx-auto">
         <h1 className="text-4xl font-bold text-gray-900 tracking-tight">
           Find Your Teacher
         </h1>
@@ -439,15 +439,26 @@ const Page = () => {
         </p>
       </header>
 
+      {/* 👇 Search bar */}
+      <div className="max-w-md mx-auto mb-8 relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+        <Input
+          placeholder="Search by name, nationality, or language..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-9"
+        />
+      </div>
+
       {/* Grid */}
-      {teachers.length === 0 ? (
+      {filteredTeachers.length === 0 ? (
         <div className="text-center text-gray-400 mt-16">
-          <CalendarDays className="w-12 h-12 mx-auto mb-4 opacity-30" />
-          <p>No teachers found.</p>
+          <Search className="w-12 h-12 mx-auto mb-4 opacity-30" />
+          <p>No teachers found for &quot;{searchQuery}&quot;</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 max-w-7xl mx-auto">
-          {teachers.map((teacher) => (
+          {filteredTeachers.map((teacher) => (
             <TeacherCard
               key={teacher._id}
               teacher={teacher}
