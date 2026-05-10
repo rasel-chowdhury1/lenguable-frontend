@@ -68,7 +68,6 @@ export default function Calendar() {
   const availability: IAvailability[] = data?.data || [];
 
   const now = new Date();
-  const todayStr = new Date().toLocaleDateString("en-CA"); // "YYYY-MM-DD"
 
   // Format ISO or HH:MM time string to readable time
   const formatTime = (timeString: string) => {
@@ -82,16 +81,23 @@ export default function Calendar() {
     return timeString;
   };
 
-  // Check if a slot is in the future
-  const isSlotInFuture = (slotStartTime: string) => {
+  // Check if a slot's full datetime is at least 24 hours from now
+  const isSlotInFuture = (slotStartTime: string, slotDate: string) => {
     if (!slotStartTime) return false;
+
+    let slotDateTime: Date;
+
     if (slotStartTime.includes("T")) {
-      return new Date(slotStartTime) > now;
+      slotDateTime = new Date(slotStartTime);
+    } else {
+      const [hour, minute] = slotStartTime.split(":").map(Number);
+      const [year, month, day] = slotDate.split("-").map(Number);
+      slotDateTime = new Date(year, month - 1, day, hour, minute, 0, 0);
     }
-    const [hour, minute] = slotStartTime.split(":").map(Number);
-    const slotTime = new Date();
-    slotTime.setHours(hour, minute, 0, 0);
-    return slotTime > now;
+
+    // Slot must be at least 24 hours from now
+    const cutoff = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    return slotDateTime >= cutoff;
   };
 
   const scheduleMap: Record<
@@ -103,9 +109,7 @@ export default function Calendar() {
     item.slots
       .filter((s) => {
         if (s.isBooked) return false;
-        if (item.date > todayStr) return true;
-        if (item.date === todayStr) return isSlotInFuture(s.startTime);
-        return false;
+        return isSlotInFuture(s.startTime, item.date);
       })
       .forEach((s) => {
         if (!scheduleMap[item.date]) {
@@ -136,7 +140,7 @@ export default function Calendar() {
         return (
           s.startTime === selectedTime &&
           !s.isBooked &&
-          (item.date > todayStr || isSlotInFuture(s.startTime))
+          isSlotInFuture(s.startTime, item.date)
         );
       }),
   );

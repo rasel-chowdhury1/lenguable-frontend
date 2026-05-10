@@ -92,11 +92,20 @@ function getInitials(name: string): string {
     .slice(0, 2);
 }
 
+// Returns true only if the slot's full datetime is at least 24 hours from now
 function isSlotInFuture(date: string, startTime: string): boolean {
-  const slotDateTime = startTime.includes("T")
-    ? new Date(startTime)
-    : new Date(`${date}T${startTime}:00`);
-  return slotDateTime > new Date();
+  let slotDateTime: Date;
+
+  if (startTime.includes("T")) {
+    slotDateTime = new Date(startTime);
+  } else {
+    const [year, month, day] = date.split("-").map(Number);
+    const [hour, minute] = startTime.split(":").map(Number);
+    slotDateTime = new Date(year, month - 1, day, hour, minute, 0, 0);
+  }
+
+  const cutoff = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  return slotDateTime >= cutoff;
 }
 
 // Slot Modal
@@ -116,10 +125,7 @@ function SlotModal({
 
   if (!teacher) return null;
 
-  const todayStr = new Date().toLocaleDateString("en-CA");
-
   const availabilities = (teacher.availabilities ?? [])
-    .filter((avail) => avail.date >= todayStr)
     .map((avail) => ({
       ...avail,
       slots: avail.slots.filter(
@@ -297,19 +303,15 @@ function TeacherCard({
   teacher: Teacher;
   onViewSlots: () => void;
 }) {
-  const todayStr = new Date().toLocaleDateString("en-CA");
-
   const freeSlots =
-    teacher.availabilities
-      ?.filter((a) => a.date >= todayStr)
-      .reduce(
-        (acc, a) =>
-          acc +
-          a.slots.filter(
-            (s) => !s.isBooked && isSlotInFuture(a.date, s.startTime),
-          ).length,
-        0,
-      ) ?? 0;
+    teacher.availabilities?.reduce(
+      (acc, a) =>
+        acc +
+        a.slots.filter(
+          (s) => !s.isBooked && isSlotInFuture(a.date, s.startTime),
+        ).length,
+      0,
+    ) ?? 0;
 
   return (
     <Card className="bg-white border border-gray-100 text-gray-900 rounded-xl overflow-hidden group hover:-translate-y-1 transition-all duration-300 hover:shadow-xl hover:shadow-gray-200/80 hover:border-[#A9F877]/40">
@@ -393,9 +395,8 @@ const Page = () => {
   const { data, isLoading, isError } = useGetTeacherQuery(timezone);
   const teachers: Teacher[] = data?.data || [];
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
-  const [searchQuery, setSearchQuery] = useState(""); // 👈 search state
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // 👇 filter teachers by name, nationality, or language
   const filteredTeachers = teachers.filter((teacher) => {
     const q = searchQuery.toLowerCase().trim();
     if (!q) return true;
@@ -439,7 +440,7 @@ const Page = () => {
         </p>
       </header>
 
-      {/* 👇 Search bar */}
+      {/* Search bar */}
       <div className="max-w-md mx-auto mb-8 relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
         <Input

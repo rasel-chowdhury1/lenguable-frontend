@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import {
   useMyBookingQuery,
   useCancelBookingMutation,
+  useMarkTeacherJoinedMutation,
 } from "@/redux/features/bookingApi";
 import { toast } from "sonner";
 import { CancelModal } from "./CancelModal";
@@ -18,6 +19,7 @@ interface IBooking {
   meetLink: string;
   createdAt: string;
   status: string;
+  teacherJoined: boolean;
   studentId: {
     _id: string;
     name: string;
@@ -26,7 +28,6 @@ interface IBooking {
   teacherId: string;
 }
 
-// Format "YYYY-MM-DD" -> "Mar 15, 2026"
 const formatDate = (iso: string) => {
   const [year, month, day] = iso.split("-").map(Number);
   return new Date(year, month - 1, day).toLocaleDateString("en-US", {
@@ -36,7 +37,6 @@ const formatDate = (iso: string) => {
   });
 };
 
-// Handles both HH:MM and ISO strings
 const formatTime = (time: string) => {
   if (!time) return "";
   if (time.includes("T")) {
@@ -51,52 +51,54 @@ const formatTime = (time: string) => {
   return `${h}:${minute.toString().padStart(2, "0")} ${ampm}`;
 };
 
-// Handles both HH:MM and ISO strings
-const isUpcoming = (
-  date: string,
-  startTime: string,
-  now: Date,
-  todayISO: string,
-) => {
+const isUpcoming = (date: string, startTime: string) => {
+  let bookingDateTime: Date;
+
   if (startTime.includes("T")) {
-    return new Date(startTime) > now;
-  }
-  if (date > todayISO) return true;
-  if (date === todayISO) {
+    bookingDateTime = new Date(startTime);
+  } else {
+    const [year, month, day] = date.split("-").map(Number);
     const [hour, minute] = startTime.split(":").map(Number);
-    const slotTime = new Date();
-    slotTime.setHours(hour, minute, 0, 0);
-    return slotTime > now;
+    bookingDateTime = new Date(year, month - 1, day, hour, minute, 0, 0);
   }
-  return false;
+
+  const cutoff = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  return bookingDateTime >= cutoff;
 };
 
 export default function Schedule() {
   const [cancelId, setCancelId] = useState<string | null>(null);
+  const [joiningId, setJoiningId] = useState<string | null>(null);
 
   const { data, isLoading } = useMyBookingQuery(undefined);
   const [cancelBooking, { isLoading: isCancelling }] =
     useCancelBookingMutation();
-
-  const now = new Date();
-  const todayISO = now.toISOString().split("T")[0];
+  const [markTeacherJoined] = useMarkTeacherJoinedMutation();
 
   const allBookings: IBooking[] = data?.data || [];
 
   const upcomingBookings = allBookings.filter(
-    (b) =>
-      isUpcoming(b.date, b.startTime, now, todayISO) &&
-      b.status !== "cancelled",
+    (b) => isUpcoming(b.date, b.startTime) && b.status !== "cancelled",
   );
+
+  const handleJoinClass = async (cls: IBooking) => {
+    setJoiningId(cls._id);
+    try {
+      if (!cls.teacherJoined) {
+        await markTeacherJoined(cls._id).unwrap();
+      }
+    } catch (err) {
+      console.error("Failed to mark teacher as joined:", err);
+    } finally {
+      setJoiningId(null);
+      window.open(cls.meetLink, "_blank");
+    }
+  };
 
   const handleCancelSubmit = async (reason: string) => {
     if (!cancelId) return;
     try {
-      const res = await cancelBooking({
-        bookingId: cancelId,
-        reason,
-      }).unwrap();
-
+      const res = await cancelBooking({ bookingId: cancelId, reason }).unwrap();
       toast.success(res?.message || "Booking cancelled.");
     } catch (err: any) {
       toast.error(err?.data?.message || "Failed to cancel booking.");
@@ -134,10 +136,11 @@ export default function Schedule() {
         <Button
           size="sm"
           className="gap-1.5 bg-[#A9F877] hover:bg-[#C1FF72] text-black"
-          onClick={() => window.open(cls.meetLink, "_blank")}
+          disabled={joiningId === cls._id}
+          onClick={() => handleJoinClass(cls)}
         >
           <Video className="h-3.5 w-3.5" />
-          Join Class
+          {joiningId === cls._id ? "Joining..." : "Join Class"}
         </Button>
 
         <Button

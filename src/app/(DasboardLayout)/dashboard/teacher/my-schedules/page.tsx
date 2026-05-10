@@ -56,7 +56,6 @@ export default function Calendar() {
 
   const schedule: AvailabilityItem[] = data?.data ?? [];
 
-  // Current time and today's date string
   const now = new Date();
   const todayStr = new Date().toLocaleDateString("en-CA"); // "YYYY-MM-DD"
 
@@ -94,28 +93,34 @@ export default function Calendar() {
     return timeString;
   };
 
-  // Helper: check if a slot is in the future (for today's date)
-  const isSlotInFuture = (slotStartTime: string) => {
+  // Returns true only if the slot's full datetime is at least 24 hours from now
+  const isSlotInFuture = (slotStartTime: string, slotDate: string) => {
     if (!slotStartTime) return false;
+
+    let slotDateTime: Date;
+
     if (slotStartTime.includes("T")) {
-      return new Date(slotStartTime) > now;
+      slotDateTime = new Date(slotStartTime);
+    } else {
+      const [year, month, day] = slotDate.split("-").map(Number);
+      const [hour, minute] = slotStartTime.split(":").map(Number);
+      slotDateTime = new Date(year, month - 1, day, hour, minute, 0, 0);
     }
-    const [hour, minute] = slotStartTime.split(":").map(Number);
-    const slotTime = new Date();
-    slotTime.setHours(hour, minute, 0, 0);
-    return slotTime > now;
+
+    const cutoff = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    return slotDateTime >= cutoff;
   };
 
-  // Filter 1: Remove past dates entirely, and for today filter by time
-  const futureSchedule = schedule.filter((item) => {
-    if (item.date > todayStr) return true; // future date — always show
-    if (item.date < todayStr) return false; // past date — always hide
-
-    // today — only show if at least one slot is still in the future and unbooked
-    return item.slots.some(
-      (slot) => !slot.isBooked && isSlotInFuture(slot.startTime),
-    );
-  });
+  // Filter: only show items with at least one unbooked slot at least 24h from now
+  const futureSchedule = schedule
+    .map((item) => ({
+      ...item,
+      slots: item.slots.filter(
+        (slot) => !slot.isBooked && isSlotInFuture(slot.startTime, item.date),
+      ),
+    }))
+    .filter((item) => item.slots.length > 0)
+    .sort((a, b) => a.date.localeCompare(b.date));
 
   const handleCreateSchedule = async () => {
     if (!date || !startTime || !endTime) return;
@@ -230,73 +235,56 @@ export default function Calendar() {
 
       {/* SCHEDULE GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-5">
-        {futureSchedule
-          .filter((item) =>
-            item.slots.some(
-              (slot) =>
-                !slot.isBooked &&
-                (item.date > todayStr || isSlotInFuture(slot.startTime)),
-            ),
-          )
-          .map((item) => (
-            <Card key={item._id} className="min-w-45">
-              <CardContent>
-                <div className="mb-4">
-                  <h3 className="font-medium">{item.day}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {formatDate(item.date)}
-                  </p>
-                </div>
+        {futureSchedule.map((item) => (
+          <Card key={item._id} className="min-w-45">
+            <CardContent>
+              <div className="mb-4">
+                <h3 className="font-medium">{item.day}</h3>
+                <p className="text-sm text-muted-foreground">
+                  {formatDate(item.date)}
+                </p>
+              </div>
 
-                <div className="space-y-2">
-                  {item.slots
-                    // ✅ Filter 2: hide past slots for today, hide booked slots
-                    .filter((slot) => {
-                      if (slot.isBooked) return false;
-                      if (item.date > todayStr) return true; // future date — show all unbooked
-                      if (item.date === todayStr)
-                        return isSlotInFuture(slot.startTime); // today — only future times
-                      return false; // past date — hide all
-                    })
-                    .map((slot) => (
-                      <div
-                        key={slot._id}
-                        className="flex items-center justify-between gap-2 border rounded-md px-2 py-1"
+              <div className="space-y-2">
+                {item.slots.map((slot) => (
+                  <div
+                    key={slot._id}
+                    className="flex items-center justify-between gap-2 border rounded-md px-2 py-1"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4" />
+                      <span className="text-sm">
+                        {formatTime(slot.startTime)} -{" "}
+                        {formatTime(slot.endTime)}
+                      </span>
+                    </div>
+
+                    <div className="flex gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="p-1"
+                        disabled={slot.isBooked || isUpdating}
+                        onClick={() => handleEdit(item._id, slot)}
                       >
-                        <div className="flex items-center gap-2">
-                          <Clock className="h-4 w-4" />
-                          <span className="text-sm">
-                            {formatTime(slot.startTime)} -{" "}
-                            {formatTime(slot.endTime)}
-                          </span>
-                        </div>
-
-                        <div className="flex gap-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="p-1"
-                            disabled={slot.isBooked || isUpdating}
-                            onClick={() => handleEdit(item._id, slot)}
-                          >
-                            <Edit className="w-4 h-4 text-primary" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="p-1"
-                            disabled={slot.isBooked || isDeleting}
-                            onClick={() => handleDelete(item._id, slot._id)}
-                          >
-                            <Trash2 className="w-4 h-4 text-destructive" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                        <Edit className="w-4 h-4 text-primary" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="p-1"
+                        disabled={slot.isBooked || isDeleting}
+                        onClick={() => handleDelete(item._id, slot._id)}
+                      >
+                        <Trash2 className="w-4 h-4 text-destructive" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       <Schedule />

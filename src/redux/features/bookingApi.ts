@@ -28,6 +28,13 @@ export const bookingApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Booking"],
     }),
+    markTeacherJoined: build.mutation({
+      query: (bookingId: string) => ({
+        url: `/booking/${bookingId}/teacher-joined`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Booking"],
+    }),
   }),
 });
 
@@ -35,4 +42,5 @@ export const {
   useCreateBookingMutation,
   useMyBookingQuery,
   useCancelBookingMutation,
+  useMarkTeacherJoinedMutation,
 } = bookingApi;
