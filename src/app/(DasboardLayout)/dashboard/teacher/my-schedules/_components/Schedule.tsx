@@ -62,8 +62,7 @@ const isUpcoming = (date: string, startTime: string) => {
     bookingDateTime = new Date(year, month - 1, day, hour, minute, 0, 0);
   }
 
-  const cutoff = new Date(Date.now() + 24 * 60 * 60 * 1000);
-  return bookingDateTime >= cutoff;
+  return bookingDateTime >= new Date();
 };
 
 export default function Schedule() {
