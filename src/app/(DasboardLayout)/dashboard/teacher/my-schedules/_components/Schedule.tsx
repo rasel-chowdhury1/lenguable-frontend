@@ -62,7 +62,9 @@ const isUpcoming = (date: string, startTime: string) => {
     bookingDateTime = new Date(year, month - 1, day, hour, minute, 0, 0);
   }
 
-  return bookingDateTime >= new Date();
+  // Show until class ends (start + 60 min)
+  const classEnd = new Date(bookingDateTime.getTime() + 60 * 60 * 1000);
+  return classEnd >= new Date();
 };
 
 export default function Schedule() {
@@ -76,9 +78,17 @@ export default function Schedule() {
 
   const allBookings: IBooking[] = data?.data || [];
 
-  const upcomingBookings = allBookings.filter(
-    (b) => isUpcoming(b.date, b.startTime) && b.status !== "cancelled",
-  );
+  // const upcomingBookings = allBookings.filter(
+  //   (b) => isUpcoming(b.date, b.startTime) && b.status !== "cancelled",
+  // );
+
+  const upcomingBookings = allBookings
+    .filter((b) => isUpcoming(b.date, b.startTime) && b.status !== "cancelled")
+    .sort((a, b) => {
+      const dateCompare = a.date.localeCompare(b.date); // earliest date first
+      if (dateCompare !== 0) return dateCompare;
+      return a.startTime.localeCompare(b.startTime); // earliest time first
+    });
 
   const handleJoinClass = async (cls: IBooking) => {
     setJoiningId(cls._id);

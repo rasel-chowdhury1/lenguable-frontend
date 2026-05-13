@@ -37,7 +37,6 @@ const formatDate = (iso: string) => {
   });
 };
 
-// Handles both HH:MM and ISO strings
 const formatTime = (time: string) => {
   if (!time) return "";
   if (time.includes("T")) {
@@ -68,14 +67,19 @@ export default function MyBookingsPage() {
     myReviews.map((r: any) => r.teacherId?._id || r.teacherId),
   );
 
-  const apiBookings = data?.data || [];
+  // Sort by date desc, then time desc BEFORE formatting
+  const apiBookings = [...(data?.data || [])].sort((a: any, b: any) => {
+    const dateCompare = b.date.localeCompare(a.date);
+    if (dateCompare !== 0) return dateCompare;
+    return b.startTime.localeCompare(a.startTime);
+  });
 
   const bookings: Booking[] = apiBookings.map((b: any) => ({
     id: b._id,
     tutorName: b.teacherId?.name || "Teacher",
     teacherId: b.teacherId?._id || b.teacherId,
     date: formatDate(b.date),
-    time: formatTime(b.startTime), // format properly
+    time: formatTime(b.startTime),
     status: b.status as BookingStatus,
     reviewed: reviewedTeacherIds.has(b.teacherId?._id || b.teacherId),
     isUpcoming: b.status === "scheduled",

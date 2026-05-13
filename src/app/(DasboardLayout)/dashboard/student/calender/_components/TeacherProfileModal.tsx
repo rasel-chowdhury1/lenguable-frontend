@@ -3,7 +3,7 @@
 
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star } from "lucide-react";
 import { useCreateBookingMutation } from "@/redux/features/bookingApi";
 import { toast } from "sonner";
@@ -18,7 +18,7 @@ type Teacher = {
   aboutMe: string;
   interests: string[];
   languages: string[];
-  profile?: string;
+  profilePicture?: string;
   day: string;
   date: string;
   startTime: string;
@@ -80,6 +80,7 @@ export default function TeacherProfileModal({ open, onClose, teacher }: Props) {
           {/* Avatar + Name */}
           <div className="flex items-center gap-4">
             <Avatar className="h-14 w-14">
+              <AvatarImage src={teacher.profilePicture} alt={teacher.name} />
               <AvatarFallback>{teacher.initials}</AvatarFallback>
             </Avatar>
             <div>

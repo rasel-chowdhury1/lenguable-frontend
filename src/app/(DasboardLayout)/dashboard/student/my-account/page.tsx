@@ -53,6 +53,23 @@ const formatDate = (iso: string) => {
   });
 };
 
+const formatTime = (timeStr: string): string => {
+  if (!timeStr) return "";
+  if (timeStr.includes("T")) {
+    return new Date(timeStr).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+  const [hour, minute] = timeStr.split(":").map(Number);
+  const date = new Date();
+  date.setHours(hour, minute, 0, 0);
+  return date.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
 export default function MyAccountPage() {
   const { data, isLoading } = useGetMeQuery(undefined);
   const userData = data?.data || {};
@@ -147,7 +164,6 @@ export default function MyAccountPage() {
             <CardTitle className="text-base">Personal Information</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {/* Avatar with upload button */}
             <div className="flex justify-center">
               <div className="relative">
                 <Avatar className="h-20 w-20">
@@ -156,7 +172,6 @@ export default function MyAccountPage() {
                     {avatarFallback}
                   </AvatarFallback>
                 </Avatar>
-                {/* Camera icon overlay */}
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
@@ -290,7 +305,7 @@ export default function MyAccountPage() {
                           </p>
                           <p className="text-muted-foreground text-xs">
                             {formatDate(b.date)} &middot; {b.day} at{" "}
-                            {b.startTime}
+                            {formatTime(b.startTime)}
                           </p>
                         </div>
                       </li>

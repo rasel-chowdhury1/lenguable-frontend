@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Clock, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import TeacherProfileModal from "./_components/TeacherProfileModal";
 import { useGetAllAvailabilityQuery } from "@/redux/features/availabilityApi";
 import { useCreateBookingMutation } from "@/redux/features/bookingApi";
@@ -27,7 +27,7 @@ interface ITeacher {
   aboutMe?: string;
   interests?: string[];
   languages?: string[];
-  profile?: string;
+  profilePicture?: string;
 }
 
 interface IAvailability {
@@ -232,6 +232,10 @@ export default function Calendar() {
                 <Card key={teacherId._id}>
                   <CardContent className="text-center space-y-4">
                     <Avatar className="h-16 w-16 mx-auto">
+                      <AvatarImage
+                        src={teacherId.profilePicture}
+                        alt={teacherId.name}
+                      />
                       <AvatarFallback>
                         {getInitials(teacherId.name)}
                       </AvatarFallback>
@@ -262,7 +266,7 @@ export default function Calendar() {
                             aboutMe: teacherId.aboutMe ?? "",
                             interests: teacherId.interests ?? [],
                             languages: teacherId.languages ?? [],
-                            profile: teacherId.profile,
+                            profilePicture: teacherId.profilePicture,
                             day: selectedDay,
                             date: selectedDate,
                             startTime: selectedTime,
