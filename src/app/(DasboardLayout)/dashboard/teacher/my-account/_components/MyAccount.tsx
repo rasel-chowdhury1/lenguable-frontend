@@ -374,7 +374,7 @@ export default function MyAccount() {
                 <p className="font-semibold">{teacher?.totalClasses ?? 0}</p>
               </div>
               <div className="flex justify-between bg-muted rounded-lg p-3">
-                <p className="text-sm text-muted-foreground">Total Students</p>
+                <p className="text-sm text-muted-foreground">Total Bookings</p>
                 <p className="font-semibold">
                   {teacher?.bookings?.length ?? 0}
                 </p>

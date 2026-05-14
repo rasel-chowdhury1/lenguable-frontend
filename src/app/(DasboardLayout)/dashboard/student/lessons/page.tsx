@@ -31,9 +31,26 @@ export default function MyLessonsPage() {
 
   // console.log(apiResources, "Resources ==>");
 
-  const filteredLessons = apiLessons.filter(
-    (l: any) => l.level === activeLevel,
-  );
+  // const filteredLessons = apiLessons.filter(
+  //   (l: any) => l.level === activeLevel,
+  // );
+
+  // In MyLessonsPage.tsx
+
+  function getLessonOrder(title: string): number {
+    if (/^Foundation/i.test(title)) return 0;
+    const match = title.match(/^Lesson\s+(\d+)/i);
+    if (match) return parseInt(match[1], 10);
+    return 0; // everything else stays in place
+  }
+
+  const filteredLessons = apiLessons
+    .filter((l: any) => l.level === activeLevel)
+    .sort(
+      (a: any, b: any) =>
+        (a.order ?? getLessonOrder(a.title)) -
+        (b.order ?? getLessonOrder(b.title)),
+    );
 
   const activeLevelLabel =
     levels.find((l) => l.id === activeLevel)?.label ?? activeLevel;

@@ -40,10 +40,10 @@ interface IAvailability {
 
 const getInitials = (name: string) =>
   name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase();
+    ?.split(" ")
+    ?.map((n) => n[0])
+    ?.join("")
+    ?.toUpperCase();
 
 const formatShortDate = (iso: string) => {
   const [year, month, day] = iso.split("-").map(Number);
@@ -179,7 +179,7 @@ export default function Calendar() {
           No availability found.
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-5">
           {schedule.map((item) => (
             <Card key={item.day} className="min-w-45">
               <CardContent>
@@ -229,26 +229,26 @@ export default function Calendar() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-5">
               {availableTeachers.map(({ teacherId }) => (
-                <Card key={teacherId._id}>
+                <Card key={teacherId?._id}>
                   <CardContent className="text-center space-y-4">
                     <Avatar className="h-16 w-16 mx-auto">
                       <AvatarImage
-                        src={teacherId.profilePicture}
-                        alt={teacherId.name}
+                        src={teacherId?.profilePicture}
+                        alt={teacherId?.name}
                       />
                       <AvatarFallback>
-                        {getInitials(teacherId.name)}
+                        {getInitials(teacherId?.name)}
                       </AvatarFallback>
                     </Avatar>
 
                     <div>
-                      <h3 className="font-medium">{teacherId.name}</h3>
+                      <h3 className="font-medium">{teacherId?.name}</h3>
                       <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground mt-1">
                         <Star className="h-4 w-4" />
-                        <span>{teacherId.experience ?? 0} yrs exp</span>
+                        <span>{teacherId?.experience ?? 0} yrs exp</span>
                       </div>
                       <p className="text-sm text-muted-foreground mt-1">
-                        {teacherId.nationality ?? "N/A"}
+                        {teacherId?.nationality ?? "N/A"}
                       </p>
                     </div>
 
