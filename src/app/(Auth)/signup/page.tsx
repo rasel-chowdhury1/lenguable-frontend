@@ -266,32 +266,64 @@ export default function Signup() {
     },
   });
 
-  const onSubmit = async (data: StudentFormValues) => {
-    try {
-      // Step 1 — create account
-      await createStudent(data).unwrap();
+  // const onSubmit = async (data: StudentFormValues) => {
+  //   try {
+  //     // Step 1 — create account
+  //     await createStudent(data).unwrap();
 
-      // Step 2 — auto login
-      const loginRes = await login({
-        email: data.email,
-        password: data.password,
-      }).unwrap();
+  //     // Step 2 — auto login
+  //     const loginRes = await login({
+  //       email: data.email,
+  //       password: data.password,
+  //     }).unwrap();
 
-      toast.success("Account created successfully!");
+  //     toast.success("Account created successfully!");
 
-      // Step 3 — redirect to dashboard
-      const role = loginRes?.data?.user?.role;
-      if (role === "STUDENT") {
-        router.push("/dashboard/student/lessons");
-      } else if (role === "TEACHER") {
-        router.push("/dashboard/teacher/my-schedules");
-      } else {
-        router.push("/");
-      }
-    } catch (err: any) {
-      toast.error(err?.data?.message || "Something went wrong!");
+  //     // Step 3 — redirect to dashboard
+  //     const role = loginRes?.data?.user?.role;
+  //     if (role === "STUDENT") {
+  //       router.push("/dashboard/student/lessons");
+  //     } else if (role === "TEACHER") {
+  //       router.push("/dashboard/teacher/my-schedules");
+  //     } else {
+  //       router.push("/");
+  //     }
+  //   } catch (err: any) {
+  //     toast.error(err?.data?.message || "Something went wrong!");
+  //   }
+  // };
+
+
+const onSubmit = async (data: StudentFormValues) => {
+  try {
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    // Step 1 — create account with timezone
+    await createStudent({ ...data, timezone }).unwrap();
+
+    // Step 2 — auto login
+    const loginRes = await login({
+      email: data.email,
+      password: data.password,
+      timezone,
+    }).unwrap();
+
+    toast.success("Account created successfully!");
+
+    // Step 3 — redirect to dashboard
+    const role = loginRes?.data?.user?.role;
+    if (role === "STUDENT") {
+      router.push("/dashboard/student/lessons");
+    } else if (role === "TEACHER") {
+      router.push("/dashboard/teacher/my-schedules");
+    } else {
+      router.push("/");
     }
-  };
+  } catch (err: any) {
+    toast.error(err?.data?.message || "Something went wrong!");
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-linear-to-br from-primary/20 to-primary/30 flex items-center justify-center p-5">

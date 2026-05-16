@@ -234,7 +234,7 @@ export default function Calendar() {
       )}
 
       {/* SCHEDULE GRID */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-5">
         {futureSchedule.map((item) => (
           <Card key={item._id} className="min-w-45">
             <CardContent>

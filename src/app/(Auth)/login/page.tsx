@@ -43,7 +43,8 @@ export default function Login() {
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      const res = await login(data).unwrap();
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const res = await login({ ...data, timezone }).unwrap();
 
       toast.success(res?.message || "Logged in successfully!");
 

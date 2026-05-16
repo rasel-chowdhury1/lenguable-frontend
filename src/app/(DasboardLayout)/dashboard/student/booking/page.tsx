@@ -69,9 +69,9 @@ export default function MyBookingsPage() {
 
   // Sort by date desc, then time desc BEFORE formatting
   const apiBookings = [...(data?.data || [])].sort((a: any, b: any) => {
-    const dateCompare = b.date.localeCompare(a.date);
+    const dateCompare = a.date.localeCompare(b.date);
     if (dateCompare !== 0) return dateCompare;
-    return b.startTime.localeCompare(a.startTime);
+    return a.startTime.localeCompare(b.startTime);
   });
 
   const bookings: Booking[] = apiBookings.map((b: any) => ({
