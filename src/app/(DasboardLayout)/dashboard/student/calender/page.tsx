@@ -128,7 +128,18 @@ export default function Calendar() {
     .map(([, { times, date, day }]) => ({
       day,
       date,
-      times: Array.from(times).sort(),
+      // times: Array.from(times).sort(),
+      times: Array.from(times).sort((a, b) => {
+        const toMinutes = (t: string) => {
+          if (t.includes("T")) {
+            const d = new Date(t);
+            return d.getHours() * 60 + d.getMinutes();
+          }
+          const [h, m] = t.split(":").map(Number);
+          return h * 60 + m;
+        };
+        return toMinutes(a) - toMinutes(b);
+      }),
     }))
     .filter((item) => item.times.length > 0);
 

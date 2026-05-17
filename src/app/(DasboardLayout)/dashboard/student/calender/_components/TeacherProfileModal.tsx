@@ -78,17 +78,19 @@ export default function TeacherProfileModal({ open, onClose, teacher }: Props) {
       <DialogContent className="max-w-md p-0 overflow-hidden">
         <div className="p-5 space-y-4">
           {/* Avatar + Name */}
-          <div className="flex items-center gap-4">
-            <Avatar className="h-14 w-14">
+          <div className="flex items-center justify-center">
+            <Avatar className="h-44 w-44">
               <AvatarImage src={teacher.profilePicture} alt={teacher.name} />
               <AvatarFallback>{teacher.initials}</AvatarFallback>
             </Avatar>
-            <div>
-              <h3 className="font-medium">{teacher.name}</h3>
-              <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                <span>{teacher.experience} years experience</span>
-              </div>
+          </div>
+
+          {/* Experience & Rating */}
+          <div>
+            <h3 className="font-medium">{teacher.name}</h3>
+            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+              <span>{teacher.experience} years experience</span>
             </div>
           </div>
 
