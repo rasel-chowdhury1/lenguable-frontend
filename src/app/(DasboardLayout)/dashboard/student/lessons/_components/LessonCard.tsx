@@ -105,8 +105,16 @@ export function LessonCard({ lesson }: LessonCardProps) {
             <DialogTitle>{lesson.title}</DialogTitle>
           </DialogHeader>
 
-          <div className="flex-1">
+          {/* <div className="flex-1">
             <iframe src={lesson.file} className="w-full h-full border-0" />
+          </div> */}
+          <div className="relative flex-1">
+            <iframe
+              src={lesson.file + "#toolbar=1&navpanes=0"}
+              className="w-full h-full border-0"
+            />
+            {/* blocks the top-right toolbar icons */}
+            <div className="absolute top-1 right-0 w-44 h-10 bg-[#3c3c3c] z-10" />
           </div>
         </DialogContent>
       </Dialog>
