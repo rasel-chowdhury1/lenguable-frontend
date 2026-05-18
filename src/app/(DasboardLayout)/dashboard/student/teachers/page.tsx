@@ -218,8 +218,16 @@ function SlotModal({
                 <div key={avail._id}>
                   <div className="flex items-center gap-2 mb-3">
                     <CalendarDays className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-                    <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">
+                    {/* <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">
                       {avail.day}
+                    </span>
+                    <span className="text-xs text-gray-400">
+                      · {formatDate(avail.date)}
+                    </span> */}
+                    <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">
+                      {new Date(avail.date).toLocaleDateString("en-US", {
+                        weekday: "long",
+                      })}
                     </span>
                     <span className="text-xs text-gray-400">
                       · {formatDate(avail.date)}
