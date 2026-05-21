@@ -89,7 +89,7 @@ export default function MyStudentsPage() {
                 Current Level
               </TableHead>
               <TableHead className="text-xs font-semibold text-gray-600">
-                Lessons Completed
+                Classes Completed
               </TableHead>
               <TableHead className="text-xs font-semibold text-gray-600">
                 Actions

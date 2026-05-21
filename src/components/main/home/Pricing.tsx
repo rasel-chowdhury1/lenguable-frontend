@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -12,8 +13,10 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 import { useValidateDiscountCodeMutation } from "@/redux/features/discountCodeApi";
+import { useRouter } from "next/navigation";
 
 export default function PricingPage() {
+  const router = useRouter();
   const { data } = useGetAllPackagesQuery(undefined);
   const packages: PricingPackage[] = data?.data || [];
 
@@ -65,7 +68,8 @@ export default function PricingPage() {
         toast.error("Could not get payment link. Please try again.");
       }
     } catch (err: any) {
-      toast.error(err?.data?.message || "Purchase failed. Please try again.");
+      // toast.error(err?.data?.message || "Purchase failed. Please try again.");
+      router.push("/signup");
     }
   };
 
