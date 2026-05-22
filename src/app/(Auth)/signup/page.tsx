@@ -313,11 +313,11 @@ const onSubmit = async (data: StudentFormValues) => {
     // Step 3 — redirect to dashboard
     const role = loginRes?.data?.user?.role;
     if (role === "STUDENT") {
-      router.push("/dashboard/student/lessons");
+      router.push("/#pricing")
     } else if (role === "TEACHER") {
       router.push("/dashboard/teacher/my-schedules");
     } else {
-      router.push("/");
+      router.push("/#pricing");
     }
   } catch (err: any) {
     toast.error(err?.data?.message || "Something went wrong!");

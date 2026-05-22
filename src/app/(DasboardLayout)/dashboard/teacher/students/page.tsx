@@ -49,16 +49,25 @@ export default function MyStudentsPage() {
 
   const rawStudents = data?.data || [];
 
-  const students: Student[] = rawStudents.map((s: any) => {
-    const unlockedCount = s.unlockedLessons?.length ?? 0;
-    return {
-      id: s._id,
-      name: s.name,
-      initials: getInitials(s.name),
-      level: getCurrentLevel(unlockedCount),
-      lessonsCompleted: unlockedCount,
-    };
-  });
+  // const students: Student[] = rawStudents.map((s: any) => {
+  //   const unlockedCount = s.unlockedLessons?.length ?? 0;
+  //   return {
+  //     id: s._id,
+  //     name: s.name,
+  //     initials: getInitials(s.name),
+  //     level: getCurrentLevel(unlockedCount),
+  //     // lessonsCompleted: unlockedCount,
+  //     lessonsCompleted: s.lessonsCompleted ?? 0,
+  //   };
+  // });
+
+  const students: Student[] = rawStudents.map((s: any) => ({
+  id: s._id,
+  name: s.name,
+  initials: getInitials(s.name),
+  level: s.currentLevel ?? "A0",       // ✅ from backend
+  lessonsCompleted: s.lessonsCompleted ?? 0,
+}));
 
   const filteredStudents = students.filter((s) =>
     s.name.toLowerCase().includes(search.toLowerCase()),
