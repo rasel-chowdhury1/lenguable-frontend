@@ -32,15 +32,15 @@ const getInitials = (name: string) =>
     .join("")
     .toUpperCase();
 
-const getCurrentLevel = (unlockedCount: number) => {
-  if (unlockedCount === 1) return "A0";
-  if (unlockedCount === 2) return "A1";
-  if (unlockedCount === 3) return "A2";
-  if (unlockedCount === 4) return "B1";
-  if (unlockedCount === 5) return "B2";
-  if (unlockedCount === 6) return "C1";
-  return "A0";
-};
+// const getCurrentLevel = (unlockedCount: number) => {
+//   if (unlockedCount === 1) return "A0";
+//   if (unlockedCount === 2) return "A1";
+//   if (unlockedCount === 3) return "A2";
+//   if (unlockedCount === 4) return "B1";
+//   if (unlockedCount === 5) return "B2";
+//   if (unlockedCount === 6) return "C1";
+//   return "A0";
+// };
 
 export default function MyStudentsPage() {
   const [activeStudent, setActiveStudent] = useState<Student | null>(null);
