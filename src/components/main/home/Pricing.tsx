@@ -7,7 +7,6 @@ import { Check, Sparkles, X } from "lucide-react";
 import { PricingPackage } from "@/types";
 import { useGetAllPackagesQuery } from "@/redux/features/packageApi";
 import { usePurchaseMutation } from "@/redux/features/purchaseApi";
-// import { useValidateDiscountCodeMutation } from "@/redux/features/discountCodeApi";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";

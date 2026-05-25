@@ -57,14 +57,6 @@ export default function MyAccount() {
 
   const searchParams = useSearchParams();
 
-  // Show success toast if redirected back from Google OAuth
-  // useEffect(() => {
-  //   if (searchParams.get("google") === "connected") {
-  //     refetch(); // Refresh user data to get updated teacher info
-  //     toast.success("Google account connected successfully!");
-  //   }
-  // }, [searchParams]);
-
   useEffect(() => {
     if (searchParams.get("google") === "connected") {
       refetch(); // refresh user data

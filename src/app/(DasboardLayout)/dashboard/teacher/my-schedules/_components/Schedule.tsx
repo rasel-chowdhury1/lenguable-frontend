@@ -37,18 +37,26 @@ const formatDate = (iso: string) => {
   });
 };
 
-const formatTime = (time: string) => {
-  if (!time) return "";
-  if (time.includes("T")) {
-    return new Date(time).toLocaleTimeString(undefined, {
+const formatTime = (timeString: string) => {
+  if (!timeString) return "";
+
+  const date = timeString.includes("T")
+    ? new Date(timeString)
+    : (() => {
+        const [h, m] = timeString.split(":").map(Number);
+        const d = new Date();
+        d.setHours(h, m, 0, 0);
+        return d;
+      })();
+
+  // undefined locale = browser's local format automatically
+  return date
+    .toLocaleTimeString(undefined, {
       hour: "2-digit",
       minute: "2-digit",
-    });
-  }
-  const [hour, minute] = time.split(":").map(Number);
-  const ampm = hour >= 12 ? "PM" : "AM";
-  const h = hour % 12 || 12;
-  return `${h}:${minute.toString().padStart(2, "0")} ${ampm}`;
+      // hour12: true,
+    })
+    .toUpperCase();
 };
 
 const isUpcoming = (date: string, startTime: string) => {
@@ -77,10 +85,6 @@ export default function Schedule() {
   const [markTeacherJoined] = useMarkTeacherJoinedMutation();
 
   const allBookings: IBooking[] = data?.data || [];
-
-  // const upcomingBookings = allBookings.filter(
-  //   (b) => isUpcoming(b.date, b.startTime) && b.status !== "cancelled",
-  // );
 
   const upcomingBookings = allBookings
     .filter((b) => isUpcoming(b.date, b.startTime) && b.status !== "cancelled")

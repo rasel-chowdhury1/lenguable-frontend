@@ -59,12 +59,6 @@ const Footer = () => {
             <h4 className="font-semibold text-gray-900 mb-4">Location</h4>
             <address className="text-sm text-gray-600 not-italic">
               The United States of America (USA)
-              {/* <br />
-              Education City
-              <br />
-              State 12345
-              <br />
-              Brazil */}
             </address>
           </div>
 

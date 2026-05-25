@@ -75,13 +75,24 @@ export default function Calendar() {
 
   const formatTime = (timeString: string) => {
     if (!timeString) return "";
-    if (timeString.includes("T")) {
-      return new Date(timeString).toLocaleTimeString(undefined, {
+
+    const date = timeString.includes("T")
+      ? new Date(timeString)
+      : (() => {
+          const [h, m] = timeString.split(":").map(Number);
+          const d = new Date();
+          d.setHours(h, m, 0, 0);
+          return d;
+        })();
+
+    // undefined locale = browser's local format automatically
+    return date
+      .toLocaleTimeString(undefined, {
         hour: "2-digit",
         minute: "2-digit",
-      });
-    }
-    return timeString;
+        // hour12: true,
+      })
+      .toUpperCase();
   };
 
   const get24hTime = (timeString: string) => {
@@ -136,17 +147,16 @@ export default function Calendar() {
     }
 
     try {
-      const startIso = new Date(`${date}T${startTime}:00`).toISOString();
-      const endIso = new Date(`${date}T${endTime}:00`).toISOString();
-
+      // Send plain local strings — NO new Date(...).toISOString() here
       await createAvailability({
         availabilities: [
           {
             day: getDayName(date),
-            date,
-            slots: [{ startTime: startIso, endTime: endIso }],
+            date, // "2026-05-28"  (local date as picked)
+            slots: [{ startTime, endTime }], // "20:00", "21:00" (local time)
           },
         ],
+        // timezone is added automatically by the API layer above
       }).unwrap();
 
       toast.success("Schedule created successfully");

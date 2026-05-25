@@ -3,39 +3,26 @@
 
 import { useState } from "react";
 import { ActiveSection, Sidebar } from "./_components/Sidebar";
-import { levels, navSections } from "@/app/data/lessonsData";
 import { HowToBegin } from "./_components/HowToBegin";
 import { LessonList } from "./_components/LessonList";
 import { ResourcePanel } from "./_components/ResourcePanel";
 import { useGetMyLessonsQuery } from "@/redux/features/noteApi";
 import { useGetAllResourcesQuery } from "@/redux/features/resourceApi";
-// import { useGetAllLessonsQuery } from "@/redux/features/LessonApi";
+import { levels, navSections } from "@/types";
 
 export default function MyLessonsPage() {
   const [activeSection, setActiveSection] =
     useState<ActiveSection>("how-to-begin");
 
   const [activeLevel, setActiveLevel] = useState("");
-
-  // ← only change: was useGetAllLessonsQuery from LessonApi
   const { data, isLoading } = useGetMyLessonsQuery(undefined);
-  // const { data, isLoading } = useGetAllLessonsQuery(undefined);
   const apiLessons = data?.data || [];
-  // console.log(apiLessons, "Lesson ==>");
 
   // Resources API
   const { data: resourceData, isLoading: resourceLoading } =
     useGetAllResourcesQuery(undefined);
 
   const apiResources = resourceData?.data || [];
-
-  // console.log(apiResources, "Resources ==>");
-
-  // const filteredLessons = apiLessons.filter(
-  //   (l: any) => l.level === activeLevel,
-  // );
-
-  // In MyLessonsPage.tsx
 
   function getLessonOrder(title: string): number {
     if (/^Foundation/i.test(title)) return 0;

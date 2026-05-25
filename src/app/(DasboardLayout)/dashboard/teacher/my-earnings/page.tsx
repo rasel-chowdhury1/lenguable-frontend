@@ -12,8 +12,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Calendar, DollarSign, TrendingUp } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { useGetMeQuery } from "@/redux/features/userApi";
 import { useGetMyPayoutsQuery } from "@/redux/features/payoutApi";
 import { useMyBookingQuery } from "@/redux/features/bookingApi";
@@ -94,20 +92,6 @@ export default function MyEarningsPage() {
   return (
     <div className="max-w-7xl mx-auto p-5 space-y-6 mt-10">
       <h1 className="text-2xl font-semibold">My Earnings</h1>
-      {/* <div className="flex justify-between">
-        <h1 className="text-2xl font-semibold">My Earnings</h1>
-        {!teacher?.stripeOnboarded ? (
-          <Link href="/dashboard/teacher/stripe/connect">
-            <Button className="bg-[#A9F877] shadow-2xl hover:bg-[#C1FF72] text-black">
-              Connect Account With Stripe
-            </Button>
-          </Link>
-        ) : (
-          <Badge className="bg-green-100 text-green-700 px-4 py-2 text-sm">
-            Stripe Connected
-          </Badge>
-        )}
-      </div> */}
 
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

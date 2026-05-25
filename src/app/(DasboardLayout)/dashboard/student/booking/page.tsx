@@ -37,19 +37,26 @@ const formatDate = (iso: string) => {
   });
 };
 
-const formatTime = (time: string) => {
-  if (!time) return "";
-  if (time.includes("T")) {
-    return new Date(time).toLocaleTimeString(undefined, {
+const formatTime = (timeString: string) => {
+  if (!timeString) return "";
+
+  const date = timeString.includes("T")
+    ? new Date(timeString)
+    : (() => {
+        const [h, m] = timeString.split(":").map(Number);
+        const d = new Date();
+        d.setHours(h, m, 0, 0);
+        return d;
+      })();
+
+  // undefined locale = browser's local format automatically
+  return date
+    .toLocaleTimeString(undefined, {
       hour: "2-digit",
       minute: "2-digit",
-    });
-  }
-  const [hourStr, minute] = time.split(":");
-  const hour = parseInt(hourStr, 10);
-  const ampm = hour >= 12 ? "PM" : "AM";
-  const h12 = hour % 12 || 12;
-  return `${h12}:${minute} ${ampm}`;
+      // hour12: true,
+    })
+    .toUpperCase();
 };
 
 export default function MyBookingsPage() {

@@ -1,29 +1,3 @@
-// export interface Lesson {
-//   id: number;
-//   title: string;
-//   status: "locked" | "unlocked" | "completed";
-//   resources: string[];
-//   image: string;
-// }
-
-// export interface Module {
-//   id: string;
-//   label: string;
-//   fullLabel: string;
-//   completedCount: number;
-//   totalCount: number;
-//   lessons: Lesson[];
-// }
-
-// export interface AppData {
-//   modules: Module[];
-// }
-
-// export interface ActiveSelection {
-//   moduleId: string;
-//   lessonId: number;
-// }
-
 export type Teacher = {
   _id: string;
   name: string;
@@ -85,4 +59,51 @@ export type ResourceFormData = {
 export type PurchasePayload = {
   packageId: string;
   discountCode?: string;
+};
+
+export type LessonStatus = "locked" | "available" | "completed";
+
+export interface Level {
+  id: string;
+  label: string;
 }
+
+export interface NavSection {
+  id: string;
+  label: string;
+  type: "link" | "group";
+}
+
+export type ResourceTab =
+  | "listening-guide"
+  | "external-activities"
+  | "flashcards";
+
+export interface ResourceItem {
+  id: string;
+  title: string;
+  description: string;
+  url: string;
+}
+
+export interface ResourceLevel {
+  levelId: string;
+  listeningGuide: ResourceItem[];
+  externalActivities: ResourceItem[];
+  flashcards: ResourceItem[];
+}
+
+export const levels: Level[] = [
+  { id: "A0", label: "A0"},
+  { id: "A1", label: "A1"},
+  { id: "A2", label: "A2"},
+  { id: "B1", label: "B1"},
+  { id: "B2", label: "B2"},
+  { id: "C1", label: "C1"},
+];
+
+export const navSections: NavSection[] = [
+  { id: "how-to-begin", label: "How to Begin", type: "link" },
+  { id: "core-lessons", label: "Core Lessons", type: "group" },
+  { id: "resources", label: "Resources", type: "group" },
+];

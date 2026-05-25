@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Level, NavSection } from "@/app/data/lessonsData";
+import { Level, NavSection } from "@/types";
 
 export type ActiveSection = "how-to-begin" | "core-lessons" | "resources";
 

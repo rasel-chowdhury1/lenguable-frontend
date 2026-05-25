@@ -1,35 +1,8 @@
-// import { baseApi } from "../api/baseApi";
-
-// export const availabilityApi = baseApi.injectEndpoints({
-//   endpoints: (build) => ({
-//     createAvailability: build.mutation({
-//       query: (data) => ({
-//         url: "/availability",
-//         method: "POST",
-//         body: data,
-//       }),
-//       invalidatesTags: ["Availability"],
-//     }),
-
-//     getAllAvailability: build.query({
-//       query: () => "/availability",
-//       providesTags: ["Availability"],
-//     }),
-
-//     getMyAvailability: build.query({
-//       query: () => "/availability/me",
-//       providesTags: ["Availability"],
-//     }),
-//   }),
-// });
-
-// export const {
-//   useCreateAvailabilityMutation,
-//   useGetAllAvailabilityQuery,
-//   useGetMyAvailabilityQuery,
-// } = availabilityApi;
-
 import { baseApi } from "../api/baseApi";
+
+// Helper to get the user's IANA timezone from the browser
+const getBrowserTimezone = () =>
+  Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 export const availabilityApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
@@ -37,18 +10,27 @@ export const availabilityApi = baseApi.injectEndpoints({
       query: (data) => ({
         url: "/availability",
         method: "POST",
-        body: data,
+        body: {
+          ...data,
+          timezone: getBrowserTimezone(),
+        },
       }),
       invalidatesTags: ["Availability"],
     }),
 
     getAllAvailability: build.query({
-      query: () => "/availability",
+      query: () => ({
+        url: "/availability",
+        params: { timezone: getBrowserTimezone() },
+      }),
       providesTags: ["Availability"],
     }),
 
     getMyAvailability: build.query({
-      query: () => "/availability/me",
+      query: () => ({
+        url: "/availability/me",
+        params: { timezone: getBrowserTimezone() },
+      }),
       providesTags: ["Availability"],
     }),
 
@@ -56,7 +38,10 @@ export const availabilityApi = baseApi.injectEndpoints({
       query: ({ availabilityId, slotId, ...data }) => ({
         url: `/availability/${availabilityId}/slots/${slotId}`,
         method: "PATCH",
-        body: data,
+        body: {
+          ...data,
+          timezone: getBrowserTimezone(),
+        },
       }),
       invalidatesTags: ["Availability"],
     }),

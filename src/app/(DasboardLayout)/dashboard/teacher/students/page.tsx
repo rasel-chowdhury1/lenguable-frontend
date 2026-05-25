@@ -32,16 +32,6 @@ const getInitials = (name: string) =>
     .join("")
     .toUpperCase();
 
-// const getCurrentLevel = (unlockedCount: number) => {
-//   if (unlockedCount === 1) return "A0";
-//   if (unlockedCount === 2) return "A1";
-//   if (unlockedCount === 3) return "A2";
-//   if (unlockedCount === 4) return "B1";
-//   if (unlockedCount === 5) return "B2";
-//   if (unlockedCount === 6) return "C1";
-//   return "A0";
-// };
-
 export default function MyStudentsPage() {
   const [activeStudent, setActiveStudent] = useState<Student | null>(null);
   const [search, setSearch] = useState("");
@@ -49,25 +39,13 @@ export default function MyStudentsPage() {
 
   const rawStudents = data?.data || [];
 
-  // const students: Student[] = rawStudents.map((s: any) => {
-  //   const unlockedCount = s.unlockedLessons?.length ?? 0;
-  //   return {
-  //     id: s._id,
-  //     name: s.name,
-  //     initials: getInitials(s.name),
-  //     level: getCurrentLevel(unlockedCount),
-  //     // lessonsCompleted: unlockedCount,
-  //     lessonsCompleted: s.lessonsCompleted ?? 0,
-  //   };
-  // });
-
   const students: Student[] = rawStudents.map((s: any) => ({
-  id: s._id,
-  name: s.name,
-  initials: getInitials(s.name),
-  level: s.currentLevel ?? "A0",       // ✅ from backend
-  lessonsCompleted: s.lessonsCompleted ?? 0,
-}));
+    id: s._id,
+    name: s.name,
+    initials: getInitials(s.name),
+    level: s.currentLevel ?? "A0", // ✅ from backend
+    lessonsCompleted: s.lessonsCompleted ?? 0,
+  }));
 
   const filteredStudents = students.filter((s) =>
     s.name.toLowerCase().includes(search.toLowerCase()),
