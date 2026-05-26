@@ -59,15 +59,53 @@ export default function Calendar() {
   const now = new Date();
   const todayStr = new Date().toLocaleDateString("en-CA"); // "YYYY-MM-DD"
 
+  // const getDayName = (dateString: string) => {
+  //   if (!dateString) return "";
+  //   return new Date(dateString + "T00:00").toLocaleDateString("en-US", {
+  //     weekday: "long",
+  //   });
+  // };
+
+  // const formatDate = (dateString: string) => {
+  //   return new Date(dateString + "T00:00").toLocaleDateString(undefined, {
+  //     month: "short",
+  //     day: "numeric",
+  //   });
+  // };
+
+  // const formatTime = (timeString: string) => {
+  //   if (!timeString) return "";
+
+  //   const date = timeString.includes("T")
+  //     ? new Date(timeString)
+  //     : (() => {
+  //         const [h, m] = timeString.split(":").map(Number);
+  //         const d = new Date();
+  //         d.setHours(h, m, 0, 0);
+  //         return d;
+  //       })();
+
+  //   // undefined locale = browser's local format automatically
+  //   return date
+  //     .toLocaleTimeString(undefined, {
+  //       hour: "2-digit",
+  //       minute: "2-digit",
+  //       // hour12: true,
+  //     })
+  //     .toUpperCase();
+  // };
+
   const getDayName = (dateString: string) => {
     if (!dateString) return "";
-    return new Date(dateString + "T00:00").toLocaleDateString("en-US", {
+    const [year, month, day] = dateString.split("-").map(Number);
+    return new Date(year, month - 1, day).toLocaleDateString("en-US", {
       weekday: "long",
     });
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString + "T00:00").toLocaleDateString(undefined, {
+    const [year, month, day] = dateString.split("-").map(Number);
+    return new Date(year, month - 1, day).toLocaleDateString(undefined, {
       month: "short",
       day: "numeric",
     });
@@ -75,7 +113,6 @@ export default function Calendar() {
 
   const formatTime = (timeString: string) => {
     if (!timeString) return "";
-
     const date = timeString.includes("T")
       ? new Date(timeString)
       : (() => {
@@ -84,13 +121,12 @@ export default function Calendar() {
           d.setHours(h, m, 0, 0);
           return d;
         })();
-
-    // undefined locale = browser's local format automatically
     return date
       .toLocaleTimeString(undefined, {
         hour: "2-digit",
         minute: "2-digit",
         // hour12: true,
+        hour12: false,
       })
       .toUpperCase();
   };

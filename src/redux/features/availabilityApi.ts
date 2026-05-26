@@ -1,6 +1,6 @@
 import { baseApi } from "../api/baseApi";
 
-// Helper to get the user's IANA timezone from the browser
+// Helper
 const getBrowserTimezone = () =>
   Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -8,12 +8,9 @@ export const availabilityApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     createAvailability: build.mutation({
       query: (data) => ({
-        url: "/availability",
+        url: `/availability?timezone=${getBrowserTimezone()}`,
         method: "POST",
-        body: {
-          ...data,
-          timezone: getBrowserTimezone(),
-        },
+        body: data,
       }),
       invalidatesTags: ["Availability"],
     }),
@@ -36,12 +33,9 @@ export const availabilityApi = baseApi.injectEndpoints({
 
     updateSlot: build.mutation({
       query: ({ availabilityId, slotId, ...data }) => ({
-        url: `/availability/${availabilityId}/slots/${slotId}`,
+        url: `/availability/${availabilityId}/slots/${slotId}?timezone=${getBrowserTimezone()}`,
         method: "PATCH",
-        body: {
-          ...data,
-          timezone: getBrowserTimezone(),
-        },
+        body: data,
       }),
       invalidatesTags: ["Availability"],
     }),
