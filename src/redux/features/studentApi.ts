@@ -2,6 +2,10 @@ import { baseApi } from "../api/baseApi";
 
 export const studentApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
+    getAllStudents: build.query({
+      query: () => "/student",
+       providesTags: ["Student"],
+    }),
     updateStudent: build.mutation({
       query: ({ id, file, ...data }) => {
         const formData = new FormData();
@@ -20,4 +24,4 @@ export const studentApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useUpdateStudentMutation } = studentApi;
+export const { useUpdateStudentMutation, useGetAllStudentsQuery } = studentApi;

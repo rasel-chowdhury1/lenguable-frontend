@@ -7,11 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useGetAllReviewsQuery } from "@/redux/features/reviewApi";
 import Image from "next/image";
+import { useGetAllStudentsQuery } from "@/redux/features/studentApi";
 
 export default function Testimonials() {
   const [current, setCurrent] = useState(0);
 
   const { data, isLoading, isError } = useGetAllReviewsQuery(undefined);
+  const { data: studentsData } = useGetAllStudentsQuery(undefined);
+  const studentCount = studentsData?.data?.length ?? 0;
   const reviews = data?.data || [];
 
   if (isLoading) {
@@ -29,7 +32,8 @@ export default function Testimonials() {
       <section className="max-w-7xl mx-auto mt-40">
         <div className="text-center mb-14">
           <h2 className="text-4xl font-bold text-foreground mb-4">
-            Trusted by <span className="text-[#A9F877]">1,000+</span> Students
+            Trusted by <span className="text-[#A9F877]">{studentCount}</span>{" "}
+            Students
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto">
             Highly rated by learners worldwide for quality teaching and real
@@ -48,7 +52,8 @@ export default function Testimonials() {
       {/* Header */}
       <div className="text-center mb-14">
         <h2 className="text-4xl font-bold text-foreground mb-4">
-          Trusted by <span className="text-[#A9F877]">1,000+</span> Students
+          Trusted by <span className="text-[#A9F877]">{studentCount}</span>{" "}
+          Students
         </h2>
         <p className="text-muted-foreground max-w-xl mx-auto">
           Highly rated by learners worldwide for quality teaching and real
@@ -85,14 +90,21 @@ export default function Testimonials() {
                   <div className="space-y-6">
                     {/* Stars */}
                     <div className="flex gap-1">
-                      {Array.from({ length: review.rating }).map(
+                      {/* {Array.from({ length: review.rating }).map(
                         (_: any, i: number) => (
                           <Star
                             key={i}
                             className="w-6 h-6 text-[#A9F877] fill-[#A9F877]"
                           />
                         ),
-                      )}
+                      )} */}
+
+                      {Array.from({ length: 5 }).map((_: any, i: number) => (
+                        <Star
+                          key={i}
+                          className={`w-6 h-6 ${i < review.rating ? "text-[#A9F877] fill-[#A9F877]" : "text-gray-200 fill-gray-200"}`}
+                        />
+                      ))}
                     </div>
 
                     {/* Comment */}

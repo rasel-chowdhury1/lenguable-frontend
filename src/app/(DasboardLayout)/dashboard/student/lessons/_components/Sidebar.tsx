@@ -33,7 +33,7 @@ export function Sidebar({
   };
 
   return (
-    <aside className="w-full md:w-56 md:shrink-0 bg-white border border-gray-200 rounded-xl p-4 h-fit">
+    <aside className="w-full lg:w-56 lg:shrink-0 bg-white border border-gray-200 rounded-xl p-4 h-fit">
       <nav className="space-y-1">
         {navSections.map((section) => {
           if (section.type === "link") {

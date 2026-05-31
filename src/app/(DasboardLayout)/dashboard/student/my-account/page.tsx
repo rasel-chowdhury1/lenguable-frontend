@@ -154,7 +154,7 @@ export default function MyAccountPage() {
     .join("");
 
   return (
-    <div className="max-w-5xl mx-auto p-5 lg:my-20">
+    <div className="max-w-5xl mx-auto md:p-5 lg:my-20">
       <h1 className="text-2xl font-semibold mb-5">My Account</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-7">

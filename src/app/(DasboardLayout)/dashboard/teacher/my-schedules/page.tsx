@@ -125,8 +125,7 @@ export default function Calendar() {
       .toLocaleTimeString(undefined, {
         hour: "2-digit",
         minute: "2-digit",
-        // hour12: true,
-        hour12: false,
+        hour12: true,
       })
       .toUpperCase();
   };

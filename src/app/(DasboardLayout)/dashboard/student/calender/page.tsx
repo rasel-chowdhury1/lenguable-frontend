@@ -388,8 +388,8 @@ const formatTime = (timeString: string) => {
   return date.toLocaleTimeString(undefined, {
     hour: "2-digit",
     minute: "2-digit",
-    hour12: false, // ✅ 24-hour
-  });
+    hour12: true,
+  }).toUpperCase();
 };
 
 // ✅ Normalize ISO or HH:MM to plain HH:MM UTC for comparison

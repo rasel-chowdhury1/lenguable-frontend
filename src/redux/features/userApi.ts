@@ -8,7 +8,7 @@ export const userApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["Auth"],
+      invalidatesTags: ["Teacher"],
     }),
 
     createStudent: build.mutation({
@@ -17,12 +17,12 @@ export const userApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["Auth"],
+      invalidatesTags: ["Student"],
     }),
 
     getMe: build.query({
       query: () => "/user/getMe",
-      providesTags: ["Auth"],
+      providesTags: ["User"],
     }),
   }),
 });

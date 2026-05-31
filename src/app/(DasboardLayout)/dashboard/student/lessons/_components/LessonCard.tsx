@@ -99,22 +99,59 @@ export function LessonCard({ lesson }: LessonCardProps) {
       </div>
 
       {/* ── Lesson PDF Modal ── */}
-      <Dialog open={lessonOpen} onOpenChange={setLessonOpen}>
+      {/* <Dialog open={lessonOpen} onOpenChange={setLessonOpen}>
         <DialogContent className="max-w-5xl! w-full h-[80vh] flex flex-col">
           <DialogHeader>
             <DialogTitle>{lesson.title}</DialogTitle>
           </DialogHeader>
 
-          {/* <div className="flex-1">
-            <iframe src={lesson.file} className="w-full h-full border-0" />
-          </div> */}
           <div className="relative flex-1">
             <iframe
               src={lesson.file + "#toolbar=1&navpanes=0"}
               className="w-full h-full border-0"
             />
-            {/* blocks the top-right toolbar icons */}
             <div className="absolute top-1 right-0 w-44 h-10 bg-[#3c3c3c] z-10" />
+          </div>
+        </DialogContent>
+      </Dialog> */}
+
+      <Dialog open={lessonOpen} onOpenChange={setLessonOpen}>
+        <DialogContent
+          className="
+      /* Mobile: true full-screen */
+      w-screen max-w-none h-dvh m-0 rounded-none p-0
+      flex flex-col
+
+      /* md+: restore floating dialog */
+      md:w-full md:max-w-5xl md:h-[80vh]
+      md:m-auto md:rounded-lg md:p-6
+    "
+        >
+          <DialogHeader className="px-4 pt-4 md:px-0 md:pt-0 shrink-0">
+            <DialogTitle className="text-base md:text-lg leading-tight">
+              {lesson.title}
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="relative flex-1 overflow-hidden px-0">
+            <iframe
+              src={lesson.file + "#toolbar=1&navpanes=0&scrollbar=1"}
+              className="w-full h-full border-0"
+              style={{ touchAction: "manipulation" }}
+              title={lesson.title}
+            />
+
+            {/* Hides Chrome PDF viewer top-right icons (download, print, etc.) */}
+            <div
+              className="
+          absolute top-1 right-0 z-10 bg-[#3c3c3c]
+          /* mobile: narrower bar, slightly taller for touch targets */
+          w-44 h-10
+          /* md+: original size */
+          md:w-44 md:h-10
+        "
+              aria-hidden="true"
+            />
           </div>
         </DialogContent>
       </Dialog>

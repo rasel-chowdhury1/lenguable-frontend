@@ -64,7 +64,7 @@ export default function MyLessonsPage() {
     <div className="min-h-screen p-5">
       <h1 className="text-2xl font-bold text-gray-900 mb-5">My Lessons</h1>
 
-      <div className="flex flex-col md:flex-row gap-5 items-start">
+      <div className="flex flex-col lg:flex-row gap-5 items-start">
         <Sidebar
           navSections={navSections}
           levels={levels}

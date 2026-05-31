@@ -8,7 +8,7 @@ export const bookingApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["Booking"],
+      invalidatesTags: ["Booking", "Teacher", "Availability", "User"],
     }),
 
     myBooking: build.query({
@@ -26,7 +26,7 @@ export const bookingApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: { reason },
       }),
-      invalidatesTags: ["Booking"],
+      invalidatesTags: ["Booking", "Teacher", "User"],
     }),
     markTeacherJoined: build.mutation({
       query: (bookingId: string) => ({

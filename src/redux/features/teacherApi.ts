@@ -7,6 +7,7 @@ export const teacherApi = baseApi.injectEndpoints({
         url: "/teacher",
         method: "GET",
       }),
+      providesTags: ["Teacher"],
     }),
     updateTeacher: build.mutation({
       query: ({ id, file, ...data }) => {

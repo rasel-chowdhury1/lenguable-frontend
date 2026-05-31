@@ -127,11 +127,13 @@ function formatTime(time: string): string {
         d.setHours(h, m, 0, 0);
         return d;
       })();
-  return date.toLocaleTimeString(undefined, {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false, // ✅ 24-hour
-  });
+  return date
+    .toLocaleTimeString(undefined, {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    })
+    .toUpperCase();
 }
 
 function formatDate(dateStr: string): string {
