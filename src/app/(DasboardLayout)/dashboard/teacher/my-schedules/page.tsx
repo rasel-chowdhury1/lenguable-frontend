@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/purity */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -55,45 +56,7 @@ export default function Calendar() {
   } | null>(null);
 
   const schedule: AvailabilityItem[] = data?.data ?? [];
-
-  const now = new Date();
   const todayStr = new Date().toLocaleDateString("en-CA"); // "YYYY-MM-DD"
-
-  // const getDayName = (dateString: string) => {
-  //   if (!dateString) return "";
-  //   return new Date(dateString + "T00:00").toLocaleDateString("en-US", {
-  //     weekday: "long",
-  //   });
-  // };
-
-  // const formatDate = (dateString: string) => {
-  //   return new Date(dateString + "T00:00").toLocaleDateString(undefined, {
-  //     month: "short",
-  //     day: "numeric",
-  //   });
-  // };
-
-  // const formatTime = (timeString: string) => {
-  //   if (!timeString) return "";
-
-  //   const date = timeString.includes("T")
-  //     ? new Date(timeString)
-  //     : (() => {
-  //         const [h, m] = timeString.split(":").map(Number);
-  //         const d = new Date();
-  //         d.setHours(h, m, 0, 0);
-  //         return d;
-  //       })();
-
-  //   // undefined locale = browser's local format automatically
-  //   return date
-  //     .toLocaleTimeString(undefined, {
-  //       hour: "2-digit",
-  //       minute: "2-digit",
-  //       // hour12: true,
-  //     })
-  //     .toUpperCase();
-  // };
 
   const getDayName = (dateString: string) => {
     if (!dateString) return "";
@@ -103,20 +66,21 @@ export default function Calendar() {
     });
   };
 
-  const formatDate = (dateString: string) => {
-    const [year, month, day] = dateString.split("-").map(Number);
+  function formatDate(dateStr: string): string {
+    const [year, month, day] = dateStr.split("-").map(Number);
     return new Date(year, month - 1, day).toLocaleDateString(undefined, {
+      weekday: "short",
       month: "short",
       day: "numeric",
     });
-  };
+  }
 
-  const formatTime = (timeString: string) => {
-    if (!timeString) return "";
-    const date = timeString.includes("T")
-      ? new Date(timeString)
+  function formatTime(time: string): string {
+    if (!time) return "";
+    const date = time.includes("T")
+      ? new Date(time)
       : (() => {
-          const [h, m] = timeString.split(":").map(Number);
+          const [h, m] = time.split(":").map(Number);
           const d = new Date();
           d.setHours(h, m, 0, 0);
           return d;
@@ -128,60 +92,40 @@ export default function Calendar() {
         hour12: true,
       })
       .toUpperCase();
-  };
+  }
 
   const get24hTime = (timeString: string) => {
     if (!timeString) return "";
     if (timeString.includes("T")) {
       const date = new Date(timeString);
-      return `${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
+      // return `${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
+      return `${date.getUTCHours().toString().padStart(2, "0")}:${date.getUTCMinutes().toString().padStart(2, "0")}`;
     }
     return timeString;
   };
 
-  // Returns true only if the slot's full datetime is at least 24 hours from now
-  const isSlotInFuture = (slotStartTime: string, slotDate: string) => {
-    if (!slotStartTime) return false;
-
-    let slotDateTime: Date;
-
-    if (slotStartTime.includes("T")) {
-      slotDateTime = new Date(slotStartTime);
-    } else {
-      const [year, month, day] = slotDate.split("-").map(Number);
-      const [hour, minute] = slotStartTime.split(":").map(Number);
-      slotDateTime = new Date(year, month - 1, day, hour, minute, 0, 0);
-    }
-
-    const cutoff = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+  function isSlotInFuture(date: string, startTime: string): boolean {
+    const slotDateTime = startTime.includes("T")
+      ? new Date(startTime)
+      : new Date(`${date}T${startTime}:00.000Z`); // ✅ UTC
+    const cutoff = new Date(Date.now() + 24 * 60 * 60 * 1000);
     return slotDateTime >= cutoff;
-  };
+  }
 
-  // Filter: only show items with at least one unbooked slot at least 24h from now
-  // const futureSchedule = schedule
-  //   .map((item) => ({
-  //     ...item,
-  //     slots: item.slots.filter(
-  //       (slot) => !slot.isBooked && isSlotInFuture(slot.startTime, item.date),
-  //     ),
-  //   }))
-  //   .filter((item) => item.slots.length > 0)
-  //   .sort((a, b) => a.date.localeCompare(b.date));
-
-
-  // New code
   const futureSchedule = schedule
     .map((item) => ({
       ...item,
       slots: item.slots
         .filter(
-          (slot) => !slot.isBooked && isSlotInFuture(slot.startTime, item.date),
+          // (slot) => !slot.isBooked && isSlotInFuture(slot.startTime, item.date),
+          (slot) => !slot.isBooked && isSlotInFuture(item.date, slot.startTime),
         )
         .sort((a, b) => {
           const toMinutes = (t: string) => {
             if (t.includes("T")) {
               const d = new Date(t);
-              return d.getHours() * 60 + d.getMinutes();
+              // return d.getHours() * 60 + d.getMinutes();
+              return d.getUTCHours() * 60 + d.getUTCMinutes();
             }
             const [h, m] = t.split(":").map(Number);
             return h * 60 + m;

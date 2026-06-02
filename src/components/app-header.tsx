@@ -138,7 +138,6 @@ import {
   CreditCard,
   CalendarPlus,
   LogIn,
-  MoreVertical,
   X,
   Languages,
 } from "lucide-react";
@@ -272,7 +271,6 @@ const AppHeader = () => {
             {mobileMenuOpen ? (
               <X className="h-4 w-4" />
             ) : (
-              // <MoreVertical className="h-4 w-4" />
               <Languages className="h-4 w-4" />
             )}
           </Button>

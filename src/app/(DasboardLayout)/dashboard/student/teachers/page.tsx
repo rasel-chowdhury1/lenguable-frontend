@@ -60,54 +60,6 @@ interface Teacher {
   availabilities?: Availability[];
 }
 
-// function formatTime(time: string): string {
-//   if (!time) return "";
-//   if (time.includes("T")) {
-//     return new Date(time).toLocaleTimeString(undefined, {
-//       hour: "2-digit",
-//       minute: "2-digit",
-//     });
-//   }
-//   const [hourStr, minute] = time.split(":");
-//   const hour = parseInt(hourStr, 10);
-//   const ampm = hour >= 12 ? "PM" : "AM";
-//   const h12 = hour % 12 || 12;
-//   return `${h12}:${minute} ${ampm}`;
-// }
-
-// function formatDate(dateStr: string): string {
-//   return new Date(dateStr).toLocaleDateString("en-US", {
-//     weekday: "short",
-//     month: "short",
-//     day: "numeric",
-//   });
-// }
-
-// function getInitials(name: string): string {
-//   return name
-//     .split(" ")
-//     .map((n) => n[0])
-//     .join("")
-//     .toUpperCase()
-//     .slice(0, 2);
-// }
-
-// // Returns true only if the slot's full datetime is at least 24 hours from now
-// function isSlotInFuture(date: string, startTime: string): boolean {
-//   let slotDateTime: Date;
-
-//   if (startTime.includes("T")) {
-//     slotDateTime = new Date(startTime);
-//   } else {
-//     const [year, month, day] = date.split("-").map(Number);
-//     const [hour, minute] = startTime.split(":").map(Number);
-//     slotDateTime = new Date(year, month - 1, day, hour, minute, 0, 0);
-//   }
-
-//   const cutoff = new Date(Date.now() + 24 * 60 * 60 * 1000);
-//   return slotDateTime >= cutoff;
-// }
-
 function getInitials(name: string): string {
   return name
     .split(" ")
@@ -170,17 +122,6 @@ function SlotModal({
 
   if (!teacher) return null;
 
-  // const availabilities = (teacher.availabilities ?? [])
-  //   .map((avail) => ({
-  //     ...avail,
-  //     slots: avail.slots.filter(
-  //       (s) => !s.isBooked && isSlotInFuture(avail.date, s.startTime),
-  //     ),
-  //   }))
-  //   .filter((avail) => avail.slots.length > 0)
-  //   .sort((a, b) => a.date.localeCompare(b.date));
-
-  // New code
   const availabilities = (teacher.availabilities ?? [])
     .map((avail) => ({
       ...avail,
@@ -202,42 +143,6 @@ function SlotModal({
     .sort((a, b) => a.date.localeCompare(b.date));
 
   const slotKey = (date: string, startTime: string) => `${date}__${startTime}`;
-
-  // const handleBook = async (date: string, startTime: string) => {
-  //   const key = slotKey(date, startTime);
-  //   setLoadingSlot(key);
-
-  //   let bookingDate = date;
-  //   let bookingTime = startTime;
-
-  //   if (startTime.includes("T")) {
-  //     const dt = new Date(startTime);
-  //     bookingDate = dt.toLocaleDateString("en-CA");
-  //     bookingTime = `${dt.getHours().toString().padStart(2, "0")}:${dt.getMinutes().toString().padStart(2, "0")}`;
-  //   }
-
-  //   try {
-  //     await createBooking({
-  //       teacherId: teacher._id,
-  //       date: bookingDate,
-  //       startTime: bookingTime,
-  //       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-  //     }).unwrap();
-
-  //     setJustBookedKey(key);
-  //     toast.success("Slot booked! Redirecting to your bookings…");
-
-  //     setTimeout(() => {
-  //       setJustBookedKey(null);
-  //       setLoadingSlot(null);
-  //       onClose();
-  //     }, 1200);
-  //     router.push("/dashboard/student/booking");
-  //   } catch (err: any) {
-  //     toast.error(err?.data?.message || "Booking failed. Please try again!");
-  //     setLoadingSlot(null);
-  //   }
-  // };
 
   const handleBook = async (date: string, startTime: string) => {
     const key = slotKey(date, startTime);
@@ -319,15 +224,6 @@ function SlotModal({
                 <div key={avail._id}>
                   <div className="flex items-center gap-2 mb-3">
                     <CalendarDays className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-                    {/* <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">
-                      {new Date(avail.date).toLocaleDateString("en-US", {
-                        weekday: "long",
-                      })}
-                    </span>
-                    <span className="text-xs text-gray-400">
-                      · {formatDate(avail.date)}
-                    </span> */}
-
                     <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">
                       {(() => {
                         const [year, month, day] = avail.date
