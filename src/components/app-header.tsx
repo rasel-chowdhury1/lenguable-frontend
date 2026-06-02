@@ -140,6 +140,7 @@ import {
   LogIn,
   MoreVertical,
   X,
+  Languages,
 } from "lucide-react";
 import { useGetMeQuery } from "@/redux/features/userApi";
 import { useLogoutMutation } from "@/redux/features/authApi";
@@ -271,7 +272,8 @@ const AppHeader = () => {
             {mobileMenuOpen ? (
               <X className="h-4 w-4" />
             ) : (
-              <MoreVertical className="h-4 w-4" />
+              // <MoreVertical className="h-4 w-4" />
+              <Languages className="h-4 w-4" />
             )}
           </Button>
         </div>

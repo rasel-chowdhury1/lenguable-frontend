@@ -170,12 +170,33 @@ function SlotModal({
 
   if (!teacher) return null;
 
+  // const availabilities = (teacher.availabilities ?? [])
+  //   .map((avail) => ({
+  //     ...avail,
+  //     slots: avail.slots.filter(
+  //       (s) => !s.isBooked && isSlotInFuture(avail.date, s.startTime),
+  //     ),
+  //   }))
+  //   .filter((avail) => avail.slots.length > 0)
+  //   .sort((a, b) => a.date.localeCompare(b.date));
+
+  // New code
   const availabilities = (teacher.availabilities ?? [])
     .map((avail) => ({
       ...avail,
-      slots: avail.slots.filter(
-        (s) => !s.isBooked && isSlotInFuture(avail.date, s.startTime),
-      ),
+      slots: avail.slots
+        .filter((s) => !s.isBooked && isSlotInFuture(avail.date, s.startTime))
+        .sort((a, b) => {
+          const toMinutes = (t: string) => {
+            if (t.includes("T")) {
+              const d = new Date(t);
+              return d.getHours() * 60 + d.getMinutes();
+            }
+            const [h, m] = t.split(":").map(Number);
+            return h * 60 + m;
+          };
+          return toMinutes(a.startTime) - toMinutes(b.startTime);
+        }),
     }))
     .filter((avail) => avail.slots.length > 0)
     .sort((a, b) => a.date.localeCompare(b.date));

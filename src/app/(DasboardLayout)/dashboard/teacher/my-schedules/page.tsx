@@ -158,12 +158,36 @@ export default function Calendar() {
   };
 
   // Filter: only show items with at least one unbooked slot at least 24h from now
+  // const futureSchedule = schedule
+  //   .map((item) => ({
+  //     ...item,
+  //     slots: item.slots.filter(
+  //       (slot) => !slot.isBooked && isSlotInFuture(slot.startTime, item.date),
+  //     ),
+  //   }))
+  //   .filter((item) => item.slots.length > 0)
+  //   .sort((a, b) => a.date.localeCompare(b.date));
+
+
+  // New code
   const futureSchedule = schedule
     .map((item) => ({
       ...item,
-      slots: item.slots.filter(
-        (slot) => !slot.isBooked && isSlotInFuture(slot.startTime, item.date),
-      ),
+      slots: item.slots
+        .filter(
+          (slot) => !slot.isBooked && isSlotInFuture(slot.startTime, item.date),
+        )
+        .sort((a, b) => {
+          const toMinutes = (t: string) => {
+            if (t.includes("T")) {
+              const d = new Date(t);
+              return d.getHours() * 60 + d.getMinutes();
+            }
+            const [h, m] = t.split(":").map(Number);
+            return h * 60 + m;
+          };
+          return toMinutes(a.startTime) - toMinutes(b.startTime);
+        }),
     }))
     .filter((item) => item.slots.length > 0)
     .sort((a, b) => a.date.localeCompare(b.date));
