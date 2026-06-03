@@ -169,10 +169,16 @@ export default function Calendar() {
       let bookingTime = selectedTime!;
 
       // ✅ Extract UTC values if ISO string
+      // if (selectedTime?.includes("T")) {
+      //   const dt = new Date(selectedTime);
+      //   bookingDate = dt.toLocaleDateString("en-CA", { timeZone: "UTC" });
+      //   bookingTime = `${dt.getUTCHours().toString().padStart(2, "0")}:${dt.getUTCMinutes().toString().padStart(2, "0")}`;
+      // }
+
       if (selectedTime?.includes("T")) {
         const dt = new Date(selectedTime);
-        bookingDate = dt.toLocaleDateString("en-CA", { timeZone: "UTC" });
-        bookingTime = `${dt.getUTCHours().toString().padStart(2, "0")}:${dt.getUTCMinutes().toString().padStart(2, "0")}`;
+        bookingDate = dt.toLocaleDateString("en-CA"); // ← remove { timeZone: "UTC" }
+        bookingTime = `${dt.getHours().toString().padStart(2, "0")}:${dt.getMinutes().toString().padStart(2, "0")}`; // ← getHours not getUTCHours
       }
 
       await createBooking({

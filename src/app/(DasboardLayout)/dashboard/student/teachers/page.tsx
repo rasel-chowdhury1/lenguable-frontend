@@ -151,10 +151,16 @@ function SlotModal({
     let bookingDate = date;
     let bookingTime = startTime;
 
+    // if (startTime.includes("T")) {
+    //   const dt = new Date(startTime);
+    //   bookingDate = dt.toLocaleDateString("en-CA", { timeZone: "UTC" }); // ✅ UTC date
+    //   bookingTime = `${dt.getUTCHours().toString().padStart(2, "0")}:${dt.getUTCMinutes().toString().padStart(2, "0")}`; // ✅ UTC time
+    // }
+
     if (startTime.includes("T")) {
       const dt = new Date(startTime);
-      bookingDate = dt.toLocaleDateString("en-CA", { timeZone: "UTC" }); // ✅ UTC date
-      bookingTime = `${dt.getUTCHours().toString().padStart(2, "0")}:${dt.getUTCMinutes().toString().padStart(2, "0")}`; // ✅ UTC time
+      bookingDate = dt.toLocaleDateString("en-CA"); // ← remove { timeZone: "UTC" }
+      bookingTime = `${dt.getHours().toString().padStart(2, "0")}:${dt.getMinutes().toString().padStart(2, "0")}`; // ← getHours not getUTCHours
     }
 
     try {

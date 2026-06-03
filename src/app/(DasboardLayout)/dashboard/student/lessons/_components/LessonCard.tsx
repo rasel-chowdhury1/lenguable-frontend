@@ -28,6 +28,7 @@ export function LessonCard({ lesson }: LessonCardProps) {
   const isLocked = lesson.isLock;
   const [lessonOpen, setLessonOpen] = useState(false);
   const [practiceOpen, setPracticeOpen] = useState(false);
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
 
   return (
     <>
@@ -79,14 +80,7 @@ export function LessonCard({ lesson }: LessonCardProps) {
             <Button
               size="sm"
               disabled={isLocked}
-              onClick={() => {
-                // On mobile — redirect directly to PDF
-                if (window.innerWidth < 640) {
-                  window.open(lesson.file, "_blank");
-                } else {
-                  setLessonOpen(true);
-                }
-              }}
+              onClick={() => setLessonOpen(true)}
               className="w-full sm:w-auto bg-[#A9F877] text-gray-900 hover:bg-[#C1FF72] border-0 text-xs font-medium shadow-none disabled:opacity-50"
             >
               View Lesson
@@ -107,19 +101,32 @@ export function LessonCard({ lesson }: LessonCardProps) {
 
       {/* ── Lesson PDF Modal ── */}
       <Dialog open={lessonOpen} onOpenChange={setLessonOpen}>
-        <DialogContent className="max-w-5xl! w-full h-[80vh] flex flex-col">
+        <DialogContent
+          className={`max-w-5xl! flex flex-col ${isMobile ? "w-[95vw] h-[85vh] p-3" : "w-full h-[80vh]"}`}
+        >
           <DialogHeader>
-            <DialogTitle className="text-base sm:text-lg">
+            <DialogTitle className="text-base sm:text-lg pr-6">
               {lesson.title}
             </DialogTitle>
           </DialogHeader>
 
           <div className="relative flex-1 min-h-0">
             <iframe
-              src={lesson.file + "#toolbar=1&navpanes=0"}
+              src={
+                isMobile
+                  ? `https://docs.google.com/viewer?url=${encodeURIComponent(lesson.file)}&embedded=true`
+                  : lesson.file + "#toolbar=1&navpanes=0"
+              }
               className="w-full h-full border-0 rounded-md"
             />
-            <div className="absolute top-1 right-0 w-44 h-10 bg-[#3c3c3c] z-10" />
+            {/* Desktop/tablet: cover PDF toolbar */}
+            {!isMobile && (
+              <div className="absolute top-1 right-0 w-44 h-10 bg-[#3c3c3c] z-10" />
+            )}
+            {/* Mobile: cover Google Docs open-in-new-tab button */}
+            {isMobile && (
+              <div className="absolute top-3 right-0 w-14 h-16 bg-[#3c3c3c] z-10" />
+            )}
           </div>
         </DialogContent>
       </Dialog>
