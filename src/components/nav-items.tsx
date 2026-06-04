@@ -42,7 +42,7 @@ export function NavItems({
               >
                 <Link href={item.url}>
                   {item.icon && <item.icon />}
-                  <span>{item.title}</span>
+                  <span className="capitalize">{item.title}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

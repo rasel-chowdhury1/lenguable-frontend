@@ -97,10 +97,18 @@ function formatDate(dateStr: string): string {
   });
 }
 
+// function isSlotInFuture(date: string, startTime: string): boolean {
+//   const slotDateTime = startTime.includes("T")
+//     ? new Date(startTime)
+//     : new Date(`${date}T${startTime}:00.000Z`); // ✅ UTC
+//   const cutoff = new Date(Date.now() + 24 * 60 * 60 * 1000);
+//   return slotDateTime >= cutoff;
+// }
+
 function isSlotInFuture(date: string, startTime: string): boolean {
   const slotDateTime = startTime.includes("T")
     ? new Date(startTime)
-    : new Date(`${date}T${startTime}:00.000Z`); // ✅ UTC
+    : new Date(`${date}T${startTime}:00`); // ← remove .000Z
   const cutoff = new Date(Date.now() + 24 * 60 * 60 * 1000);
   return slotDateTime >= cutoff;
 }
@@ -140,7 +148,15 @@ function SlotModal({
         }),
     }))
     .filter((avail) => avail.slots.length > 0)
-    .sort((a, b) => a.date.localeCompare(b.date));
+    // .sort((a, b) => a.date.localeCompare(b.date));
+
+    .sort((a, b) => {
+      const getLocalDate = (avail: Availability) =>
+        avail.slots[0]?.startTime?.includes("T")
+          ? new Date(avail.slots[0].startTime).toLocaleDateString("en-CA")
+          : avail.date;
+      return getLocalDate(a).localeCompare(getLocalDate(b));
+    });
 
   const slotKey = (date: string, startTime: string) => `${date}__${startTime}`;
 
@@ -230,7 +246,8 @@ function SlotModal({
                 <div key={avail._id}>
                   <div className="flex items-center gap-2 mb-3">
                     <CalendarDays className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-                    <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">
+
+                    {/* <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">
                       {(() => {
                         const [year, month, day] = avail.date
                           .split("-")
@@ -246,7 +263,40 @@ function SlotModal({
                     </span>
                     <span className="text-xs text-gray-400">
                       · {formatDate(avail.date)}
+                    </span> */}
+
+                    <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">
+                      {(() => {
+                        const displayDate = avail.slots[0]?.startTime?.includes(
+                          "T",
+                        )
+                          ? new Date(
+                              avail.slots[0].startTime,
+                            ).toLocaleDateString("en-CA")
+                          : avail.date;
+                        const [year, month, day] = displayDate
+                          .split("-")
+                          .map(Number);
+                        return new Date(
+                          year,
+                          month - 1,
+                          day,
+                        ).toLocaleDateString(undefined, {
+                          weekday: "long",
+                        });
+                      })()}
                     </span>
+                    <span className="text-xs text-gray-400">
+                      ·{" "}
+                      {formatDate(
+                        avail.slots[0]?.startTime?.includes("T")
+                          ? new Date(
+                              avail.slots[0].startTime,
+                            ).toLocaleDateString("en-CA")
+                          : avail.date,
+                      )}
+                    </span>
+
                     <div className="flex-1 h-px bg-gray-100" />
                   </div>
 
