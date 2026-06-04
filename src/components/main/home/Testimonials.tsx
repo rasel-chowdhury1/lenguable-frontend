@@ -52,7 +52,7 @@ export default function Testimonials() {
       {/* Header */}
       <div className="text-center mb-14">
         <h2 className="text-4xl font-bold text-foreground mb-4">
-          Trusted by <span className="text-[#A9F877]">{studentCount}</span>{" "}
+          Trusted by <span className="text-[#A9F877] notranslate">{studentCount}</span>{" "}
           Students
         </h2>
         <p className="text-muted-foreground max-w-xl mx-auto">

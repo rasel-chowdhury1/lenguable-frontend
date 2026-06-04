@@ -52,44 +52,15 @@ export default function GoogleTranslate() {
   const [selected, setSelected] = useState("en");
   const [isClient, setIsClient] = useState(false);
 
-  // useEffect(() => {
-  //   setIsClient(true);
-
-  //   const cookieValue = Cookies.get("googtrans");
-  //   if (cookieValue && cookieValue !== "/auto/en") {
-  //     const parts = cookieValue.split("/");
-  //     const target = parts[2];
-  //     const match = languages.find((l) => l.value === target);
-  //     if (match) setSelected(match.value);
-  //   } else {
-  //     setSelected("en");
-  //     Cookies.set("googtrans", "/auto/en", { path: "/" });
-  //   }
-  // }, []);
-
   useEffect(() => {
     setIsClient(true);
 
     const cookieValue = Cookies.get("googtrans");
-    const isHomePage = window.location.pathname === "/";
-    const isDashboard = window.location.pathname.startsWith("/dashboard");
-
-    // Reset to English when on dashboard
-    if (isDashboard) {
-      setSelected("en");
-      Cookies.set("googtrans", "/auto/en", { path: "/" });
-      return;
-    }
-
     if (cookieValue && cookieValue !== "/auto/en") {
       const parts = cookieValue.split("/");
       const target = parts[2];
       const match = languages.find((l) => l.value === target);
       if (match) setSelected(match.value);
-    } else if (isHomePage) {
-      setSelected("es");
-      Cookies.set("googtrans", "/auto/es", { path: "/" });
-      window.location.href = window.location.href;
     } else {
       setSelected("en");
       Cookies.set("googtrans", "/auto/en", { path: "/" });
