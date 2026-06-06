@@ -37,7 +37,7 @@ type AvailabilityItem = {
   slots: SlotItem[];
 };
 
-export default function Calendar() {
+export default function MySchedules() {
   const { data, isLoading } = useGetMyAvailabilityQuery(undefined);
   const [createAvailability, { isLoading: isCreating }] =
     useCreateAvailabilityMutation();

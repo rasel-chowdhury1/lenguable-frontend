@@ -130,29 +130,48 @@ export default function Calendar() {
   //     });
   // });
 
+  // Commented: 05-06-2026
+  // availability.forEach((item) => {
+  //   item.slots
+  //     .filter((s) => !s.isBooked && isSlotInFuture(s.startTime, item.date))
+  //     .forEach((s) => {
+  //       // Derive local date from ISO startTime if available
+  //       const localDate = s.startTime.includes("T")
+  //         ? new Date(s.startTime).toLocaleDateString("en-CA") // local YYYY-MM-DD
+  //         : item.date;
+
+  //       const localDay = s.startTime.includes("T")
+  //         ? new Date(s.startTime).toLocaleDateString("en-US", {
+  //             weekday: "long",
+  //           })
+  //         : item.day;
+
+  //       if (!scheduleMap[localDate]) {
+  //         scheduleMap[localDate] = {
+  //           times: new Set(),
+  //           date: localDate,
+  //           day: localDay,
+  //         };
+  //       }
+  //       scheduleMap[localDate].times.add(s.startTime);
+  //     });
+  // });
+
+
+  // Updated: 05-06-2026
+  // ✅ Always use item.date and item.day — they're set by the teacher intentionally
   availability.forEach((item) => {
     item.slots
       .filter((s) => !s.isBooked && isSlotInFuture(s.startTime, item.date))
       .forEach((s) => {
-        // Derive local date from ISO startTime if available
-        const localDate = s.startTime.includes("T")
-          ? new Date(s.startTime).toLocaleDateString("en-CA") // local YYYY-MM-DD
-          : item.date;
-
-        const localDay = s.startTime.includes("T")
-          ? new Date(s.startTime).toLocaleDateString("en-US", {
-              weekday: "long",
-            })
-          : item.day;
-
-        if (!scheduleMap[localDate]) {
-          scheduleMap[localDate] = {
+        if (!scheduleMap[item.date]) {
+          scheduleMap[item.date] = {
             times: new Set(),
-            date: localDate,
-            day: localDay,
+            date: item.date,
+            day: item.day,
           };
         }
-        scheduleMap[localDate].times.add(s.startTime);
+        scheduleMap[item.date].times.add(s.startTime);
       });
   });
 
@@ -187,24 +206,37 @@ export default function Calendar() {
   //     ),
   // );
 
+  // Commented: 05-06-2026
+  // const availableTeachers = availability.filter((item) =>
+  //   item.slots.some((s) => {
+  //     const localDate = s.startTime.includes("T")
+  //       ? new Date(s.startTime).toLocaleDateString("en-CA")
+  //       : item.date;
+
+  //     const localDay = s.startTime.includes("T")
+  //       ? new Date(s.startTime).toLocaleDateString("en-US", { weekday: "long" })
+  //       : item.day;
+
+  //     return (
+  //       localDay === selectedDay &&
+  //       localDate === selectedDate &&
+  //       normalizeTime(s.startTime) === normalizeTime(selectedTime!) &&
+  //       !s.isBooked &&
+  //       isSlotInFuture(s.startTime, item.date)
+  //     );
+  //   }),
+  // );
+
+  // Updated: 05-06-2026
   const availableTeachers = availability.filter((item) =>
-    item.slots.some((s) => {
-      const localDate = s.startTime.includes("T")
-        ? new Date(s.startTime).toLocaleDateString("en-CA")
-        : item.date;
-
-      const localDay = s.startTime.includes("T")
-        ? new Date(s.startTime).toLocaleDateString("en-US", { weekday: "long" })
-        : item.day;
-
-      return (
-        localDay === selectedDay &&
-        localDate === selectedDate &&
+    item.slots.some(
+      (s) =>
+        item.day === selectedDay &&
+        item.date === selectedDate &&
         normalizeTime(s.startTime) === normalizeTime(selectedTime!) &&
         !s.isBooked &&
-        isSlotInFuture(s.startTime, item.date)
-      );
-    }),
+        isSlotInFuture(s.startTime, item.date),
+    ),
   );
 
   const handleBookClass = async (teacherId: string) => {
