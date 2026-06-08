@@ -74,17 +74,28 @@ export default function MySchedules() {
       day: "numeric",
     });
   }
+   function formatUtcToShortDateByRK(
+  utcDate: string,
+  timeZone?: string
+): string {
+  return new Date(utcDate).toLocaleDateString("en-US", {
+    timeZone,
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  });
+}
 
   function formatTime(time: string): string {
     if (!time) return "";
     const date = time.includes("T")
       ? new Date(time)
       : (() => {
-          const [h, m] = time.split(":").map(Number);
-          const d = new Date();
-          d.setHours(h, m, 0, 0);
-          return d;
-        })();
+        const [h, m] = time.split(":").map(Number);
+        const d = new Date();
+        d.setHours(h, m, 0, 0);
+        return d;
+      })();
     return date
       .toLocaleTimeString(undefined, {
         hour: "2-digit",
@@ -115,6 +126,7 @@ export default function MySchedules() {
 
   // ✅ Derive display date from ISO startTime to get correct local date for all timezones
   function getDisplayDate(date: string, firstSlotStartTime: string): string {
+    console.log(date, "date??????")
     if (firstSlotStartTime?.includes("T")) {
       return new Date(firstSlotStartTime).toLocaleDateString("en-CA"); // local YYYY-MM-DD
     }
@@ -262,9 +274,10 @@ export default function MySchedules() {
             <Card key={item._id} className="min-w-45">
               <CardContent>
                 <div className="mb-4">
-                  <h3 className="font-medium">{getDayName(displayDate)}</h3>
+                  <h3 className="font-medium">{getDayName(displayDate)}  </h3>
+ 
                   <p className="text-sm text-muted-foreground">
-                    {formatDate(displayDate)}
+                    {formatUtcToShortDateByRK(new Date((item as any).utcDate).toLocaleString())}
                   </p>
                 </div>
 
