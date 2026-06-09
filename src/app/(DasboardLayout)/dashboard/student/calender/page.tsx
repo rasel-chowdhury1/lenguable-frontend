@@ -32,7 +32,7 @@ interface ITeacher {
 
 interface IAvailability {
   _id: string;
-  teacherId: ITeacher;
+  teacher: ITeacher;
   day: string;
   date: string;
   slots: ISlot[];
@@ -239,9 +239,9 @@ export default function Calendar() {
     ),
   );
 
-  const handleBookClass = async (teacherId: string) => {
+  const handleBookClass = async (teacher: string) => {
     try {
-      setBookingTeacherId(teacherId);
+      setBookingTeacherId(teacher);
 
       let bookingDate = selectedDate!;
       let bookingTime = selectedTime!;
@@ -260,7 +260,7 @@ export default function Calendar() {
       }
 
       await createBooking({
-        teacherId,
+        teacher,
         date: bookingDate,
         startTime: bookingTime,
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -274,6 +274,9 @@ export default function Calendar() {
       setBookingTeacherId(null);
     }
   };
+
+
+
 
   return (
     <div className="w-full p-5">
@@ -346,27 +349,27 @@ export default function Calendar() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-              {availableTeachers.map(({ teacherId }, index) => (
-                <Card key={teacherId?._id || index}>
+              {availableTeachers.map(({ teacher }, index) => (
+                <Card key={teacher?._id || index}>
                   <CardContent className="text-center space-y-4">
                     <Avatar className="h-16 w-16 mx-auto">
                       <AvatarImage
-                        src={teacherId?.profilePicture}
-                        alt={teacherId?.name}
+                        src={teacher?.profilePicture}
+                        alt={teacher?.name}
                       />
                       <AvatarFallback>
-                        {getInitials(teacherId?.name)}
+                        {getInitials(teacher?.name)}
                       </AvatarFallback>
                     </Avatar>
 
                     <div>
-                      <h3 className="font-medium">{teacherId?.name}</h3>
+                      <h3 className="font-medium">{teacher?.name}</h3>
                       <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground mt-1">
                         <Star className="h-4 w-4" />
-                        <span>{teacherId?.experience ?? 0} yrs exp</span>
+                        <span>{teacher?.experience ?? 0} yrs exp</span>
                       </div>
                       <p className="text-sm text-muted-foreground mt-1">
-                        {teacherId?.nationality ?? "N/A"}
+                        {teacher?.nationality ?? "N/A"}
                       </p>
                     </div>
 
@@ -376,15 +379,15 @@ export default function Calendar() {
                         size="sm"
                         onClick={() => {
                           setSelectedTeacher({
-                            _id: teacherId._id,
-                            name: teacherId.name,
-                            initials: getInitials(teacherId.name),
-                            nationality: teacherId.nationality ?? "N/A",
-                            experience: teacherId.experience ?? 0,
-                            aboutMe: teacherId.aboutMe ?? "",
-                            interests: teacherId.interests ?? [],
-                            languages: teacherId.languages ?? [],
-                            profilePicture: teacherId.profilePicture,
+                            _id: teacher._id,
+                            name: teacher.name,
+                            initials: getInitials(teacher.name),
+                            nationality: teacher.nationality ?? "N/A",
+                            experience: teacher.experience ?? 0,
+                            aboutMe: teacher.aboutMe ?? "",
+                            interests: teacher.interests ?? [],
+                            languages: teacher.languages ?? [],
+                            profilePicture: teacher.profilePicture,
                             day: selectedDay,
                             date: selectedDate,
                             startTime: selectedTime,
@@ -399,11 +402,11 @@ export default function Calendar() {
                         size="sm"
                         className="bg-[#A9F877] hover:bg-[#C1FF72] text-black"
                         disabled={
-                          isBooking && bookingTeacherId === teacherId._id
+                          isBooking && bookingTeacherId === teacher._id
                         }
-                        onClick={() => handleBookClass(teacherId._id)}
+                        onClick={() => handleBookClass(teacher._id)}
                       >
-                        {isBooking && bookingTeacherId === teacherId._id
+                        {isBooking && bookingTeacherId === teacher._id
                           ? "Booking..."
                           : "Book Class"}
                       </Button>

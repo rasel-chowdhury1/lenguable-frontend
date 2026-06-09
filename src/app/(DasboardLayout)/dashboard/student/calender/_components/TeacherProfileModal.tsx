@@ -254,6 +254,7 @@ export default function TeacherProfileModal({ open, onClose, teacher }: Props) {
 
   if (!teacher) return null;
 
+
   const handleBookClass = async () => {
     try {
       let bookingDate = teacher.date;

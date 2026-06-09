@@ -89,6 +89,7 @@ function formatTime(time: string): string {
 }
 
 function formatDate(dateStr: string): string {
+ 
   const [year, month, day] = dateStr.split("-").map(Number);
   return new Date(year, month - 1, day).toLocaleDateString(undefined, {
     weekday: "short",
@@ -130,33 +131,36 @@ function SlotModal({
 
   if (!teacher) return null;
 
-  const availabilities = (teacher.availabilities ?? [])
-    .map((avail) => ({
-      ...avail,
-      slots: avail.slots
+  // Flatten every slot, tag it with its own local date
+  type TaggedSlot = Slot & { availDate: string; localDate: string };
+  const allTaggedSlots: TaggedSlot[] = (teacher.availabilities ?? []).flatMap(
+    (avail) =>
+      avail.slots
         .filter((s) => !s.isBooked && isSlotInFuture(avail.date, s.startTime))
-        .sort((a, b) => {
-          const toMinutes = (t: string) => {
-            if (t.includes("T")) {
-              const d = new Date(t);
-              return d.getHours() * 60 + d.getMinutes();
-            }
-            const [h, m] = t.split(":").map(Number);
-            return h * 60 + m;
-          };
-          return toMinutes(a.startTime) - toMinutes(b.startTime);
-        }),
-    }))
-    .filter((avail) => avail.slots.length > 0)
-    // .sort((a, b) => a.date.localeCompare(b.date));
+        .map((s) => ({
+          ...s,
+          availDate: avail.date,
+          localDate: s.startTime.includes("T")
+            ? new Date(s.startTime).toLocaleDateString("en-CA")
+            : avail.date,
+        }))
+  );
 
-    .sort((a, b) => {
-      const getLocalDate = (avail: Availability) =>
-        avail.slots[0]?.startTime?.includes("T")
-          ? new Date(avail.slots[0].startTime).toLocaleDateString("en-CA")
-          : avail.date;
-      return getLocalDate(a).localeCompare(getLocalDate(b));
-    });
+  // Group by each slot's own local date
+  const slotsByDate = new Map<string, TaggedSlot[]>();
+  for (const slot of allTaggedSlots) {
+    if (!slotsByDate.has(slot.localDate)) slotsByDate.set(slot.localDate, []);
+    slotsByDate.get(slot.localDate)!.push(slot);
+  }
+
+  const availabilities = [...slotsByDate.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([localDate, slots]) => ({
+      localDate,
+      slots: slots.sort(
+        (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+      ),
+    }));
 
   const slotKey = (date: string, startTime: string) => `${date}__${startTime}`;
 
@@ -243,7 +247,7 @@ function SlotModal({
               </div>
             ) : (
               availabilities.map((avail) => (
-                <div key={avail._id}>
+                <div key={avail.localDate}>
                   <div className="flex items-center gap-2 mb-3">
                     <CalendarDays className="w-3.5 h-3.5 text-gray-400 shrink-0" />
 
@@ -266,35 +270,10 @@ function SlotModal({
                     </span> */}
 
                     <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">
-                      {(() => {
-                        const displayDate = avail.slots[0]?.startTime?.includes(
-                          "T",
-                        )
-                          ? new Date(
-                              avail.slots[0].startTime,
-                            ).toLocaleDateString("en-CA")
-                          : avail.date;
-                        const [year, month, day] = displayDate
-                          .split("-")
-                          .map(Number);
-                        return new Date(
-                          year,
-                          month - 1,
-                          day,
-                        ).toLocaleDateString(undefined, {
-                          weekday: "long",
-                        });
-                      })()}
+                      {new Date(avail.localDate + "T12:00:00").toLocaleDateString("en-US", { weekday: "long" })}
                     </span>
                     <span className="text-xs text-gray-400">
-                      ·{" "}
-                      {formatDate(
-                        avail.slots[0]?.startTime?.includes("T")
-                          ? new Date(
-                              avail.slots[0].startTime,
-                            ).toLocaleDateString("en-CA")
-                          : avail.date,
-                      )}
+                      · {formatDate(avail.localDate)}
                     </span>
 
                     <div className="flex-1 h-px bg-gray-100" />
@@ -302,7 +281,7 @@ function SlotModal({
 
                   <div className="space-y-2">
                     {avail.slots.map((slot) => {
-                      const key = slotKey(avail.date, slot.startTime);
+                      const key = slotKey(slot.availDate, slot.startTime);
                       const isThisBooked = justBookedKey === key;
                       const isThisLoading = loadingSlot === key;
                       const anyLoading = !!loadingSlot;
@@ -340,7 +319,7 @@ function SlotModal({
                               size="sm"
                               disabled={anyLoading}
                               onClick={() =>
-                                handleBook(avail.date, slot.startTime)
+                                handleBook(slot.availDate, slot.startTime)
                               }
                               className="h-8 px-4 text-xs font-semibold bg-[#A9F877] hover:bg-[#C1FF72] text-gray-900 rounded-md shadow-none border-0 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                             >

@@ -28,9 +28,9 @@ interface IBooking {
   teacherId: string;
 }
 
-const formatDate = (dateString: string) => {
-  const [year, month, day] = dateString.split("-").map(Number);
-  return new Date(year, month - 1, day).toLocaleDateString(undefined, {
+const formatUtcToShortDateByRK = (dateStr: string): string => {
+  return new Date(dateStr).toLocaleDateString("en-US", {
+    weekday: "short",
     month: "short",
     day: "numeric",
   });
@@ -129,7 +129,8 @@ export default function Schedule() {
         <div className="flex items-center gap-2">
           <Calendar className="h-4 w-4 text-gray-400 shrink-0" />
           <span className="text-sm text-gray-600">
-            {cls.day}, {formatDate(cls.date)}
+            {new Date(cls.date + "T12:00:00").toLocaleDateString("en-US", { weekday: "long" })},{" "}
+            {formatUtcToShortDateByRK(new Date(cls.date + "T12:00:00").toLocaleString())}
           </span>
         </div>
 

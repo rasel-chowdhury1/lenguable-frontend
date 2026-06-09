@@ -56,6 +56,9 @@ export default function MySchedules() {
   } | null>(null);
 
   const schedule: AvailabilityItem[] = data?.data ?? [];
+
+
+
   const todayStr = new Date().toLocaleDateString("en-CA"); // "YYYY-MM-DD"
 
   const getDayName = (dateString: string) => {
@@ -126,7 +129,7 @@ export default function MySchedules() {
 
   // ✅ Derive display date from ISO startTime to get correct local date for all timezones
   function getDisplayDate(date: string, firstSlotStartTime: string): string {
-    console.log(date, "date??????")
+
     if (firstSlotStartTime?.includes("T")) {
       return new Date(firstSlotStartTime).toLocaleDateString("en-CA"); // local YYYY-MM-DD
     }
@@ -154,6 +157,7 @@ export default function MySchedules() {
     }))
     .filter((item) => item.slots.length > 0)
     .sort((a, b) => a.date.localeCompare(b.date));
+
 
   const handleCreateSchedule = async () => {
     if (!date || !startTime || !endTime) return;
@@ -243,6 +247,7 @@ export default function MySchedules() {
     );
   }
 
+
   return (
     <div className="w-full p-5">
       {/* HEADER */}
@@ -266,18 +271,19 @@ export default function MySchedules() {
       {/* SCHEDULE GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-5">
         {futureSchedule.map((item) => {
-          const displayDate = getDisplayDate(
-            item.date,
-            item.slots[0]?.startTime ?? "",
-          );
+          // const displayDate = getDisplayDate(
+          //   item.date,
+          //   item.slots[0]?.startTime ?? "",
+          // );
           return (
             <Card key={item._id} className="min-w-45">
               <CardContent>
                 <div className="mb-4">
-                  <h3 className="font-medium">{getDayName(displayDate)}  </h3>
- 
+                  {/* <h3 className="font-medium">{getDayName(displayDate)}  </h3> */}
+                  <h3 className="font-medium">{new Date(item.date + "T12:00:00").toLocaleDateString("en-US", { weekday: "long" })}</h3>
+
                   <p className="text-sm text-muted-foreground">
-                    {formatUtcToShortDateByRK(new Date((item as any).utcDate).toLocaleString())}
+                    {formatUtcToShortDateByRK(new Date(item.date + "T12:00:00").toLocaleString())}
                   </p>
                 </div>
 
