@@ -248,6 +248,20 @@ export default function MySchedules() {
     );
   }
 
+
+function createLocalDate(dateStr: string) {
+  const [year, month, day] = dateStr.split("-").map(Number);
+
+  return new Date(
+    year,
+    month - 1,
+    day,
+    12, // noon
+    0,
+    0
+  );
+}
+
   return (
     <div className="w-full p-5">
       {/* HEADER */}
@@ -275,16 +289,55 @@ export default function MySchedules() {
           //   item.date,
           //   item.slots[0]?.startTime ?? "",
           // );
+
+          // const localDate = new Date(`${item.date}T12:00:00`);
+          const localDate = createLocalDate(item.date);
+
+
+          console.log("Original Date:", item.date);
+          console.log("Parsed Date:", localDate);
+          console.log("Is Valid:", !isNaN(localDate.getTime()));
+          console.log(
+            "Timezone:",
+            Intl.DateTimeFormat().resolvedOptions().timeZone
+          );
+
           return (
             <Card key={item._id} className="min-w-45">
               <CardContent>
                 <div className="mb-4">
                   {/* <h3 className="font-medium">{getDayName(displayDate)}  </h3> */}
-                  <h3 className="font-medium">{new Date(item.date + "T12:00:00").toLocaleDateString("en-US", { weekday: "long" })}</h3>
+                  {/* <h3 className="font-medium">{new Date(item.date + "T12:00:00").toLocaleDateString("en-US", { weekday: "long" })}</h3>
 
                   <p className="text-sm text-muted-foreground">
                     {formatUtcToShortDateByRK(new Date(item.date + "T12:00:00").toLocaleString())}
-                  </p>
+                  </p> */}
+                  {/* <h3 className="font-medium">{localDate.toLocaleDateString(undefined, {
+    weekday: "long",
+  })}</h3>
+
+                  <p className="text-sm text-muted-foreground">
+                    {localDate.toLocaleDateString(undefined, {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  })}
+                  </p> */}
+
+                  <h3 className="font-medium">
+  {localDate.toLocaleDateString(undefined, {
+    weekday: "long",
+  })}
+</h3>
+
+<p className="text-sm text-muted-foreground">
+  {localDate.toLocaleDateString(undefined, {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  })}
+</p>
+
                 </div>
 
                 <div className="space-y-2">
