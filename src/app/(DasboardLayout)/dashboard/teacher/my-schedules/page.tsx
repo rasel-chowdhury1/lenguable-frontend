@@ -136,6 +136,7 @@ export default function MySchedules() {
     return date;
   }
 
+
   const futureSchedule = schedule
     .map((item) => ({
       ...item,
@@ -246,7 +247,6 @@ export default function MySchedules() {
       </div>
     );
   }
-
 
   return (
     <div className="w-full p-5">
