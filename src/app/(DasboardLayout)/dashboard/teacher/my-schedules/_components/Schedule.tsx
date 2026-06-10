@@ -122,6 +122,8 @@ export default function Schedule() {
   };
 
   const BookingCard = ({ cls }: { cls: IBooking }) => (
+
+  
     <div className="rounded-lg border border-gray-200 bg-white px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center gap-2">
@@ -135,7 +137,12 @@ export default function Schedule() {
           <Calendar className="h-4 w-4 text-gray-400 shrink-0" />
           <span className="text-sm text-gray-600">
             {createLocalDate(cls.date).toLocaleDateString("en-US", { weekday: "long" })},{" "}
-            {formatUtcToShortDateByRK(createLocalDate(cls.date).toLocaleString())}
+            {/* {formatUtcToShortDateByRK(createLocalDate(cls.date).toLocaleString())} */}
+            {createLocalDate(cls.date).toLocaleDateString(undefined, {
+                      weekday: "short",
+                      month: "short",
+                      day: "numeric",
+                    })}
           </span>
         </div>
 
