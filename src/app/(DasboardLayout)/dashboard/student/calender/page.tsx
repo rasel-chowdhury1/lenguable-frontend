@@ -87,6 +87,7 @@ export default function Calendar() {
   const teachersRef = useRef<HTMLDivElement>(null);
 
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [selectedEndTime, setSelectedEndTime] = useState<string | null>(null);
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [openProfile, setOpenProfile] = useState(false);
@@ -97,6 +98,11 @@ export default function Calendar() {
   const [createBooking, { isLoading: isBooking }] = useCreateBookingMutation();
 
   const availability: IAvailability[] = data?.data || [];
+
+  const endTimeMap: Record<string, string> = {};
+  availability.forEach((item) => {
+    item.slots.forEach((s) => { endTimeMap[s.startTime] = s.endTime; });
+  });
 
   const now = new Date();
 
@@ -239,31 +245,14 @@ export default function Calendar() {
     ),
   );
 
-  const handleBookClass = async (teacher: string) => {
+  const handleBookClass = async (teacherId: string) => {
     try {
-      setBookingTeacherId(teacher);
-
-      let bookingDate = selectedDate!;
-      let bookingTime = selectedTime!;
-
-      // ✅ Extract UTC values if ISO string
-      // if (selectedTime?.includes("T")) {
-      //   const dt = new Date(selectedTime);
-      //   bookingDate = dt.toLocaleDateString("en-CA", { timeZone: "UTC" });
-      //   bookingTime = `${dt.getUTCHours().toString().padStart(2, "0")}:${dt.getUTCMinutes().toString().padStart(2, "0")}`;
-      // }
-
-      if (selectedTime?.includes("T")) {
-        const dt = new Date(selectedTime);
-        bookingDate = dt.toLocaleDateString("en-CA"); // ← remove { timeZone: "UTC" }
-        bookingTime = `${dt.getHours().toString().padStart(2, "0")}:${dt.getMinutes().toString().padStart(2, "0")}`; // ← getHours not getUTCHours
-      }
+      setBookingTeacherId(teacherId);
 
       await createBooking({
-        teacher,
-        date: bookingDate,
-        startTime: bookingTime,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        teacherId,
+        startTime: selectedTime!,
+        endTime: selectedEndTime!,
       }).unwrap();
 
       toast.success("Class booked successfully!");
@@ -276,6 +265,9 @@ export default function Calendar() {
   };
 
 
+
+console.log("schedule from calendar =>>> ", schedule);
+console.log("selected time =>>> ", selectedTime)
 
 
   return (
@@ -316,6 +308,7 @@ export default function Calendar() {
                       }`}
                       onClick={() => {
                         setSelectedTime(time);
+                        setSelectedEndTime(endTimeMap[time] ?? null);
                         setSelectedDay(item.day);
                         setSelectedDate(item.date);
                         requestAnimationFrame(() => {
