@@ -160,10 +160,10 @@ export default function Login() {
                     Remember me
                   </label>
                 </div>
-                <Link href="forgot-password">
-                  <Button variant="link" className="text-primary">
+                <Link href="forgot-password" className="text-primary underline-offset-4 hover:underline">
+                  {/* <Button variant="link" className="text-primary"> */}
                     Forgot Password?
-                  </Button>
+                  {/* < /Button> */}
                 </Link>
               </div>
 
