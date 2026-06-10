@@ -164,46 +164,84 @@ function SlotModal({
 
   const slotKey = (date: string, startTime: string) => `${date}__${startTime}`;
 
-  const handleBook = async (date: string, startTime: string) => {
-    const key = slotKey(date, startTime);
-    setLoadingSlot(key);
+  // const handleBook = async (date: string, startTime: string) => {
+  //   const key = slotKey(date, startTime);
+  //   setLoadingSlot(key);
 
-    let bookingDate = date;
-    let bookingTime = startTime;
+  //   let bookingDate = date;
+  //   let bookingTime = startTime;
 
-    // if (startTime.includes("T")) {
-    //   const dt = new Date(startTime);
-    //   bookingDate = dt.toLocaleDateString("en-CA", { timeZone: "UTC" }); // ✅ UTC date
-    //   bookingTime = `${dt.getUTCHours().toString().padStart(2, "0")}:${dt.getUTCMinutes().toString().padStart(2, "0")}`; // ✅ UTC time
-    // }
+  //   // if (startTime.includes("T")) {
+  //   //   const dt = new Date(startTime);
+  //   //   bookingDate = dt.toLocaleDateString("en-CA", { timeZone: "UTC" }); // ✅ UTC date
+  //   //   bookingTime = `${dt.getUTCHours().toString().padStart(2, "0")}:${dt.getUTCMinutes().toString().padStart(2, "0")}`; // ✅ UTC time
+  //   // }
 
-    if (startTime.includes("T")) {
-      const dt = new Date(startTime);
-      bookingDate = dt.toLocaleDateString("en-CA"); // ← remove { timeZone: "UTC" }
-      bookingTime = `${dt.getHours().toString().padStart(2, "0")}:${dt.getMinutes().toString().padStart(2, "0")}`; // ← getHours not getUTCHours
-    }
+  //   if (startTime.includes("T")) {
+  //     const dt = new Date(startTime);
+  //     bookingDate = dt.toLocaleDateString("en-CA"); // ← remove { timeZone: "UTC" }
+  //     bookingTime = `${dt.getHours().toString().padStart(2, "0")}:${dt.getMinutes().toString().padStart(2, "0")}`; // ← getHours not getUTCHours
+  //   }
 
-    try {
-      await createBooking({
-        teacherId: teacher._id,
-        date: bookingDate,
-        startTime: bookingTime,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, // ✅ already correct
-      }).unwrap();
+  //   try {
+  //     await createBooking({
+  //       teacherId: teacher._id,
+  //       date: bookingDate,
+  //       startTime: bookingTime,
+  //       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, // ✅ already correct
+  //     }).unwrap();
 
-      setJustBookedKey(key);
-      toast.success("Slot booked! Redirecting to your bookings…");
-      setTimeout(() => {
-        setJustBookedKey(null);
-        setLoadingSlot(null);
-        onClose();
-      }, 1200);
-      router.push("/dashboard/student/booking");
-    } catch (err: any) {
-      toast.error(err?.data?.message || "Booking failed. Please try again!");
+  //     setJustBookedKey(key);
+  //     toast.success("Slot booked! Redirecting to your bookings…");
+  //     setTimeout(() => {
+  //       setJustBookedKey(null);
+  //       setLoadingSlot(null);
+  //       onClose();
+  //     }, 1200);
+  //     router.push("/dashboard/student/booking");
+  //   } catch (err: any) {
+  //     toast.error(err?.data?.message || "Booking failed. Please try again!");
+  //     setLoadingSlot(null);
+  //   }
+  // };
+
+  const handleBook = async (
+  startTime: string,
+  endTime: string,
+) => {
+  const key = slotKey("", startTime);
+
+  setLoadingSlot(key);
+
+  try {
+    await createBooking({
+      teacherId: teacher._id,
+      startTime,
+      endTime,
+    }).unwrap();
+
+    setJustBookedKey(key);
+
+    toast.success(
+      "Slot booked! Redirecting to your bookings…"
+    );
+
+    setTimeout(() => {
+      setJustBookedKey(null);
       setLoadingSlot(null);
-    }
-  };
+      onClose();
+    }, 1200);
+
+    router.push("/dashboard/student/booking");
+  } catch (err: any) {
+    toast.error(
+      err?.data?.message ||
+        "Booking failed. Please try again!"
+    );
+
+    setLoadingSlot(null);
+  }
+};
 
   const handleClose = () => {
     setJustBookedKey(null);
@@ -319,7 +357,7 @@ function SlotModal({
                               size="sm"
                               disabled={anyLoading}
                               onClick={() =>
-                                handleBook(slot.availDate, slot.startTime)
+                                handleBook(slot.startTime,slot.endTime,)
                               }
                               className="h-8 px-4 text-xs font-semibold bg-[#A9F877] hover:bg-[#C1FF72] text-gray-900 rounded-md shadow-none border-0 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                             >
@@ -479,6 +517,8 @@ const Page = () => {
       </div>
     );
   }
+
+  console.log("filtered teacher data=>>> ", filteredTeachers)
 
   return (
     <div className="min-h-screen px-6 py-12">
