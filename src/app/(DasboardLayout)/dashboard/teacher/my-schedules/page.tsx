@@ -325,18 +325,18 @@ function createLocalDate(dateStr: string) {
                   </p> */}
 
                   <h3 className="font-medium">
-  {localDate.toLocaleDateString(undefined, {
-    weekday: "long",
-  })}
-</h3>
+                    {localDate.toLocaleDateString(undefined, {
+                      weekday: "long",
+                    })}
+                  </h3>
 
-<p className="text-sm text-muted-foreground">
-  {localDate.toLocaleDateString(undefined, {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-  })}
-</p>
+                  <p className="text-sm text-muted-foreground">
+                    {localDate.toLocaleDateString(undefined, {
+                      weekday: "short",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </p>
 
                 </div>
 
