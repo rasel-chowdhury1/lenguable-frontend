@@ -56,14 +56,16 @@ export default function GoogleTranslate() {
     setIsClient(true);
 
     const cookieValue = Cookies.get("googtrans");
-    if (cookieValue && cookieValue !== "/auto/en") {
+    if (cookieValue) {
       const parts = cookieValue.split("/");
       const target = parts[2];
       const match = languages.find((l) => l.value === target);
       if (match) setSelected(match.value);
     } else {
-      setSelected("en");
-      Cookies.set("googtrans", "/auto/en", { path: "/" });
+      // Default to Spanish on the home page, English everywhere else
+      const defaultLang = window.location.pathname === "/" ? "es" : "en";
+      setSelected(defaultLang);
+      Cookies.set("googtrans", `/auto/${defaultLang}`, { path: "/" });
     }
   }, []);
 

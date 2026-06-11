@@ -31,26 +31,34 @@ interface IBooking {
   teacherId: { _id: string; name: string } | string;
 }
 
-const isUpcoming = (date: string, startTime: string): boolean => {
-  const now = new Date();
-  const todayISO = now.toISOString().split("T")[0];
-  if (date > todayISO) return true;
-  if (date === todayISO) {
-    const [hour, minute] = startTime.split(":").map(Number);
-    const slotTime = new Date();
-    slotTime.setHours(hour, minute, 0, 0);
-    return slotTime > now;
-  }
-  return false;
+const getBookingDateTime = (date: string, startTime: string): Date => {
+  if (startTime?.includes("T")) return new Date(startTime);
+  return new Date(`${date}T${startTime}:00`);
 };
 
-const formatDate = (iso: string) => {
+const isUpcoming = (date: string, startTime: string): boolean => {
+  return getBookingDateTime(date, startTime) > new Date();
+};
+
+const formatDate = (iso: string | undefined): string => {
+  if (!iso) return "";
   const [year, month, day] = iso.split("-").map(Number);
   return new Date(year, month - 1, day).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
   });
+};
+
+const getDisplayDate = (date: string, startTime: string): string => {
+  if (date) return formatDate(date);
+  if (startTime?.includes("T"))
+    return new Date(startTime).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  return "";
 };
 
 const formatTime = (timeStr: string): string => {
@@ -136,12 +144,17 @@ export default function MyAccountPage() {
     .filter((b) => isUpcoming(b.date, b.startTime))
     .sort(
       (a, b) =>
-        a.date.localeCompare(b.date) || a.startTime.localeCompare(b.startTime),
+        getBookingDateTime(a.date, a.startTime).getTime() -
+        getBookingDateTime(b.date, b.startTime).getTime(),
     );
 
   const pastBookings = bookings
     .filter((b) => !isUpcoming(b.date, b.startTime))
-    .sort((a, b) => b.date.localeCompare(a.date));
+    .sort(
+      (a, b) =>
+        getBookingDateTime(b.date, b.startTime).getTime() -
+        getBookingDateTime(a.date, a.startTime).getTime(),
+    );
 
   const nextUpcoming = upcomingBookings.slice(0, 1);
   const recentBookings = [...nextUpcoming, ...pastBookings].slice(0, 5);
@@ -304,7 +317,7 @@ export default function MyAccountPage() {
                             {teacherName}
                           </p>
                           <p className="text-muted-foreground text-xs">
-                            {formatDate(b.date)} &middot; {b.day} at{" "}
+                            {getDisplayDate(b.date, b.startTime)} &middot; {b.day} at{" "}
                             {formatTime(b.startTime)}
                           </p>
                         </div>
