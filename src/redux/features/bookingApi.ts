@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { baseApi } from "../api/baseApi";
 
 export const bookingApi = baseApi.injectEndpoints({
@@ -35,6 +36,13 @@ export const bookingApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Booking"],
     }),
+    markStudentJoined: build.mutation<any, string>({
+      query: (bookingId) => ({
+        url: `/booking/${bookingId}/student-joined`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Booking", "Student"],
+    }),
   }),
 });
 
@@ -43,4 +51,5 @@ export const {
   useMyBookingQuery,
   useCancelBookingMutation,
   useMarkTeacherJoinedMutation,
+  useMarkStudentJoinedMutation
 } = bookingApi;

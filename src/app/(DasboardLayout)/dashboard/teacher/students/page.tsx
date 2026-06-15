@@ -44,6 +44,7 @@ export default function MyStudentsPage() {
     name: s.name,
     initials: getInitials(s.name),
     level: s.currentLevel ?? "A0", // ✅ from backend
+    // lessonsCompleted: s.lessonsCompleted ?? 0,
     lessonsCompleted: s.lessonsCompleted ?? 0,
   }));
 

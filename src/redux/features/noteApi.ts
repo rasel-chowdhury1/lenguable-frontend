@@ -19,10 +19,15 @@ export const noteApi = baseApi.injectEndpoints({
     }),
 
     // new — teacher
+    // getMyStudents: build.query({
+    //   query: () => "/note/all-students",
+    //   providesTags: ["Note"],
+    // }),
+    
     getMyStudents: build.query({
-      query: () => "/note/all-students",
-      providesTags: ["Note"],
-    }),
+      query: () => "/note/my-students",
+      providesTags: ["Student"],
+}),
 
     getLessonsForStudent: build.query({
       query: (studentId: string) => `/note/students/${studentId}/lessons`,

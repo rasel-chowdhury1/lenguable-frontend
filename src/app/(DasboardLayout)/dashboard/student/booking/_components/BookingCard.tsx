@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Calendar, Clock, User, Video } from "lucide-react";
 import { Booking, BookingStatus } from "../page";
+import { useMarkStudentJoinedMutation } from "@/redux/features/bookingApi";
 
 const statusStyles: Record<BookingStatus, string> = {
   scheduled: "bg-[#A9F877] text-gray-800",
@@ -19,6 +20,7 @@ export function BookingCard({
   onCancel?: () => void;
   onLeaveReview?: () => void;
 }) {
+  const [markStudentJoined] = useMarkStudentJoinedMutation();
   return (
     <div className="rounded-2xl border border-gray-200 bg-white px-5 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       {/* Left */}
@@ -64,9 +66,27 @@ export function BookingCard({
         {/* Upcoming — Join + Cancel */}
         {booking.isUpcoming && (
           <>
+            {/* <Button
+              size="sm"
+              onClick={() => {
+                markStudentJoined(booking.id);
+                window.open(booking.meetLink, "_blank");
+              }}
+              className="flex items-center gap-1.5 bg-[#A9F877] hover:bg-[#C1FF72] text-gray-900"
+            >
+              <Video className="h-3.5 w-3.5" />
+              Join Class
+            </Button> */}
             <Button
               size="sm"
-              onClick={() => window.open(booking.meetLink, "_blank")}
+              onClick={async () => {
+                try {
+                  await markStudentJoined(booking.id).unwrap();
+                } catch (err) {
+                  console.error("Failed to mark student joined:", err);
+                }
+                window.open(booking.meetLink, "_blank");
+              }}
               className="flex items-center gap-1.5 bg-[#A9F877] hover:bg-[#C1FF72] text-gray-900"
             >
               <Video className="h-3.5 w-3.5" />
