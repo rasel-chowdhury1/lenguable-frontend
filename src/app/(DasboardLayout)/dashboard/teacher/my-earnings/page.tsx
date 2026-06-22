@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Calendar, DollarSign, TrendingUp } from "lucide-react";
+import { Calendar, DollarSign, Loader2, TrendingUp } from "lucide-react";
 import { useGetMeQuery } from "@/redux/features/userApi";
 import { useGetMyPayoutsQuery } from "@/redux/features/payoutApi";
 import { useMyBookingQuery } from "@/redux/features/bookingApi";
@@ -86,7 +86,12 @@ export default function MyEarningsPage() {
   ];
 
   if (meLoading || payoutsLoading || bookingsLoading) {
-    return <div className="p-5">Loading earnings...</div>;
+    return (<div className="min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3 text-gray-400">
+          <Loader2 className="w-8 h-8 animate-spin text-[#A9F877]" />
+          <p className="text-sm">Loading My Earning...</p>
+        </div>
+      </div>);
   }
 
   return (

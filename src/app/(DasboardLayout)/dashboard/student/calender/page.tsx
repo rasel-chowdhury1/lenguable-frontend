@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Clock, Star } from "lucide-react";
+import { Clock, Loader2, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -11,6 +11,7 @@ import { useGetAllAvailabilityQuery } from "@/redux/features/availabilityApi";
 import { useCreateBookingMutation } from "@/redux/features/bookingApi";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { Spinner } from "@/components/ui/spinner";
 
 interface ISlot {
   startTime: string;
@@ -266,8 +267,6 @@ export default function Calendar() {
 
 
 
-console.log("schedule from calendar =>>> ", schedule);
-console.log("selected time =>>> ", selectedTime)
 
 
   return (
@@ -280,7 +279,12 @@ console.log("selected time =>>> ", selectedTime)
       </div>
 
       {isLoading ? (
-        <div className="text-sm text-muted-foreground">Loading schedule...</div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3 text-gray-400">
+          <Loader2 className="w-8 h-8 animate-spin text-[#A9F877]" />
+          <p className="text-sm">Loading available class...</p>
+        </div>
+      </div>
       ) : schedule.length === 0 ? (
         <div className="text-sm text-muted-foreground">
           No availability found.

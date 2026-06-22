@@ -139,6 +139,7 @@ export default function MyAccount() {
   // Correct — points to /teacher/google/connect
   const handleConnectGoogle = () => {
     const userId = user?._id; // get from your redux state
+    https://tcp6n2f2-5000.inc1.devtunnels.ms/
     // window.location.href = `http://localhost:5000/api/v1/teacher/google/connect?userId=${userId}`;
     window.location.href = `https://lenguable.com/api/v1/teacher/google/connect?userId=${userId}`;
   };

@@ -13,6 +13,8 @@ import {
 } from "@/redux/features/bookingApi";
 import { useGetMyReviewsQuery } from "@/redux/features/reviewApi";
 import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
+import { Loader2 } from "lucide-react";
 
 export type BookingStatus = "scheduled" | "completed" | "cancelled";
 
@@ -108,7 +110,17 @@ export default function MyBookingsPage() {
     }
   };
 
-  if (isLoading) return <div className="p-5">Loading bookings...</div>;
+
+    if (isLoading)
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3 text-gray-400">
+          <Loader2 className="w-8 h-8 animate-spin text-[#A9F877]" />
+          <p className="text-sm">Loading My Booking...</p>
+        </div>
+      </div>
+    );
+
   if (isError)
     return <div className="p-5 text-red-500">Failed to load bookings</div>;
 

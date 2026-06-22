@@ -319,7 +319,7 @@ function SlotModal({
 
                   <div className="space-y-2">
                     {avail.slots.map((slot) => {
-                      const key = slotKey(slot.availDate, slot.startTime);
+                      const key = slotKey("", slot.startTime);
                       const isThisBooked = justBookedKey === key;
                       const isThisLoading = loadingSlot === key;
                       const anyLoading = !!loadingSlot;
@@ -361,14 +361,7 @@ function SlotModal({
                               }
                               className="h-8 px-4 text-xs font-semibold bg-[#A9F877] hover:bg-[#C1FF72] text-gray-900 rounded-md shadow-none border-0 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                             >
-                              {isThisLoading ? (
-                                <>
-                                  <Loader2 className="w-3 h-3 mr-1.5 animate-spin" />
-                                  Booking…
-                                </>
-                              ) : (
-                                "Book Slot"
-                              )}
+                              {isThisLoading ? "Booking..." : "Book Slot"}
                             </Button>
                           )}
                         </div>

@@ -3,6 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const baseApi = createApi({
   baseQuery: fetchBaseQuery({
     // baseUrl: "http://localhost:5000/api/v1",
+    // baseUrl: "https://tcp6n2f2-5000.inc1.devtunnels.ms/api/v1",
     baseUrl: process.env.NEXT_PUBLIC_BASE_API_URL,
     credentials: "include",
   }),
