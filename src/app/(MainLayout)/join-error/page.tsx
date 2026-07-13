@@ -10,6 +10,9 @@ function JoinErrorContent() {
   const message =
     searchParams.get("message") ||
     "Something went wrong while joining the class.";
+    
+  const role = searchParams.get("role");
+  const isTeacher = role === "teacher";
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#EEFEE4]">
@@ -23,10 +26,10 @@ function JoinErrorContent() {
         <p className="text-gray-600 mb-6">{decodeURIComponent(message)}</p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link
-            href="/dashboard/student/booking"
+            href={isTeacher ? "/dashboard/teacher/my-schedules" : "/dashboard/student/booking"}
             className="bg-[#A9F877] hover:bg-[#C1FF72] text-gray-900 font-semibold px-6 py-2 rounded-lg transition-colors"
           >
-            Go to My Bookings
+            {isTeacher ? "Go to My Schedules" : "Go to My Bookings"}
           </Link>
           <Link
             href="/"
