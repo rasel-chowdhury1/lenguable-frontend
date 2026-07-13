@@ -101,11 +101,13 @@ export default function Schedule() {
       if (!cls.teacherJoined) {
         await markTeacherJoined(cls._id).unwrap();
       }
-    } catch (err) {
-      console.error("Failed to mark teacher as joined:", err);
+      toast.success("Joining class...");
+      window.open(cls.meetLink, "_blank");
+    } catch (err: any) {
+      toast.error(err?.data?.message || "Failed to join class. Please try again!");
     } finally {
       setJoiningId(null);
-      window.open(cls.meetLink, "_blank");
+      
     }
   };
 

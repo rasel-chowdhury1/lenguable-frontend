@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Calendar, Clock, User, Video } from "lucide-react";
 import { Booking, BookingStatus } from "../page";
 import { useMarkStudentJoinedMutation } from "@/redux/features/bookingApi";
+import { toast } from "sonner";
 
 const statusStyles: Record<BookingStatus, string> = {
   scheduled: "bg-[#A9F877] text-gray-800",
@@ -82,10 +83,12 @@ export function BookingCard({
               onClick={async () => {
                 try {
                   await markStudentJoined(booking.id).unwrap();
-                } catch (err) {
+                  toast.success("Joining class...");
+                  window.open(booking.meetLink, "_blank");
+                } catch (err: any) {
                   console.error("Failed to mark student joined:", err);
+                  toast.error(err?.data?.message || "Failed to join class. Please try again!");
                 }
-                window.open(booking.meetLink, "_blank");
               }}
               className="flex items-center gap-1.5 bg-[#A9F877] hover:bg-[#C1FF72] text-gray-900"
             >
