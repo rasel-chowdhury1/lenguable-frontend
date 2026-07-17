@@ -67,8 +67,8 @@ const Footer = () => {
             <h4 className="font-semibold text-gray-900 mb-4">Contact Info</h4>
             <div className="space-y-2 text-sm text-gray-600">
               <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-gray-400" />
-                <p>2108302212</p>
+                {/* <Phone className="h-4 w-4 text-gray-400" />
+                <p>2108302212</p> */}
               </div>
 
               <div className="flex items-center gap-2">
