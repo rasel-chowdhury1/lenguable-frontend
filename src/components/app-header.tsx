@@ -169,7 +169,7 @@ const AppHeader = () => {
   };
 
   return (
-    <div className="sticky top-0 z-50 bg-sidebar border-b notranslate">
+    <div className="sticky top-0 z-[999999] bg-sidebar border-b notranslate">
       {/* Main bar */}
       <div className="flex h-16 items-center justify-between px-4">
         {/* LEFT — sidebar trigger */}

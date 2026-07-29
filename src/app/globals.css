@@ -187,4 +187,24 @@ body {
 .skiptranslate {
   height: 0 !important;
   overflow: hidden !important;
+  /* Prevent the container from intercepting touch/click events on mobile */
+  pointer-events: none !important;
+}
+
+/*
+ * Google Translate injects a fixed-position loading spinner and tooltip
+ * overlay during translation. On mobile these block all touch events,
+ * including the sidebar/menu trigger. Suppress them entirely.
+ */
+#goog-gt-tt,
+.goog-te-spinner,
+.goog-te-balloon-frame,
+.goog-tooltip,
+.goog-tooltip-card,
+/* obfuscated class names used by newer GT versions */
+.VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
+.VIpgJd-ZVi9od-aZ2wEe,
+.VIpgJd-ZVi9od-l4eHX-hSRGPd {
+  display: none !important;
+  pointer-events: none !important;
 }
